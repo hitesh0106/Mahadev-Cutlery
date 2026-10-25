@@ -1,0 +1,1387 @@
+# MASTER BUILD PROMPT
+## MAHADEV CUTLERY & GIFT ARTICLES — PREMIUM SHOPIFY E-COMMERCE STORE
+
+Act as an elite team consisting of:
+
+- A world-class e-commerce UI/UX designer.
+- A Shopify Online Store 2.0 and Liquid theme architect.
+- A senior frontend developer.
+- An advanced motion and interaction designer.
+- A conversion-rate optimization specialist.
+- An e-commerce information architecture expert.
+- A product catalogue and merchandising specialist.
+- A technical SEO and performance engineer.
+- A Shopify quality assurance engineer.
+
+Your mission is to DESIGN, BUILD, TEST, AND DELIVER a complete, premium, production-oriented Shopify storefront for:
+
+**Business Name:** Mahadev Cutlery & Gift Articles  
+**Business Type:** Multi-category retail store  
+**Platform:** Shopify  
+**Theme Architecture:** Native Shopify Online Store 2.0  
+**Template Language:** Shopify Liquid  
+**Styling:** CSS, design tokens, responsive layouts  
+**Interactions:** Lightweight JavaScript and carefully optimized animations  
+**Primary Market:** India  
+**Currency:** INR (₹)  
+**Primary Goal:** Create an exceptional, high-converting, visually impressive online shopping experience that customers enjoy using and that the store owner can manage without coding.
+
+This is NOT a basic template website.
+
+This is NOT a static HTML landing page.
+
+This is NOT a React prototype pretending to be Shopify.
+
+This is NOT a separate frontend disconnected from Shopify.
+
+Build a complete, maintainable Shopify theme that uses Shopify's native products, collections, vendors, variants, inventory, cart, search, and checkout infrastructure.
+
+If a feature requires Shopify Admin configuration, app installation, credentials, or an external integration, identify the requirement honestly and provide the setup instructions.
+
+Do not claim a feature has been tested, installed, or configured unless that action has actually been completed.
+
+---
+
+# 1. CREATIVE DIRECTION: PREMIUM LIGHT LUXURY
+
+Create a sophisticated, modern, premium retail design that feels like a combination of an international beauty retailer, a premium lifestyle store, and a polished Indian multi-brand shopping destination.
+
+The visual experience must feel expensive, carefully art-directed, and memorable.
+
+## Colour Palette
+
+Use a bright, elegant, light-first visual system.
+
+Suggested design tokens:
+
+- Primary background: #FFFFFF
+- Secondary background: #FAF8F5
+- Soft cream: #F5F0E9
+- Warm light grey: #F4F4F2
+- Primary text: #20201E
+- Secondary text: #6F6B66
+- Accent colour: #B8875A
+- Soft accent background: #F2E5D8
+- Border colour: #EAE6E0
+- Success colour: #287A53
+- Error colour: #B42318
+
+Use the accent colour sparingly for important buttons, active states, decorative details, and selected highlights.
+
+Do not turn the entire website gold or beige.
+
+Maintain a clean white foundation with sophisticated neutral colours and carefully controlled accent tones.
+
+## Typography
+
+Use a premium, readable typography combination.
+
+Suggested direction:
+
+- Headings: elegant editorial serif, such as DM Serif Display or a comparable licensed/web-safe alternative.
+- Body: Inter or a similarly readable sans-serif.
+- Prices and product information: clean, highly legible sans-serif.
+
+Use typography to establish a clear hierarchy between headlines, category labels, product names, descriptions, and prices.
+
+## Overall Aesthetic
+
+The website should feature:
+
+- Large editorial headlines.
+- Beautiful product photography.
+- Spacious layouts.
+- Carefully balanced whitespace.
+- Premium collection banners.
+- Subtle shadows.
+- Fine borders.
+- Elegant rounded corners.
+- Consistent product image ratios.
+- Strong visual hierarchy.
+- Refined micro-interactions.
+- Beautiful mobile layouts.
+- Consistent spacing throughout the entire store.
+
+Avoid a generic marketplace appearance.
+
+Avoid making every section look identical.
+
+Avoid excessive rounded cards, oversized gradients, random colours, unnecessary glassmorphism, and template-like repetitive sections.
+
+The result must look custom-designed for Mahadev Cutlery & Gift Articles.
+
+---
+
+# 2. DESIGN REFERENCE AND ORIGINALITY
+
+Study the general shopping experience of premium beauty, fashion, and lifestyle retailers.
+
+Use these sites as inspiration for relevant design patterns:
+
+- Jockey India: organized shopping and product navigation.
+- Lakmé India: beauty merchandising and category discovery.
+- Sephora: beauty product discovery and premium merchandising.
+- Apple: clean product presentation and interaction quality.
+- Aesop: editorial typography and premium visual restraint.
+- Premium Shopify storefronts: responsive shopping, product discovery, and clear conversion flows.
+
+Do not copy another company's exact design, assets, branding, wording, or page layout.
+
+Create an original visual identity for Mahadev Cutlery & Gift Articles.
+
+The website should be recognizable as a premium multi-brand Indian retail store.
+
+---
+
+# 3. BRAND IDENTITY
+
+Create a polished text-based logo treatment for:
+
+**MAHADEV**
+
+Secondary line:
+
+**CUTLERY & GIFT ARTICLES**
+
+Use elegant typography and a small, refined visual mark if appropriate.
+
+Do not use religious symbols, clip art, or generic shopping-cart logos unless specifically approved.
+
+Create the logo area so the owner can later replace the text logo with an uploaded logo through Shopify's theme editor.
+
+Prepare configurable settings for:
+
+- Logo image.
+- Logo width.
+- Header layout.
+- Announcement bar.
+- Brand accent colour.
+- Typography.
+- Footer information.
+
+Do not invent a registered brand identity or claim the business has certifications it does not possess.
+
+---
+
+# 4. GLOBAL WEBSITE STRUCTURE
+
+Build the following primary navigation:
+
+1. Home
+2. Shop All
+3. Beauty & Skincare
+4. Haircare
+5. Makeup
+6. Hosiery & Innerwear
+7. Kids & Toys
+8. Gifts & Jewellery
+9. Beauty Tools
+10. Brands
+11. Offers
+
+The navigation must be editable through Shopify's native navigation menus.
+
+Do not display empty or irrelevant departments prominently.
+
+If a department has no active products, allow the store owner to hide it until products become available.
+
+## Announcement Bar
+
+Create a configurable announcement bar supporting:
+
+- Promotional messages.
+- Seasonal campaigns.
+- Shipping information.
+- Store announcements.
+- Optional link.
+- Optional rotation between multiple messages.
+
+Do not invent free-shipping thresholds or discounts. The owner must configure actual offers.
+
+---
+
+# 5. ADVANCED HEADER AND MEGA MENU
+
+Create a premium responsive header with:
+
+- Logo.
+- Main navigation.
+- Search.
+- Account access.
+- Wishlist icon if wishlist functionality is implemented.
+- Cart icon with a live item count.
+- Mobile menu.
+- Optional announcement bar.
+
+The header should be visually light, clean, and elegant.
+
+## Desktop Behaviour
+
+Implement:
+
+- Smooth sticky-header behaviour.
+- Header transition when scrolling.
+- Elegant dropdown menus.
+- Large, structured mega menus.
+- Brand and category navigation.
+- Subtle hover indicators.
+- Smooth opening and closing.
+- Keyboard-accessible interactions.
+- Proper focus states.
+
+Mega menu structure should support:
+
+**Shop by Department**
+- Beauty & Skincare.
+- Makeup.
+- Haircare.
+- Hosiery & Innerwear.
+- Kids & Toys.
+- Gift Articles.
+- Imitation Jewellery.
+- Beauty Tools & Grooming.
+- Accessories & More.
+
+**Shop by Brand**
+- Alphabetical brand navigation.
+- Featured brands.
+- Brand links generated from configured Shopify navigation or brand collections.
+
+**Shop by Product Type**
+- Face Wash.
+- Moisturizer.
+- Serum.
+- Shampoo.
+- Conditioner.
+- Lip Products.
+- Makeup Products.
+- Innerwear.
+- Toys.
+- Gifts.
+- Other relevant product types that are actually stocked.
+
+Only show valid configured links.
+
+## Mobile Behaviour
+
+Build a proper mobile navigation drawer with:
+
+- Expandable departments.
+- Expandable subcategories.
+- Brand directory.
+- Search access.
+- Cart access.
+- Touch-friendly controls.
+- Smooth transitions.
+- Correct scroll locking.
+- Escape-key support where applicable.
+- Accessible labels and focus management.
+
+Do not create a desktop menu that becomes unusable on mobile.
+
+---
+
+# 6. HOMEPAGE — PREMIUM EDITORIAL SHOPPING EXPERIENCE
+
+Build the homepage as a carefully designed shopping journey, not a collection of generic cards.
+
+The homepage should contain the following configurable sections.
+
+## Section A: Hero Experience
+
+Create an elegant, visually striking hero section.
+
+Desktop:
+- Large editorial composition.
+- High-quality lifestyle/product photography.
+- Headline.
+- Supporting copy.
+- Primary CTA: Shop Now.
+- Secondary CTA: Explore Brands.
+- Optional secondary image or visual element.
+- Sophisticated entrance animation.
+
+Mobile:
+- Optimized image composition.
+- Clear headline.
+- Visible CTA.
+- Comfortable text spacing.
+- No clipped content.
+
+The hero must be editable from the Shopify theme editor.
+
+Use uploaded store-owned images or appropriately licensed assets. Do not hotlink copyrighted retailer images.
+
+Do not invent discount percentages, brand partnerships, or promotional claims.
+
+Provide attractive placeholder artwork only where actual assets have not yet been supplied, and make replacement easy.
+
+## Section B: Shop by Department
+
+Create visually distinct department cards for:
+
+- Makeup & Cosmetics.
+- Skincare.
+- Haircare.
+- Beauty & Personal Care.
+- Hosiery & Innerwear.
+- Kids & Toys.
+- Gift Articles.
+- Imitation Jewellery.
+- Beauty Tools & Grooming.
+- Accessories & More.
+
+Each card should support:
+
+- Image.
+- Department title.
+- Short subtitle.
+- Destination collection.
+- Hover image zoom.
+- Subtle arrow movement.
+- Smooth reveal animation.
+
+Do not show a Cutlery or Kitchenware product department. The business name includes Cutlery & Gift Articles, but the current product taxonomy must not invent a kitchenware department.
+
+## Section C: Featured Brands
+
+Build a premium brand showcase.
+
+Support:
+- Brand logo or text treatment.
+- Configurable brand cards.
+- Horizontal carousel or grid.
+- Smooth drag/scroll interaction where appropriate.
+- Responsive layouts.
+- Link to the brand collection.
+
+Do not fabricate brand logos.
+
+If an official logo is unavailable, use a restrained text-based treatment.
+
+## Section D: Trending Products
+
+Display a configurable Shopify collection.
+
+Use product data from Shopify.
+
+Product cards must display real product information only.
+
+## Section E: New Arrivals
+
+Display recently added products from an appropriately configured collection or product sorting strategy.
+
+If a native collection cannot automatically determine the intended meaning, provide a clear setup instruction instead of claiming it works automatically.
+
+## Section F: Shop by Product Type
+
+Create a visual product-type discovery area.
+
+Examples:
+- Face Wash.
+- Face Cream.
+- Sunscreen.
+- Serum.
+- Shampoo.
+- Conditioner.
+- Lip Products.
+- Makeup.
+- Innerwear.
+- Gifts.
+- Toys.
+- Other stocked products.
+
+The available items must be configurable and connected to relevant Shopify collections.
+
+## Section G: Beauty & Skincare Edit
+
+Create a visually distinctive editorial section highlighting skincare and beauty products.
+
+Use actual configured collections.
+
+Do not assign products to brands or categories based only on assumptions.
+
+## Section H: Hosiery & Innerwear
+
+Create a clean, easy-to-shop section with appropriate filters and product groups.
+
+Respect the exact inventory restrictions defined in the brand taxonomy below.
+
+## Section I: Gifts, Toys & Jewellery
+
+Create a colourful but refined section.
+
+The visual presentation may be playful, but it must remain consistent with the overall premium light theme.
+
+## Section J: Shop by Budget
+
+Support configurable price-based shopping collections.
+
+Examples:
+- Under ₹199.
+- Under ₹499.
+- Premium Picks.
+
+Do not create these collections with invented or arbitrary price rules. Configure them only after actual product pricing is available.
+
+## Section K: Offers
+
+Display genuine discounted products or manually configured promotional collections.
+
+Show discount labels only when the actual Shopify price and compare-at price justify them.
+
+Do not invent discounts.
+
+## Section L: Recently Viewed
+
+Implement a lightweight recently viewed products feature using browser storage where appropriate.
+
+Ensure it:
+- Handles unavailable products.
+- Avoids unnecessary tracking.
+- Does not store sensitive information.
+- Works on mobile.
+- Has a graceful empty state.
+
+## Section M: Brand Directory A–Z
+
+Create an elegant alphabetized brand directory.
+
+Requirements:
+- A–Z index.
+- Searchable brand list where practical.
+- One canonical listing per brand.
+- Correct brand destination.
+- Responsive layout.
+- No duplicate brand entries.
+- No links to nonexistent collections.
+
+## Section N: Newsletter
+
+Create a polished newsletter signup section connected to a supported Shopify newsletter/customer form.
+
+Do not pretend an external email marketing integration is active unless it has actually been configured.
+
+## Section O: Footer
+
+Include configurable areas for:
+
+- Shop.
+- Departments.
+- Brands.
+- Customer support.
+- Contact information.
+- Shipping policy.
+- Return/refund policy.
+- Privacy policy.
+- Terms and conditions.
+- Social media links.
+- Newsletter.
+- Copyright.
+
+Do not invent a street address, telephone number, email, or social media profile.
+
+---
+
+# 7. OFFICIAL BRAND DIRECTORY AND STOCK RESTRICTIONS
+
+Implement the following brand taxonomy carefully.
+
+The official manufacturer catalogue can inform potential product types, but the store's actual inventory is the final authority.
+
+Never create products merely because the manufacturer sells them.
+
+## Hosiery & Innerwear
+
+### Jockey
+Show relevant Jockey products actually stocked by the store.
+
+### Van Heusen
+Show only relevant stocked products.
+
+### Zoiro
+STRICT RESTRICTION:
+- Men's Nikar/underwear only.
+- Do not create a women's Zoiro department.
+- Do not automatically add T-shirts, sportswear, or unrelated product types.
+- Only display actual Zoiro products supplied by the store owner.
+
+### Sunny
+Use the exact Sunny hosiery products actually stocked.
+
+The brand identity and full catalogue must not be guessed if they cannot be verified.
+
+### Bodycare
+STRICT RESTRICTION:
+- Kids — Boys.
+- Kids — Girls.
+- Women.
+
+Do not create a men's Bodycare category.
+
+Only show actual stocked Bodycare products.
+
+### Lady Care
+STRICT RESTRICTION:
+- Women — Nikar/Panty only.
+
+Do not create men's products or unrelated Lady Care categories.
+
+## Haircare and Professional Haircare
+
+### L'Oréal Professionnel
+Professional haircare products actually stocked by the store.
+
+### L'Oréal Paris
+Regular L'Oréal products actually stocked by the store.
+
+Keep L'Oréal Paris and L'Oréal Professionnel separate when the actual product packaging/vendor identifies them as separate brands.
+
+Do not incorrectly place every L'Oréal product under L'Oréal Professionnel.
+
+### Matrix
+Relevant stocked haircare products.
+
+### Wella Professionals
+Relevant stocked haircare products.
+
+### Garnier
+Relevant stocked skincare and haircare products.
+
+### Minimalist
+Relevant stocked skincare and haircare products.
+
+## Makeup & Cosmetics
+
+### Swiss Beauty
+Show relevant stocked makeup and beauty products.
+
+### Lakmé
+Show actual stocked Lakmé products.
+
+### MARS
+Show actual stocked MARS cosmetics.
+
+### Maybelline New York
+Show actual stocked makeup products.
+
+### Colorbar
+Show relevant stocked products.
+
+### Faces Canada
+Show relevant stocked products.
+
+If the owner refers to a separate brand called "Faces Canada Professionals," do not invent that identity. Use the actual label printed on the product.
+
+## Skincare and Beauty
+
+### Lotus Herbals
+STRICT RESTRICTION:
+- Skincare.
+- Face care.
+- Haircare.
+- Relevant beauty/personal-care products actually stocked.
+
+Do not place Lotus Herbals under Makeup.
+
+### O3+
+Relevant stocked skincare and facial-care products.
+
+### Cetaphil
+Relevant stocked skincare products.
+
+### Sebamed
+Relevant stocked skincare and personal-care products.
+
+### Pilgrim
+Relevant stocked skincare, haircare, and personal-care products.
+
+### Minimalist
+Relevant stocked skincare and haircare products.
+
+### Garnier
+Relevant stocked face and hair products.
+
+### Plix
+Relevant stocked beauty/personal-care products.
+
+### NIVEA
+Relevant stocked skincare and personal-care products.
+
+### POND'S
+Relevant stocked skincare products.
+
+### Dot & Key
+Relevant stocked skincare products.
+
+### Ghar Soaps
+Use the exact brand identity and products confirmed by the owner.
+
+If the exact brand cannot be verified, keep it configurable and do not fabricate a catalogue.
+
+## Beauty Tools and Grooming
+
+### VEGA
+Relevant stocked brushes, combs, beauty tools, and other actual products.
+
+### Philips
+Relevant stocked grooming products and appliances.
+
+Do not show the entire official manufacturer catalogue if the store carries only a few products.
+
+## Other store departments
+
+Support the actual inventory for:
+- Toys.
+- Gift Articles.
+- Imitation Jewellery.
+- Accessories & More.
+- Other confirmed products.
+
+Do not create empty or misleading categories.
+
+## Mixed Products
+
+Belts, goggles, perfumes, and other mixed products must remain in relevant general collections such as Accessories & More or All Products.
+
+Do not create dedicated research-heavy brand categories for these items.
+
+Do not treat belts, goggles, or perfume as separate brands.
+
+Do not create a kitchenware/cutlery department unless the owner explicitly changes this instruction.
+
+---
+
+# 8. PRODUCT DATA MODEL — SINGLE SOURCE OF TRUTH
+
+Shopify must remain the canonical product database.
+
+Use Shopify's native product fields wherever possible.
+
+Recommended product fields:
+
+- Product title.
+- Vendor.
+- Product type.
+- Description.
+- Images/media.
+- Price.
+- Compare-at price.
+- Variants.
+- SKU.
+- Barcode, when available.
+- Inventory quantity and tracking.
+- Product status.
+- Collections.
+- Tags.
+- SEO title.
+- SEO description.
+
+Use Shopify metafields where they materially improve the catalogue.
+
+Suggested metafields:
+
+- `custom.department`
+- `custom.subcategory`
+- `custom.target_audience`
+- `custom.product_highlights`
+- `custom.usage_instructions`
+- `custom.ingredients`
+- `custom.product_attributes`
+
+Choose metafield types that match the intended data. If department or subcategory values are represented by Shopify taxonomy/metaobjects, document that design and keep it consistent.
+
+Do not create a separate database that duplicates Shopify products.
+
+Do not require the owner to enter the same product multiple times.
+
+## Automated Product Organization
+
+Where supported, use automated Shopify collections based on vendor, product type, tags, or metafields.
+
+Examples:
+
+- Vendor = Jockey → Jockey collection.
+- Department = Skincare → Skincare collection.
+- Vendor = Lotus Herbals and Department = Skincare → relevant Lotus Herbals collection.
+- Vendor = Zoiro and Product Type = Men's Nikar → Zoiro Men's Nikar collection.
+
+Use exact, consistent naming and rules.
+
+Explain how to configure any rules that cannot be configured through the theme itself.
+
+Do not assume that uploading a Liquid theme automatically creates Shopify products, collections, menus, metafields, policies, or shipping settings.
+
+---
+
+# 9. PRODUCT CARD DESIGN
+
+Create sophisticated product cards.
+
+Every product card should support:
+
+- Main product image.
+- Optional second image on hover.
+- Brand/vendor.
+- Product title.
+- Actual price.
+- Compare-at price when applicable.
+- Genuine discount percentage, if applicable.
+- Variant or colour indicators where useful.
+- Quick-add functionality where variants allow.
+- Wishlist button only if fully implemented.
+- Clear sold-out state.
+- Keyboard-accessible controls.
+- Responsive image handling.
+
+Interactions:
+- Gentle image zoom.
+- Smooth image transition.
+- Subtle card elevation.
+- Animated arrow or action indicator.
+- Clear focus and hover states.
+- Optional quick-view modal only if it works reliably and remains accessible.
+
+Do not make the card jump or flicker when hovered.
+
+Avoid excessive motion and unnecessary UI elements.
+
+Never invent product ratings, review counts, or popularity scores.
+
+---
+
+# 10. PRODUCT DETAIL PAGE
+
+Build a polished product detail page with:
+
+- Breadcrumbs.
+- Product gallery.
+- Thumbnail navigation.
+- Product title.
+- Vendor/brand link.
+- Actual price.
+- Actual compare-at price.
+- Variant selectors.
+- Quantity selector.
+- Stock availability.
+- Add-to-cart button.
+- Optional accelerated checkout button when supported.
+- Product description.
+- Additional product information.
+- Shipping/returns information from configured policies.
+- Related products.
+- Same-brand products.
+- Recently viewed products.
+- Relevant product recommendations.
+
+For skincare and beauty products, support fields for ingredients, usage instructions, and other product-specific details when supplied.
+
+For hosiery, support available sizes, colours, and product attributes where relevant.
+
+For toys, gifts, jewellery, and accessories, adapt the product information to the item.
+
+Do not display empty technical specifications or fabricated product claims.
+
+The purchase buttons must work with Shopify's native cart and checkout system.
+
+---
+
+# 11. CART AND CHECKOUT
+
+Implement Shopify-native cart behaviour.
+
+Requirements:
+- Add products to cart.
+- Update quantity.
+- Remove products.
+- Show variant information.
+- Display correct line prices.
+- Show subtotal.
+- Handle unavailable or changed inventory.
+- Show an appropriate empty-cart state.
+- Provide a clear checkout CTA.
+- Preserve Shopify's native checkout flow.
+
+An optional AJAX cart drawer may be implemented if it is robust.
+
+Do not build a fake checkout form.
+
+Do not collect or store payment-card information in the theme.
+
+Do not claim payments are enabled until Shopify Payments or the relevant Indian payment provider has been configured by the store owner.
+
+---
+
+# 12. ADVANCED MOTION DESIGN — HIGH-END AND SMOOTH
+
+This is a critical requirement.
+
+The website must feel premium, alive, polished, and carefully animated.
+
+It must not feel like a static beginner template.
+
+However, animations must support shopping and never obstruct it.
+
+Use a restrained motion system with consistent easing, duration, and interaction rules.
+
+## A. Page Entrance
+
+Implement tasteful page transitions where compatible with Shopify navigation and browser behaviour.
+
+Avoid animation that delays the initial shopping experience.
+
+## B. Scroll-Triggered Reveals
+
+Use lightweight reveal animations for selected content:
+- Section headings.
+- Department cards.
+- Featured brand panels.
+- Editorial images.
+- Promotional sections.
+
+Use staggered timing carefully.
+
+Do not animate every paragraph or every product card independently if that causes performance problems.
+
+## C. Product Image Interactions
+
+Implement:
+- Smooth hover image swaps where a second image exists.
+- Gentle zoom.
+- Subtle image reveal.
+- Polished loading placeholders.
+- Smooth transitions between available product images.
+
+Do not create fake 3D product models or invent additional product images.
+
+## D. Premium Mega Menu
+
+Implement:
+- Smooth opening and closing.
+- Subtle opacity and position transitions.
+- Clear active navigation state.
+- Stable layout without page jumps.
+- Immediate response to keyboard and pointer interaction.
+
+## E. Department Cards
+
+Implement:
+- Gentle image zoom.
+- Subtle text movement.
+- Animated arrow.
+- Elegant border or shadow transition.
+- Consistent interaction timing.
+
+## F. Add-to-Cart Feedback
+
+When a product is successfully added:
+- Provide immediate visual confirmation.
+- Update the cart count.
+- Show a polished toast or cart drawer.
+- Respect errors and unavailable inventory.
+- Avoid unnecessary full-page reloads where technically appropriate.
+
+## G. Buttons
+
+Use:
+- Smooth colour transitions.
+- Small directional movement where appropriate.
+- Clear pressed states.
+- Accessible keyboard focus.
+- Reduced-motion alternatives.
+
+Do not use oversized scaling that makes the interface feel unstable.
+
+## H. Carousels
+
+If implemented:
+- Support touch gestures.
+- Support keyboard navigation.
+- Include visible navigation controls where appropriate.
+- Avoid accidental auto-scrolling while customers read.
+- Use smooth, controllable movement.
+- Ensure product links remain accessible.
+
+## I. Loading States
+
+Use lightweight skeletons or placeholders only when loading is genuinely occurring.
+
+Do not use fake loading delays to make the website look sophisticated.
+
+## J. Motion Accessibility
+
+Respect `prefers-reduced-motion`.
+
+Ensure:
+- No essential information is hidden behind animation.
+- No important CTA is delayed.
+- No seizure-inducing effects.
+- No excessive parallax.
+- No persistent distracting movement.
+- No forced smooth scrolling that interferes with accessibility.
+
+## Motion Performance
+
+Prefer CSS transitions and IntersectionObserver where appropriate.
+
+Avoid installing a large animation library just to animate simple UI elements.
+
+If using GSAP, Framer Motion, or another advanced library, assess whether it is compatible with the native Shopify theme architecture and whether the additional JavaScript is justified.
+
+The default implementation should use lightweight CSS and JavaScript.
+
+Target the perception of a premium, responsive, high-end storefront rather than a motion-heavy showcase that performs poorly.
+
+---
+
+# 13. SEARCH AND DISCOVERY
+
+Create an elegant search interface with:
+
+- Search icon and input.
+- Clear button.
+- Keyboard-accessible interaction.
+- Relevant search suggestions.
+- Product results.
+- Brand suggestions where supported.
+- Helpful empty state.
+- Mobile-friendly search experience.
+
+Use Shopify's native search infrastructure.
+
+If predictive search is implemented, use Shopify's supported search endpoints and return relevant product suggestions.
+
+Do not invent search results.
+
+Do not create a separate search database that falls out of sync with Shopify inventory.
+
+---
+
+# 14. COLLECTIONS, FILTERS, AND SORTING
+
+Create configurable collection templates with:
+
+- Collection title.
+- Optional collection image.
+- Collection description.
+- Product grid.
+- Sorting.
+- Filters supported by Shopify and the configured product data.
+- Pagination or a robust load-more implementation.
+- Product counts where supported.
+- Empty states.
+
+Use Shopify Search & Discovery capabilities where appropriate.
+
+Support relevant filters:
+- Brand/vendor.
+- Price.
+- Availability.
+- Product type.
+- Size.
+- Colour.
+- Other meaningful attributes available in the catalogue.
+
+Only show useful filters for the relevant collection.
+
+Do not display every possible filter for every product type.
+
+Avoid slow, unbounded product loading.
+
+---
+
+# 15. WISHLIST AND CUSTOMER FEATURES
+
+If a wishlist is implemented, it must actually work.
+
+Choose and document a suitable implementation:
+- A compatible Shopify app, or
+- A carefully implemented browser-local wishlist with clearly stated limitations.
+
+Do not display a wishlist icon that does nothing.
+
+If account-related features are included, use Shopify's supported customer account architecture.
+
+Do not invent login functionality or collect unnecessary personal data.
+
+---
+
+# 16. MOBILE-FIRST RESPONSIVE DESIGN
+
+Test the layout conceptually and, where tools permit, actually at:
+
+- Small mobile: 320–375px.
+- Standard mobile: 390–430px.
+- Tablet: 768px.
+- Laptop: 1024–1440px.
+- Large desktop: 1600px and above.
+
+Requirements:
+- No horizontal overflow.
+- No clipped navigation.
+- No overlapping buttons.
+- No unreadable text.
+- No broken product grids.
+- Appropriate image ratios.
+- Comfortable tap targets.
+- Sticky elements that do not cover important content.
+- Fast and easy mobile shopping.
+
+Mobile is a primary shopping experience, not a reduced desktop layout.
+
+---
+
+# 17. SEO AND DISCOVERABILITY
+
+Implement Shopify-compatible SEO practices:
+
+- Semantic HTML.
+- Proper heading hierarchy.
+- Descriptive page titles.
+- Meta descriptions.
+- Canonical URLs where appropriate.
+- Product structured data where valid.
+- Breadcrumbs.
+- Image alt text.
+- Descriptive collection URLs managed through Shopify.
+- Internal links between relevant collections and brands.
+- Sitemap compatibility.
+- Robots directives compatible with Shopify's platform behaviour.
+
+Avoid duplicate or contradictory structured data.
+
+Do not hard-code fake ratings or review markup.
+
+Do not generate thousands of empty pages.
+
+Do not claim guaranteed search rankings.
+
+---
+
+# 18. PERFORMANCE AND TECHNICAL QUALITY
+
+Performance is essential.
+
+Requirements:
+- Responsive image sizes.
+- Shopify image URL transformations where appropriate.
+- Lazy loading for below-the-fold images.
+- Prioritize the main hero image appropriately.
+- Avoid lazy-loading the main above-the-fold image when that would harm loading.
+- Minimize JavaScript.
+- Minimize render-blocking resources.
+- Avoid unnecessary third-party scripts.
+- Avoid layout shifts.
+- Use sensible font loading.
+- Use semantic, maintainable Liquid.
+- Avoid repeated expensive Liquid operations.
+- Prevent console errors.
+- Ensure theme assets resolve correctly.
+
+Aim for strong Core Web Vitals and good Lighthouse performance.
+
+Do not promise a specific Lighthouse score without testing the completed store in a representative environment.
+
+---
+
+# 19. SHOPIFY THEME ARCHITECTURE
+
+Deliver a native Online Store 2.0 theme.
+
+Use Shopify Liquid, JSON templates, sections, snippets, CSS, and JavaScript.
+
+Suggested architecture:
+
+- `layout/theme.liquid`
+- `templates/index.json`
+- `templates/product.json`
+- `templates/collection.json`
+- `templates/list-collections.json`
+- `templates/page.json`
+- `templates/search.json`
+- `templates/cart.json`
+- `templates/blog.json`
+- `templates/article.json`
+- `sections/header.liquid`
+- `sections/footer.liquid`
+- `sections/announcement-bar.liquid`
+- `sections/hero-editorial.liquid`
+- `sections/shop-by-department.liquid`
+- `sections/featured-brands.liquid`
+- `sections/featured-collection.liquid`
+- `sections/brand-directory.liquid`
+- `sections/product-type-grid.liquid`
+- `sections/editorial-banner.liquid`
+- `sections/newsletter.liquid`
+- `snippets/product-card.liquid`
+- `snippets/price.liquid`
+- `snippets/breadcrumbs.liquid`
+- `snippets/icon.liquid`
+- `assets/base.css`
+- `assets/theme.js`
+- `config/settings_schema.json`
+- `config/settings_data.json`
+
+This is a suggested architecture, not a reason to create unnecessary files.
+
+Add any other required files following Shopify's valid theme conventions.
+
+Do not create empty placeholder files merely to inflate the project.
+
+All sections should have appropriate Shopify schema settings.
+
+Where practical, allow the store owner to:
+- Change images.
+- Change headings.
+- Change descriptions.
+- Select collections.
+- Configure buttons.
+- Reorder sections.
+- Hide optional sections.
+- Adjust selected layout settings.
+- Configure brand displays.
+
+Use valid Liquid syntax and supported Shopify section/block schemas.
+
+Validate the final theme with Shopify's theme-check tooling where available.
+
+If validation tooling is unavailable, state that limitation.
+
+---
+
+# 20. THEME SETTINGS AND CUSTOMIZATION
+
+Provide theme editor controls for:
+
+- Logo.
+- Header layout.
+- Announcement bar.
+- Colour palette.
+- Typography.
+- Button styles.
+- Product-card layout.
+- Image ratios.
+- Homepage sections.
+- Hero image and copy.
+- Department cards.
+- Featured collections.
+- Featured brands.
+- Footer content.
+- Social links.
+- Product page settings.
+- Cart behaviour.
+- Animation intensity where practical.
+
+Use global design tokens to keep the website consistent.
+
+Do not require the owner to edit code for routine content changes.
+
+---
+
+# 21. STORE OWNER WORKFLOW — BEGINNER-FRIENDLY
+
+The owner should primarily manage the store from Shopify Admin.
+
+Create a straightforward documented workflow.
+
+## Adding a Product
+
+The guide must explain how to:
+
+1. Open Shopify Admin.
+2. Select Products.
+3. Add a product.
+4. Enter the actual product name.
+5. Upload real product images.
+6. Add an accurate description.
+7. Enter the actual price.
+8. Set the correct vendor/brand.
+9. Set the product type.
+10. Set department and relevant subcategory fields.
+11. Add appropriate tags or metafield values.
+12. Configure variants.
+13. Set actual inventory.
+14. Set shipping information where applicable.
+15. Configure product SEO.
+16. Save and publish the product.
+17. Verify that it appears in the intended collections.
+
+Provide examples for:
+- Jockey Men's Innerwear.
+- Zoiro Men's Nikar.
+- Bodycare Women's Product.
+- Bodycare Kids' Boys Product.
+- Bodycare Kids' Girls Product.
+- Lady Care Women's Nikar/Panty.
+- Lotus Herbals Skincare.
+- L'Oréal Paris product.
+- L'Oréal Professionnel product.
+
+These examples must explain the field values, not create fake products in the live store.
+
+## Automatic Organization
+
+Explain which collections are automated and which need manual product assignment.
+
+If a Shopify collection cannot be created automatically through the theme, explain the exact Admin steps required.
+
+Make the process simple enough for a nontechnical shop owner.
+
+---
+
+# 22. REQUIRED DELIVERY PACKAGE
+
+The project is incomplete if it only provides screenshots, mockups, or an unconnected frontend.
+
+Deliver:
+
+1. Complete Shopify Liquid theme source.
+2. Valid theme directory structure.
+3. Installable ZIP package.
+4. All required sections, snippets, templates, assets, and configuration files.
+5. Theme editor settings.
+6. Homepage implementation.
+7. Product page implementation.
+8. Collection page implementation.
+9. Brand directory and brand collection support.
+10. Search and filtering implementation.
+11. Cart integration.
+12. Responsive styling.
+13. Animation implementation.
+14. SEO foundation.
+15. Theme validation report, if validation was actually performed.
+16. Installation guide.
+17. Shopify Admin configuration guide.
+18. Brand/category configuration guide.
+19. Beginner product-upload guide.
+20. Known limitations and outstanding manual configuration list.
+
+Include a README that explains:
+- What is included.
+- How to install the theme.
+- How to preview before publishing.
+- How to configure the navigation.
+- How to configure collections.
+- How to configure brand listings.
+- How to add products.
+- How to configure metafields.
+- How to configure policies and shipping.
+- How to test cart and checkout.
+- How to troubleshoot common problems.
+
+Do not overwrite an existing live theme or publish the new theme without explicit approval.
+
+---
+
+# 23. TESTING CHECKLIST
+
+Test every feature that the environment allows.
+
+Check:
+- Theme file structure.
+- Liquid syntax.
+- Shopify schema validity.
+- Homepage rendering.
+- Product page rendering.
+- Collection page rendering.
+- Search behaviour.
+- Navigation links.
+- Product card links.
+- Variant selection.
+- Add to cart.
+- Quantity updates.
+- Cart removal.
+- Mobile navigation.
+- Responsive layouts.
+- Animation behaviour.
+- Reduced-motion behaviour.
+- Empty collections.
+- Sold-out products.
+- Missing images.
+- Missing descriptions.
+- Missing optional metafields.
+- SEO metadata.
+- Keyboard navigation.
+- Accessibility basics.
+- Console errors where browser access is available.
+
+Clearly distinguish:
+- Tests actually performed.
+- Tests that could not be performed.
+- Features requiring Shopify Admin configuration.
+- Features requiring an app or paid integration.
+
+Never falsely report successful testing.
+
+---
+
+# 24. EXECUTION STRATEGY
+
+Do not stop after producing a plan.
+
+Proceed to build the actual deliverables.
+
+Follow this order:
+
+### Phase 1 — Project Inspection
+Inspect the existing workspace and identify the available Shopify theme files, assets, tools, and integrations.
+
+If an existing project exists, preserve useful work and avoid overwriting it unnecessarily.
+
+### Phase 2 — Design System
+Establish the light premium palette, typography, spacing, responsive rules, product-card system, and motion system.
+
+### Phase 3 — Theme Foundation
+Build the Shopify layout, global settings, header, navigation, footer, and core templates.
+
+### Phase 4 — Homepage
+Implement the complete configurable homepage.
+
+### Phase 5 — Catalogue Experience
+Implement product cards, product pages, collections, brand directory, search, filters, and relevant product discovery.
+
+### Phase 6 — Cart
+Implement and verify Shopify-native cart behaviour.
+
+### Phase 7 — Motion and Responsive Refinement
+Polish animations, micro-interactions, mobile layouts, loading states, and accessibility.
+
+### Phase 8 — Validation
+Run the available checks, fix errors, and report remaining limitations.
+
+### Phase 9 — Delivery
+Generate the theme ZIP, source directory, README, installation guide, and product management guide.
+
+Do not claim the theme is complete merely because a homepage screenshot looks good.
+
+Do not replace required Shopify functionality with visual mockups.
+
+If a capability is unavailable in the current environment, build the parts that can be completed and clearly identify the remaining steps.
+
+---
+
+# 25. FINAL QUALITY STANDARD
+
+The final result should feel like a custom-built, premium Indian retail e-commerce experience.
+
+The visual design must be distinctive, light, elegant, and richly detailed.
+
+The animations must feel smooth and intentional.
+
+The product discovery must be intuitive.
+
+The Shopify integration must be real.
+
+The theme must be maintainable.
+
+The store owner must be able to manage products without coding.
+
+The customer must be able to browse by department, brand, product type, and collection.
+
+Every feature must have a clear purpose.
+
+Avoid unnecessary complexity, fake functionality, invented product data, and empty categories.
+
+Prioritize visual excellence, usability, trust, performance, and a maintainable Shopify architecture.
+
+**Start by inspecting the available project environment. Then build the actual Shopify theme and its deliverables. Do not stop at explaining how you would build it.**
