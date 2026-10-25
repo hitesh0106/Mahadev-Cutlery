@@ -1,0 +1,26 @@
+{%- comment -%}
+  Wishlist page (page.wishlist template, linked from the header heart icon).
+  Items are rendered client-side by wishlist.js from localStorage (mc_wishlist_v1).
+  The page itself renders only the honest shell + device note.
+{%- endcomment -%}
+<section class="mc-section mc-wishlist" data-mc-wishlist-page>
+  <div class="mc-container">
+    <h1 class="mc-section__heading">{{ 'wishlist.title' | t }}</h1>
+    <p class="mc-wishlist__note">{{ 'wishlist.device_note' | t }}</p>
+
+    <div class="mc-grid mc-grid--products" data-mc-wishlist-list></div>
+
+    <div class="mc-empty-state" data-mc-wishlist-empty>
+      <span class="mc-empty-state__icon" aria-hidden="true">{% render 'icon', name: 'heart', size: 40 %}</span>
+      <p>{{ 'wishlist.empty' | t }}</p>
+      <a class="mc-btn mc-btn--primary" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Wishlist",
+  "settings": []
+}
+{% endschema %}

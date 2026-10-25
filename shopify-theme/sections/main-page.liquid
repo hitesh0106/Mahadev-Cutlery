@@ -1,0 +1,16 @@
+{%- comment -%} Standard page template section (title + RTE content). {%- endcomment -%}
+<section class="mc-section mc-page">
+  <div class="mc-container">
+    <h1 class="mc-section__heading">{{ page.title | escape }}</h1>
+    {%- if page.content != blank -%}
+      <div class="mc-page__content mc-rte">{{ page.content }}</div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": []
+}
+{% endschema %}

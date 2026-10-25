@@ -1,0 +1,154 @@
+{%- comment -%}
+  Collection page:
+  - header (title, description, optional image), products count
+  - storefront filters via collection.filters (availability, price range, list filters)
+    with an honest tag-chip fallback and a no-filters note
+  - sort dropdown (collection.sort_options, sort_by param)
+  - paginated product grid, empty state
+{%- endcomment -%}
+{%- assign mc_page_size = section.settings.products_per_page | default: 12 -%}
+{%- assign mc_sort_current = collection.sort_by | default: collection.default_sort_by -%}
+
+<section class="mc-section mc-collection">
+  <div class="mc-container">
+    <header class="mc-collection__header{% if section.settings.show_image and collection.image != blank %} mc-collection__header--image{% endif %}">
+      {%- if section.settings.show_image and collection.image != blank -%}
+        {%- assign col_alt = collection.title -%}
+        {%- if collection.image.alt != blank -%}{%- assign col_alt = collection.image.alt -%}{%- endif -%}
+        <div class="mc-collection__banner">
+          {{ collection.image | image_url: width: 1600 | image_tag:
+            loading: 'eager',
+            sizes: '100vw',
+            widths: '600, 900, 1200, 1600',
+            class: 'mc-collection__banner-img',
+            alt: col_alt
+          }}
+        </div>
+      {%- endif -%}
+      <h1 class="mc-collection__title">{{ collection.title | escape }}</h1>
+      {%- if collection.description != blank -%}
+        <div class="mc-collection__description mc-rte">{{ collection.description }}</div>
+      {%- endif -%}
+      {%- if collection.products_count > 0 -%}
+        <p class="mc-collection__count">{{ 'collections.products_count' | t: count: collection.products_count }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- paginate collection.products by mc_page_size -%}
+      {%- if collection.filters.size > 0 or collection.all_tags.size > 0 -%}
+        <form class="mc-toolbar" method="get" action="{{ collection.url }}" data-mc-filters>
+          <div class="mc-toolbar__row">
+            <button type="button" class="mc-btn mc-btn--secondary mc-btn--sm" data-mc-filters-toggle aria-expanded="false" aria-controls="mc-filters-panel">
+              {% render 'icon', name: 'menu', size: 16 %} {{ 'collections.filter' | t }}
+            </button>
+
+            <div class="mc-toolbar__sort">
+              <label class="mc-label" for="mc-sort-by">{{ 'collections.sort' | t }}</label>
+              <select class="mc-select mc-select--sm" id="mc-sort-by" name="sort_by" data-mc-sort-select onchange="this.form.submit()">
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}" {% if option.value == mc_sort_current %}selected{% endif %}>{{ option.name | escape }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+          </div>
+
+          {%- if collection.filters.size > 0 -%}
+            <div class="mc-filters" id="mc-filters-panel" data-mc-filters-panel>
+              {%- for filter in collection.filters -%}
+                {%- case filter.type -%}
+                  {%- when 'boolean' or 'list' -%}
+                    <fieldset class="mc-filters__group">
+                      <legend class="mc-filters__legend">{{ filter.label | escape }}</legend>
+                      {%- for value in filter.values -%}
+                        <label class="mc-filters__option">
+                          <input
+                            type="checkbox"
+                            class="mc-checkbox"
+                            name="{{ value.param_name }}"
+                            value="{{ value.value }}"
+                            {% if value.active %}checked{% endif %}
+                            {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                          >
+                          <span>{{ value.label | escape }}</span>
+                          <span class="mc-filters__count">({{ value.count }})</span>
+                        </label>
+                      {%- endfor -%}
+                    </fieldset>
+                  {%- when 'price_range' -%}
+                    <fieldset class="mc-filters__group">
+                      <legend class="mc-filters__legend">{{ filter.label | escape }}</legend>
+                      <div class="mc-filters__price">
+                        <input class="mc-input mc-input--sm" type="number" min="0" step="1" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | divided_by: 100.0 | replace: '.0', '' }}" placeholder="0" aria-label="{{ 'collections.price' | t }} min">
+                        <span class="mc-filters__price-sep" aria-hidden="true">&ndash;</span>
+                        <input class="mc-input mc-input--sm" type="number" min="0" step="1" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | divided_by: 100.0 | replace: '.0', '' }}" placeholder="{{ 'collections.price' | t }} max" aria-label="{{ 'collections.price' | t }} max">
+                      </div>
+                    </fieldset>
+                {%- endcase -%}
+              {%- endfor -%}
+              <div class="mc-filters__actions">
+                <button type="submit" class="mc-btn mc-btn--primary mc-btn--sm">{{ 'collections.apply' | t }}</button>
+                <a class="mc-btn mc-btn--ghost mc-btn--sm" href="{{ collection.url }}">{{ 'collections.clear' | t }}</a>
+              </div>
+            </div>
+          {%- else -%}
+            {%- comment -%} Tag fallback: honest, simple chip links (no storefront filters configured). {%- endcomment -%}
+            <div class="mc-filters mc-filters--tags" id="mc-filters-panel" data-mc-filters-panel>
+              <fieldset class="mc-filters__group">
+                <legend class="mc-filters__legend">{{ 'collections.tags' | t }}</legend>
+                <div class="mc-chips">
+                  {%- for tag in collection.all_tags -%}
+                    {%- assign tag_enc = tag | url_encode -%}
+                    {%- assign tag_url = collection.url | append: '/' | append: tag_enc -%}
+                    {%- if mc_sort_current != blank -%}
+                      {%- assign tag_url = tag_url | append: '?sort_by=' | append: mc_sort_current -%}
+                    {%- endif -%}
+                    <a class="mc-chip{% if current_tags contains tag %} is-active{% endif %}" href="{{ tag_url }}">{{ tag | escape }}</a>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            </div>
+          {%- endif -%}
+        </form>
+      {%- else -%}
+        <p class="mc-empty-note">{{ 'collections.no_filters_note' | t }}</p>
+      {%- endif -%}
+
+      {%- if paginate.items == 0 -%}
+        <div class="mc-empty-state">
+          <p>{{ 'collections.empty' | t }}</p>
+          <a class="mc-btn mc-btn--secondary" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+        </div>
+      {%- else -%}
+        <div class="mc-grid mc-grid--products" data-mc-collection-grid>
+          {%- for product in collection.products -%}
+            {% render 'product-card', card_product: product %}
+          {%- endfor -%}
+        </div>
+        {% render 'pagination', paginate: paginate %}
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Show collection image banner",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 12
+    }
+  ]
+}
+{% endschema %}

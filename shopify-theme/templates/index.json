@@ -1,0 +1,29 @@
+{
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar"
+    },
+    "countdown": {
+      "type": "festival-countdown"
+    },
+    "hero": {
+      "type": "hero"
+    },
+    "departments": {
+      "type": "department-grid"
+    },
+    "featured": {
+      "type": "featured-products",
+      "settings": {
+        "heading": "Featured picks"
+      }
+    },
+    "finder": {
+      "type": "gift-finder"
+    },
+    "newsletter": {
+      "type": "newsletter"
+    }
+  },
+  "order": ["announcement", "countdown", "hero", "departments", "featured", "finder", "newsletter"]
+}

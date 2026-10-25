@@ -1,0 +1,16 @@
+{%- comment -%} 404 page — honest empty state with a way back. {%- endcomment -%}
+<section class="mc-section mc-404">
+  <div class="mc-container mc-empty-state">
+    <span class="mc-empty-state__icon" aria-hidden="true">{% render 'icon', name: 'search', size: 40 %}</span>
+    <h1 class="mc-section__heading">{{ 'page404.title' | t }}</h1>
+    <p>{{ 'page404.body' | t }}</p>
+    <a class="mc-btn mc-btn--primary" href="{{ routes.root_url }}">{{ 'page404.cta' | t }}</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "404",
+  "settings": []
+}
+{% endschema %}

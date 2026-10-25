@@ -1,0 +1,290 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Mahadev Cutlery & Gift Articles",
+    "theme_version": "1.0.0",
+    "theme_author": "MAHADEV CUTLERY & GIFT ARTICLES",
+    "theme_documentation_url": "https://shopify.dev/docs/themes",
+    "theme_support_url": "https://shopify.dev/docs/themes"
+  },
+  {
+    "name": "Store information",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "address_lines",
+        "label": "Address lines",
+        "info": "One line per row. Empty lines are not rendered in the footer.",
+        "default": "A-15, Shivalik Bungalows, Vastral Road\nOpposite Ratanpura Gam, Vastral\nAhmedabad, Gujarat 382418\nIndia"
+      },
+      {
+        "type": "text",
+        "id": "phone_1",
+        "label": "Phone 1",
+        "default": "9898648776"
+      },
+      {
+        "type": "text",
+        "id": "phone_2",
+        "label": "Phone 2",
+        "default": "9998268636"
+      },
+      {
+        "type": "text",
+        "id": "email",
+        "label": "Email",
+        "default": "mahadevcutlery@gmail.com"
+      },
+      {
+        "type": "text",
+        "id": "instagram_url",
+        "label": "Instagram URL",
+        "default": "https://www.instagram.com/mahadev_cutlery/"
+      },
+      {
+        "type": "text",
+        "id": "maps_url",
+        "label": "Google Maps URL",
+        "default": "https://maps.app.goo.gl/P3AkDsq9bySkxAVbA"
+      },
+      {
+        "type": "text",
+        "id": "store_hours",
+        "label": "Store hours",
+        "info": "Optional. Leave empty to hide from the footer.",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "logo_text",
+        "label": "Logo text",
+        "default": "MAHADEV",
+        "info": "Falls back to the shop name if left empty."
+      },
+      {
+        "type": "text",
+        "id": "logo_subline",
+        "label": "Logo subline",
+        "default": "CUTLERY & GIFT ARTICLES"
+      }
+    ]
+  },
+  {
+    "name": "WhatsApp ordering",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "whatsapp_enabled",
+        "label": "Enable WhatsApp ordering buttons",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp number",
+        "default": "919898648776",
+        "info": "Digits only, with country code and no + sign (e.g. 919898648776). Buttons are hidden when this is empty."
+      }
+    ]
+  },
+  {
+    "name": "Gift wrapping",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "gift_wrap_enabled",
+        "label": "Offer gift wrapping on product pages",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "gift_wrap_charged",
+        "label": "Charge for gift wrapping (via a real product)",
+        "default": false,
+        "info": "When off, gift wrapping is described as free. When on, the customer is charged by adding a real product to the cart — no invented fee is ever displayed."
+      },
+      {
+        "type": "text",
+        "id": "gift_wrap_product_handle",
+        "label": "Gift wrapping product handle",
+        "info": "IMPORTANT: first create a real \"Gift Wrapping\" product in Shopify with its actual price, then enter its handle here (e.g. gift-wrapping). If charged is on but this handle is empty or missing, no gift-wrap option and no fee are shown.",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Festival countdown",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Festival 1"
+      },
+      {
+        "type": "checkbox",
+        "id": "festival_1_enabled",
+        "label": "Enable festival 1",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "festival_1_name",
+        "label": "Name",
+        "default": "Diwali"
+      },
+      {
+        "type": "text",
+        "id": "festival_1_date",
+        "label": "Date (YYYY-MM-DD, Asia/Kolkata)",
+        "default": "2026-11-08",
+        "info": "Owner must verify festival dates every year."
+      },
+      {
+        "type": "color",
+        "id": "festival_1_bg",
+        "label": "Background color",
+        "default": "#B8875A"
+      },
+      {
+        "type": "color",
+        "id": "festival_1_text",
+        "label": "Text color",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "text",
+        "id": "festival_1_link",
+        "label": "CTA link",
+        "default": "/pages/gift-finder"
+      },
+      {
+        "type": "header",
+        "content": "Festival 2"
+      },
+      {
+        "type": "checkbox",
+        "id": "festival_2_enabled",
+        "label": "Enable festival 2",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "festival_2_name",
+        "label": "Name",
+        "default": "Raksha Bandhan"
+      },
+      {
+        "type": "text",
+        "id": "festival_2_date",
+        "label": "Date (YYYY-MM-DD, Asia/Kolkata)",
+        "default": "2027-08-17",
+        "info": "Owner must verify festival dates every year."
+      },
+      {
+        "type": "color",
+        "id": "festival_2_bg",
+        "label": "Background color",
+        "default": "#B8875A"
+      },
+      {
+        "type": "color",
+        "id": "festival_2_text",
+        "label": "Text color",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "text",
+        "id": "festival_2_link",
+        "label": "CTA link",
+        "default": "/pages/gift-finder"
+      },
+      {
+        "type": "header",
+        "content": "Behaviour"
+      },
+      {
+        "type": "range",
+        "id": "festival_hide_after_days",
+        "label": "Hide banner this many days after the date passes",
+        "min": 0,
+        "max": 14,
+        "step": 1,
+        "default": 3,
+        "info": "Between the date and this limit the banner shows an 'ended' note instead of a countdown."
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_bg_soft",
+        "label": "Soft background",
+        "default": "#FAF8F5"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Text",
+        "default": "#20201E"
+      },
+      {
+        "type": "color",
+        "id": "color_ink_soft",
+        "label": "Secondary text",
+        "default": "#6F6B66"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent",
+        "default": "#B8875A"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Borders",
+        "default": "#EAE6E0"
+      }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_link",
+        "label": "Additional social link (optional)",
+        "default": "",
+        "info": "Optional extra profile link (e.g. Facebook or YouTube). The store's Instagram link is set under Store information. Hidden when empty."
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart type",
+        "options": [
+          { "value": "drawer", "label": "Drawer" },
+          { "value": "page", "label": "Page" }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show product vendor on cards and in cart",
+        "default": true
+      }
+    ]
+  }
+]

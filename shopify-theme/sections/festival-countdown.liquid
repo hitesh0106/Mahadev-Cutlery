@@ -1,0 +1,104 @@
+{%- comment -%}
+  Festival countdown banner (Diwali / Raksha Bandhan configured in Theme settings → Festival countdown).
+  - Server-side: hidden entirely once the configured date + "hide after N days" has passed.
+  - JS (countdown.js) ticks down to the date in Asia/Kolkata (IST, DST-independent).
+  - Between the date and the hide-limit, JS swaps the ticker for the honest "ended" note.
+{%- endcomment -%}
+{%- if section.settings.festival == 'festival_2' -%}
+  {%- assign fc_enabled = settings.festival_2_enabled -%}
+  {%- assign fc_name = settings.festival_2_name -%}
+  {%- assign fc_date = settings.festival_2_date -%}
+  {%- assign fc_bg = settings.festival_2_bg -%}
+  {%- assign fc_text = settings.festival_2_text -%}
+  {%- assign fc_link = settings.festival_2_link -%}
+{%- else -%}
+  {%- assign fc_enabled = settings.festival_1_enabled -%}
+  {%- assign fc_name = settings.festival_1_name -%}
+  {%- assign fc_date = settings.festival_1_date -%}
+  {%- assign fc_bg = settings.festival_1_bg -%}
+  {%- assign fc_text = settings.festival_1_text -%}
+  {%- assign fc_link = settings.festival_1_link -%}
+{%- endif -%}
+
+{%- assign fc_heading = section.settings.heading | default: fc_name -%}
+{%- assign fc_target_epoch = fc_date | date: '%s' -%}
+{%- assign fc_now_epoch = 'now' | date: '%s' -%}
+{%- assign fc_hide_secs = settings.festival_hide_after_days | default: 3 | times: 86400 -%}
+{%- assign fc_limit_epoch = fc_target_epoch | plus: fc_hide_secs -%}
+
+{%- if fc_enabled and fc_name != blank and fc_date != blank and fc_target_epoch != blank and fc_limit_epoch > fc_now_epoch -%}
+  <section
+    class="mc-countdown"
+    data-mc-countdown
+    data-target="{{ fc_date }}"
+    data-tz="Asia/Kolkata"
+    data-show-until="{{ fc_limit_epoch | times: 1000 }}"
+    style="background: {{ fc_bg }}; color: {{ fc_text }};"
+  >
+    <div class="mc-container mc-countdown__inner">
+      <div class="mc-countdown__text">
+        <h2 class="mc-countdown__name">{{ fc_heading | escape }}</h2>
+        <p class="mc-countdown__label">{{ 'countdown.ends_in' | t }}</p>
+        {%- if section.settings.show_cta and fc_link != blank -%}
+          <a class="mc-btn mc-btn--light mc-countdown__cta" href="{{ fc_link }}">{{ 'countdown.find_gift' | t }}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="mc-countdown__ticker" data-mc-countdown-ticker role="timer" aria-label="{{ fc_name | escape }}">
+        <div class="mc-countdown__unit">
+          <span class="mc-countdown__value" data-mc-countdown-days aria-live="polite">00</span>
+          <span class="mc-countdown__unit-label">{{ 'countdown.days' | t }}</span>
+        </div>
+        <div class="mc-countdown__unit">
+          <span class="mc-countdown__value" data-mc-countdown-hours>00</span>
+          <span class="mc-countdown__unit-label">{{ 'countdown.hours' | t }}</span>
+        </div>
+        <div class="mc-countdown__unit">
+          <span class="mc-countdown__value" data-mc-countdown-minutes>00</span>
+          <span class="mc-countdown__unit-label">{{ 'countdown.minutes' | t }}</span>
+        </div>
+        <div class="mc-countdown__unit">
+          <span class="mc-countdown__value" data-mc-countdown-seconds>00</span>
+          <span class="mc-countdown__unit-label">{{ 'countdown.seconds' | t }}</span>
+        </div>
+      </div>
+
+      <p class="mc-countdown__expired" data-mc-countdown-expired hidden>{{ 'countdown.expired_note' | t }}</p>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Festival countdown",
+  "settings": [
+    {
+      "type": "select",
+      "id": "festival",
+      "label": "Festival (configured in Theme settings)",
+      "options": [
+        { "value": "festival_1", "label": "Festival 1 (default: Diwali)" },
+        { "value": "festival_2", "label": "Festival 2 (default: Raksha Bandhan)" }
+      ],
+      "default": "festival_1"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading override",
+      "info": "Leave empty to use the festival name."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show “Find a Gift” CTA",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Festival countdown"
+    }
+  ]
+}
+{% endschema %}

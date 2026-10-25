@@ -6,8 +6,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-mc-body), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-mc-heading), Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -43,73 +44,98 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/*
+ * MAHADEV CUTLERY & GIFT ARTICLES — theme studio palette.
+ * SPEC §4 tokens (--mc-*) + shadcn variables mapped onto the same warm
+ * terracotta / cream / ink palette. No blue / indigo anywhere.
+ */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* ── SPEC §4 design tokens (exact values) ─────────────────────────── */
+  --mc-bg: #ffffff;
+  --mc-bg-soft: #faf8f5;
+  --mc-cream: #f5f0e9;
+  --mc-grey: #f4f4f2;
+  --mc-ink: #20201e;
+  --mc-ink-soft: #6f6b66;
+  --mc-accent: #b8875a;
+  --mc-accent-soft: #f2e5d8;
+  --mc-border: #eae6e0;
+  --mc-success: #287a53;
+  --mc-error: #b42318;
+  --mc-radius: 14px;
+  --mc-radius-sm: 10px;
+  --mc-shadow: 0 10px 30px rgba(32, 32, 30, 0.07);
+  --mc-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --mc-dur: 0.45s;
+
+  /* ── shadcn variables mapped to the same palette ──────────────────── */
+  --radius: 0.875rem;
+  --background: var(--mc-bg);
+  --foreground: var(--mc-ink);
+  --card: #ffffff;
+  --card-foreground: var(--mc-ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--mc-ink);
+  --primary: var(--mc-accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--mc-cream);
+  --secondary-foreground: var(--mc-ink);
+  --muted: var(--mc-grey);
+  --muted-foreground: var(--mc-ink-soft);
+  --accent: var(--mc-accent-soft);
+  --accent-foreground: var(--mc-ink);
+  --destructive: var(--mc-error);
+  --border: var(--mc-border);
+  --input: var(--mc-border);
+  --ring: var(--mc-accent);
+  --chart-1: #b8875a;
+  --chart-2: #287a53;
+  --chart-3: #8a6d4b;
+  --chart-4: #c9a227;
+  --chart-5: #7a5c3e;
+  --sidebar: var(--mc-bg-soft);
+  --sidebar-foreground: var(--mc-ink);
+  --sidebar-primary: var(--mc-accent);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--mc-accent-soft);
+  --sidebar-accent-foreground: var(--mc-ink);
+  --sidebar-border: var(--mc-border);
+  --sidebar-ring: var(--mc-accent);
 }
 
+/* Light-editorial app; dark block kept warm & consistent (unused by default). */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #1c1b19;
+  --foreground: #f4f4f2;
+  --card: #262421;
+  --card-foreground: #f4f4f2;
+  --popover: #262421;
+  --popover-foreground: #f4f4f2;
+  --primary: #c99b6d;
+  --primary-foreground: #20201e;
+  --secondary: #322f2b;
+  --secondary-foreground: #f4f4f2;
+  --muted: #322f2b;
+  --muted-foreground: #b5afa7;
+  --accent: #4a3b2c;
+  --accent-foreground: #f4f4f2;
+  --destructive: #d4574c;
+  --border: #3a3733;
+  --input: #3a3733;
+  --ring: #c99b6d;
+  --chart-1: #c99b6d;
+  --chart-2: #4f9d76;
+  --chart-3: #a3865f;
+  --chart-4: #d9b64a;
+  --chart-5: #8f7250;
+  --sidebar: #262421;
+  --sidebar-foreground: #f4f4f2;
+  --sidebar-primary: #c99b6d;
+  --sidebar-primary-foreground: #20201e;
+  --sidebar-accent: #4a3b2c;
+  --sidebar-accent-foreground: #f4f4f2;
+  --sidebar-border: #3a3733;
+  --sidebar-ring: #c99b6d;
 }
 
 @layer base {
@@ -118,5 +144,49 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-mc-body), ui-sans-serif, system-ui, sans-serif;
+  }
+  ::selection {
+    background: var(--mc-accent-soft);
+    color: var(--mc-ink);
+  }
+}
+
+/* Elegant serif headings (DM Serif Display via next/font). */
+.font-heading {
+  font-family: var(--font-mc-heading), Georgia, "Times New Roman", serif;
+}
+
+/* Thin, warm-neutral scrollbar for long scrollable lists. */
+.mc-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #d8cfc3 transparent;
+}
+.mc-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.mc-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mc-scroll::-webkit-scrollbar-thumb {
+  background-color: #d8cfc3;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.mc-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #c4b8a8;
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

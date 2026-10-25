@@ -1,0 +1,36 @@
+{%- comment -%}
+  Renders an "Order on WhatsApp" button with a prefilled, honest message.
+  Renders ONLY when settings.whatsapp_enabled is on AND settings.whatsapp_number is non-empty.
+  Accepts:
+  - product: {Object} Product (required)
+  - variant: {Object} (optional) preselected variant
+  - quantity: {Number} (optional) initial quantity, default 1
+  - class: {String} (optional)
+{%- endcomment -%}
+{%- assign wa_variant = variant | default: product.selected_or_first_available_variant -%}
+{%- assign wa_qty = quantity | default: 1 -%}
+{%- assign wa_product_url = shop.url | append: product.url -%}
+{%- capture wa_template -%}Namaste! I would like to order:
+Product: {{ product.title }}
+Variant: {variant}
+Quantity: {qty}
+Link: {{ wa_product_url }}
+Please confirm availability & price.{%- endcapture -%}
+{%- assign wa_href_text = wa_template | replace: '{variant}', wa_variant.title | replace: '{qty}', wa_qty | url_encode -%}
+{%- if settings.whatsapp_enabled and settings.whatsapp_number != blank and product != blank -%}
+<div class="mc-wa{% if class != blank %} {{ class }}{% endif %}" data-mc-wa>
+  <a
+    class="mc-btn mc-btn--whatsapp"
+    href="https://wa.me/{{ settings.whatsapp_number }}?text={{ wa_href_text }}"
+    target="_blank"
+    rel="noopener"
+    data-mc-wa-link
+    data-mc-wa-number="{{ settings.whatsapp_number }}"
+    data-mc-wa-template="{{ wa_template | escape }}"
+  >
+    {% render 'icon', name: 'whatsapp', class: 'mc-btn__icon' %}
+    <span>{{ 'whatsapp.order_on_whatsapp' | t }}</span>
+  </a>
+  <p class="mc-wa__disclaimer">{{ 'whatsapp.disclaimer' | t }}</p>
+</div>
+{%- endif -%}

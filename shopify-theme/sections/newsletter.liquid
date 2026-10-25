@@ -1,0 +1,62 @@
+{%- comment -%}
+  Newsletter signup — uses Shopify's native customer form (accepts_marketing).
+  Honest microcopy: only real store updates, no spam claims beyond that.
+{%- endcomment -%}
+<section class="mc-section mc-newsletter">
+  <div class="mc-container mc-newsletter__inner">
+    <div class="mc-newsletter__text">
+      <h2 class="mc-section__heading">{{ section.settings.heading | default: 'newsletter.title' | t }}</h2>
+      {%- if section.settings.subtitle != blank -%}
+        <p class="mc-newsletter__subtitle">{{ section.settings.subtitle | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- form 'customer', id: 'mc-newsletter-form', class: 'mc-newsletter__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <input type="hidden" name="contact[accepts_marketing]" value="true">
+      <label class="mc-sr-only" for="mc-newsletter-email">{{ 'newsletter.placeholder' | t }}</label>
+      <input
+        type="email"
+        class="mc-input"
+        id="mc-newsletter-email"
+        name="contact[email]"
+        placeholder="{{ 'newsletter.placeholder' | t }}"
+        autocomplete="email"
+        required
+      >
+      <button type="submit" class="mc-btn mc-btn--primary">{{ 'newsletter.submit' | t }}</button>
+      {%- if form.posted_successfully? -%}
+        <p class="mc-newsletter__success" role="status">{{ 'newsletter.success' | t }}</p>
+      {%- endif -%}
+      {%- if form.errors -%}
+        <p class="mc-newsletter__error" role="alert">{{ form.errors.translated_fields.email }} {{ form.errors.messages.email }}</p>
+      {%- endif -%}
+    {%- endform -%}
+    <p class="mc-newsletter__disclaimer">{{ 'newsletter.disclaimer' | t }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Stay in the loop"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Occasional updates about new arrivals and festival picks."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

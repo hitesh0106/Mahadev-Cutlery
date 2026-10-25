@@ -1,0 +1,42 @@
+{%- comment -%}
+  Renders the language selector.
+  - If more than one language is published (Shopify Translate & Adapt), renders a real
+    <form locale> select switching languages.
+  - Otherwise renders an honest, non-functional selector (native language names) with a
+    partial_note tooltip explaining that full translation needs Translate & Adapt.
+{%- endcomment -%}
+{%- if localization.available_languages.size > 1 -%}
+  <div class="mc-lang" data-mc-language-selector>
+    <label class="mc-lang__label" for="mc-language-select">
+      {% render 'icon', name: 'user', size: 16 %}{{ 'language.selector_label' | t }}
+    </label>
+    {%- form 'localization', id: 'mc-language-form', class: 'mc-lang__form' -%}
+      <select
+        id="mc-language-select"
+        class="mc-lang__select"
+        name="locale_code"
+        data-mc-language-select
+        onchange="this.form.submit()"
+      >
+        {%- for language in localization.available_languages -%}
+          <option
+            value="{{ language.iso_code }}"
+            {% if language.iso_code == localization.language.iso_code %}selected{% endif %}
+          >
+            {{ language.endonym_name | capitalize }}
+          </option>
+        {%- endfor -%}
+      </select>
+      <noscript><button type="submit" class="mc-btn mc-btn--secondary mc-btn--sm">OK</button></noscript>
+    {%- endform -%}
+  </div>
+{%- else -%}
+  <div class="mc-lang mc-lang--static" data-mc-language-selector title="{{ 'language.partial_note' | t }}">
+    <span class="mc-lang__label">{% render 'icon', name: 'user', size: 16 %}{{ 'language.selector_label' | t }}</span>
+    {%- liquid
+      assign current_endonym = localization.language.endonym_name | capitalize
+    -%}
+    <span class="mc-lang__current" aria-disabled="true" tabindex="0">{{ current_endonym }}</span>
+    <span class="mc-lang__note mc-sr-only">{{ 'language.partial_note' | t }}</span>
+  </div>
+{%- endif -%}

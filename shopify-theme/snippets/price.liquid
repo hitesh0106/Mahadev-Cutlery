@@ -1,0 +1,25 @@
+{%- comment -%}
+  Renders a product price with optional compare-at price (shown ONLY when compare_at_price is higher than price — never invents a discount).
+  Accepts:
+  - product: {Object} Product (required)
+  - variant: {Object} (optional) Variant to prefer over product price
+  - class: {String} (optional)
+{%- endcomment -%}
+{%- liquid
+  if variant != blank and variant.price != blank
+    assign pr_price = variant.price
+    assign pr_compare = variant.compare_at_price
+  else
+    assign pr_price = product.price
+    assign pr_compare = product.compare_at_price
+  endif
+-%}
+<span class="mc-price{% if class != blank %} {{ class }}{% endif %}" data-mc-price{% if variant != blank %} data-mc-price-current="{{ pr_price }}"{% endif %}>
+  <span class="mc-price__current" data-mc-price-value>{{ pr_price | money }}</span>
+  {%- if pr_compare and pr_compare > pr_price -%}
+    <span class="mc-price__compare-wrap">
+      <span class="mc-sr-only">{{ 'products.regular_price' | t }}</span>
+      <s class="mc-price__compare">{{ pr_compare | money }}</s>
+    </span>
+  {%- endif -%}
+</span>

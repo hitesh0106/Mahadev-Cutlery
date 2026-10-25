@@ -1,0 +1,75 @@
+{%- comment -%}
+  Brand directory (page.brands template).
+  Blocks are configured BY THE MERCHANT in the theme editor: brand name + optional
+  collection link + optional one-line rule. The theme never auto-generates brands and
+  never invents stock claims. Blocks with no name are skipped.
+{%- endcomment -%}
+<section class="mc-section mc-brands">
+  <div class="mc-container">
+    <h1 class="mc-section__heading">{{ 'brands.directory_title' | t }}</h1>
+
+    {%- if section.blocks.size == 0 -%}
+      <p class="mc-empty-note">{{ 'brands.no_collection_note' | t }}</p>
+    {%- else -%}
+      <div class="mc-brands__grid">
+        {%- for block in section.blocks -%}
+          {%- assign bd_name = block.settings.name -%}
+          {%- if bd_name == blank -%}{%- continue -%}{%- endif -%}
+          <article class="mc-brands__card mc-reveal" {{ block.shopify_attributes }}>
+            <h2 class="mc-brands__name">{{ bd_name | escape }}</h2>
+            {%- if block.settings.rule != blank -%}
+              <p class="mc-brands__rule">{{ block.settings.rule | escape }}</p>
+            {%- endif -%}
+            {%- if block.settings.collection != blank -%}
+              <a class="mc-btn mc-btn--secondary mc-btn--sm" href="{{ block.settings.collection.url }}">{{ block.settings.collection.title | escape }}</a>
+            {%- else -%}
+              <p class="mc-brands__note">{{ 'brands.no_collection_note' | t }}</p>
+            {%- endif -%}
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand directory",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Brand name"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection link (optional)",
+          "info": "Create an automated collection (condition: Product vendor is …) first — the theme never creates collections for you."
+        },
+        {
+          "type": "text",
+          "id": "rule",
+          "label": "One-line note (optional)",
+          "info": "e.g. \"Men's innerwear only\" — shown under the brand name."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand directory",
+      "blocks": [
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}

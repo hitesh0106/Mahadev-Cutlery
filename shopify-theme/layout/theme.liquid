@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_accent }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <title>{{ page_title }}{% unless page_title contains shop.name %} &mdash; {{ shop.name }}{% endunless %}</title>
+
+  {{ content_for_header }}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=Inter:wght@400;500;600;700&amp;display=swap" media="all">
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  <style>
+    :root {
+      --mc-font-heading: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+      --mc-font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      --mc-bg: {{ settings.color_bg | default: '#FFFFFF' }};
+      --mc-bg-soft: {{ settings.color_bg_soft | default: '#FAF8F5' }};
+      --mc-ink: {{ settings.color_ink | default: '#20201E' }};
+      --mc-ink-soft: {{ settings.color_ink_soft | default: '#6F6B66' }};
+      --mc-accent: {{ settings.color_accent | default: '#B8875A' }};
+      --mc-border: {{ settings.color_border | default: '#EAE6E0' }};
+    }
+  </style>
+</head>
+
+<body
+  class="mc-body mc-template--{{ template.name | handle }}"
+  data-mc-cart-type="{{ settings.cart_type | default: 'drawer' }}"
+  data-mc-money-format="{{ shop.money_format | escape }}"
+>
+  <a href="#MainContent" class="mc-skip-link">{{ 'general.skip_to_content' | t }}</a>
+
+  {% section 'header' %}
+
+  <main id="MainContent" class="mc-main" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+
+  {% render 'cart-drawer' %}
+
+  <script type="application/json" data-mc-config>
+    {
+      "cartType": {{ settings.cart_type | default: 'drawer' | json }},
+      "cartUrl": {{ routes.cart_url | json }},
+      "checkoutUrl": "/checkout",
+      "searchUrl": {{ routes.search_url | json }},
+      "moneyFormat": {{ shop.money_format | json }},
+      "currency": {{ cart.currency.iso_code | json }},
+      "giftWrap": {
+        "enabled": {{ settings.gift_wrap_enabled | json }},
+        "charged": {{ settings.gift_wrap_charged | json }},
+        "variantId": {%- assign mc_gw_product = all_products[settings.gift_wrap_product_handle] -%}{%- if settings.gift_wrap_charged and settings.gift_wrap_product_handle != blank and mc_gw_product != blank and mc_gw_product.selected_or_first_available_variant -%}{{ mc_gw_product.selected_or_first_available_variant.id }}{%- else -%}null{%- endif -%}
+      }
+    }
+  </script>
+
+  <script type="application/json" data-mc-i18n>
+    {
+      "addToCart": {{ 'cart.add_to_cart' | t | json }},
+      "adding": {{ 'cart.adding' | t | json }},
+      "addedToCart": {{ 'cart.added_to_cart' | t | json }},
+      "cartError": {{ 'cart.error' | t | json }},
+      "cartEmpty": {{ 'cart.empty' | t | json }},
+      "cartEmptyCta": {{ 'cart.empty_cta' | t | json }},
+      "cartCheckout": {{ 'cart.checkout' | t | json }},
+      "cartSubtotal": {{ 'cart.subtotal' | t | json }},
+      "cartTaxesNote": {{ 'cart.taxes_note' | t | json }},
+      "cartRemove": {{ 'cart.remove' | t | json }},
+      "cartView": {{ 'cart.view_cart' | t | json }},
+      "qtyDecrease": {{ 'cart.qty_decrease' | t | json }},
+      "qtyIncrease": {{ 'cart.qty_increase' | t | json }},
+      "soldOut": {{ 'cart.sold_out' | t | json }},
+      "unavailable": {{ 'cart.unavailable' | t | json }},
+      "wishlistAdd": {{ 'wishlist.add' | t | json }},
+      "wishlistAdded": {{ 'wishlist.added' | t | json }},
+      "wishlistRemove": {{ 'wishlist.remove' | t | json }},
+      "viewDetails": {{ 'products.view_details' | t | json }}
+    }
+  </script>
+
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  <script src="{{ 'wishlist.js' | asset_url }}" defer></script>
+  <script src="{{ 'countdown.js' | asset_url }}" defer></script>
+  <script src="{{ 'gift-finder.js' | asset_url }}" defer></script>
+</body>
+</html>

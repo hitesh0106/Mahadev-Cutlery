@@ -1,0 +1,71 @@
+{%- comment -%}
+  Featured products — grid of product cards from a picked collection.
+  Falls back to the automatic All Products collection when none is picked.
+  Hides when there are no products to show.
+{%- endcomment -%}
+{%- liquid
+  assign fp_collection = section.settings.collection
+  if fp_collection == blank
+    assign fp_collection = collections.all
+  endif
+-%}
+{%- assign fp_limit = section.settings.products_to_show | default: 8 -%}
+{%- if fp_collection != blank and fp_collection.products.size > 0 -%}
+  <section class="mc-section mc-featured-products">
+    <div class="mc-container">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="mc-section__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      <div class="mc-grid mc-grid--products">
+        {%- for product in fp_collection.products limit: fp_limit -%}
+          {% render 'product-card', card_product: product %}
+        {%- endfor -%}
+      </div>
+      {%- if section.settings.show_view_all and fp_collection.url != blank -%}
+        <div class="mc-section__cta">
+          <a class="mc-btn mc-btn--secondary" href="{{ fp_collection.url }}">{{ 'header.shop_all' | t }}</a>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Featured products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Leave empty to use All Products."
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 16,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show “All Products” button",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured products"
+    }
+  ]
+}
+{% endschema %}
