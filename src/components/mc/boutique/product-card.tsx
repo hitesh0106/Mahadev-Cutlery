@@ -7,12 +7,14 @@
 import { Heart, Plus } from 'lucide-react';
 import { inr, type BoutiqueProduct } from '@/lib/boutique';
 import { useBoutique } from '@/lib/boutique-store';
+import { useLang } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { CarouselArrows, Reveal, SectionHead, ActionLink, useCarousel, SECTION_PAD } from './primitives';
 
 export function ProductCard({ p, ctx = 'grid' }: { p: BoutiqueProduct; ctx?: string }) {
   const key = `${ctx}-${p.id}`;
   const { add, toggleWish, wishlist, view } = useBoutique();
+  const { t, tf } = useLang();
   const saved = wishlist.includes(p.id);
   const discount =
     p.compareAt && p.compareAt > p.price
@@ -50,7 +52,7 @@ export function ProductCard({ p, ctx = 'grid' }: { p: BoutiqueProduct; ctx?: str
               data-testid={`product-soldout-${key}`}
               className="rounded-[2px] bg-ink px-2 py-1 text-[10.5px] font-semibold tracking-[0.1em] text-warm uppercase"
             >
-              Sold out
+              {t('Sold out')}
             </span>
           )}
           {p.available && discount > 0 && (
@@ -58,13 +60,13 @@ export function ProductCard({ p, ctx = 'grid' }: { p: BoutiqueProduct; ctx?: str
               data-testid={`product-discount-${key}`}
               className="rounded-[2px] bg-sale px-2 py-1 text-[10.5px] font-semibold tracking-[0.1em] text-white uppercase"
             >
-              {discount}% off
+              {tf('{n}% off', { n: discount })}
             </span>
           )}
         </div>
         <button
           type="button"
-          aria-label={`Save ${p.title} to wishlist`}
+          aria-label={tf('Save {title} to wishlist', { title: p.title })}
           aria-pressed={saved}
           onClick={() => toggleWish(p.id)}
           data-testid={`wishlist-toggle-${key}`}
@@ -83,7 +85,7 @@ export function ProductCard({ p, ctx = 'grid' }: { p: BoutiqueProduct; ctx?: str
               data-testid={`quick-add-${key}`}
               className="flex min-h-11 w-full items-center justify-between rounded-[2px] bg-white/95 px-4 text-xs font-semibold tracking-[0.08em] uppercase transition-colors duration-300 hover:bg-ink hover:text-warm"
             >
-              <span>{p.variants ? `Add · ${p.variants[0]}` : 'Quick add'}</span>
+              <span>{p.variants ? `${t('Add')} · ${p.variants[0]}` : t('Quick add')}</span>
               <Plus className="size-4" />
             </button>
           </div>
@@ -125,15 +127,16 @@ export function ProductRow({
   bg?: string;
   carousel?: boolean;
 }) {
+  const { t } = useLang();
   const { ref, by } = useCarousel();
 
   return (
     <section id={id} className={`${SECTION_PAD} ${bg ?? ''}`} data-testid={`${id}-section`}>
       <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:px-10">
         <SectionHead
-          eyebrow={eyebrow}
-          title={title}
-          action={<ActionLink testId={`${id}-view-all`}>View all</ActionLink>}
+          eyebrow={t(eyebrow)}
+          title={t(title)}
+          action={<ActionLink testId={`${id}-view-all`}>{t('View all')}</ActionLink>}
         />
         <ul
           ref={ref}

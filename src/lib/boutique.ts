@@ -316,6 +316,97 @@ export const OFFER_PRODUCTS = PRODUCTS.filter(
   (p) => p.compareAt && p.compareAt > p.price,
 );
 
+// ── Gift wrap (mirrors snippets/gift-wrap-options.liquid + theme.js) ────────
+// FREE mode stores line-item properties ("Gift wrap" = "Yes", "Gift message").
+// CHARGED mode requires a REAL "Gift Wrapping" product in Shopify — its actual
+// price is then added to the cart/order by theme.js (syncGiftWrap). The preview
+// never invents a fee: with charged=false nothing is added to the subtotal.
+
+export const GIFT_WRAP = {
+  enabled: true,
+  charged: false, // owner sets true + real product in Theme settings → Gift wrapping
+  /** Real fee in ₹, only used when charged=true and the owner configures one. */
+  fee: null as number | null,
+  maxMessage: 200,
+} as const;
+
+// ── Festival countdown (mirrors sections/festival-countdown.liquid) ─────────
+// Dates are Asia/Kolkata (IST, UTC+05:30 — no DST). The owner re-verifies dates
+// yearly (documented). Banner hides automatically after date + hideAfterDays.
+
+export type Festival = {
+  key: string;
+  name: string;
+  /** ISO date (yyyy-mm-dd) of the festival's start day at 00:00 IST. */
+  date: string;
+  hideAfterDays: number;
+  enabled: boolean;
+  link: string;
+};
+
+export const FESTIVALS: Festival[] = [
+  {
+    key: 'diwali',
+    name: 'Diwali',
+    date: '2026-11-08', // Lakshmi Puja, Asia/Kolkata — owner re-verifies yearly
+    hideAfterDays: 3,
+    enabled: true,
+    link: '#gift-finder',
+  },
+  {
+    key: 'raksha-bandhan',
+    name: 'Raksha Bandhan',
+    date: '2026-08-28', // already passed → banner auto-hides (honest demo of the rule)
+    hideAfterDays: 3,
+    enabled: false,
+    link: '#gift-finder',
+  },
+];
+
+/** Epoch ms of yyyy-mm-ddT00:00:00 IST. */
+export function festivalTargetMs(date: string): number {
+  return Date.parse(`${date}T00:00:00+05:30`);
+}
+
+export type FestivalState = {
+  festival: Festival;
+  state: 'upcoming' | 'live' | 'ended';
+  /** ms remaining until the festival start (upcoming) or since start (live). */
+  remainingMs: number;
+};
+
+/**
+ * Picks the banner-worthy festival: the next upcoming enabled one, or one that
+ * started but is still inside its show-window. Returns null when the banner
+ * must be hidden entirely (e.g. Raksha Bandhan 2026-08-28, passed + disabled).
+ */
+export function pickActiveFestival(nowMs = Date.now()): FestivalState | null {
+  for (const festival of FESTIVALS) {
+    if (!festival.enabled) continue;
+    const target = festivalTargetMs(festival.date);
+    const limit = target + festival.hideAfterDays * 86_400_000;
+    if (nowMs < target) {
+      return { festival, state: 'upcoming', remainingMs: target - nowMs };
+    }
+    if (nowMs < limit) {
+      return { festival, state: 'live', remainingMs: nowMs - target };
+    }
+    // ended + window over → keep looking (banner hidden for this festival)
+  }
+  return null;
+}
+
+/** Splits a remaining-ms into countdown units (IST-independent, pure math). */
+export function countdownParts(ms: number) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  return {
+    days: Math.floor(total / 86_400),
+    hours: Math.floor((total % 86_400) / 3_600),
+    minutes: Math.floor((total % 3_600) / 60),
+    seconds: total % 60,
+  };
+}
+
 // ── WhatsApp ordering ────────────────────────────────────────────────────────
 
 export const WA_GREETING = 'Hello Mahadev Cutlery & Gift Articles, I would like to order:';
@@ -329,10 +420,16 @@ export function buildWhatsAppMessage(
   variant: string | null,
   qty: number,
   link: string,
+  gift?: { message?: string },
 ) {
   const lines = [WA_GREETING, '', `Product: ${product.title}`];
   if (variant) lines.push(`Option: ${variant}`);
-  lines.push(`Quantity: ${qty}`, `Link: ${link}`, '', WA_CLOSING);
+  lines.push(`Quantity: ${qty}`);
+  if (gift) {
+    lines.push('Gift wrap: Yes');
+    if (gift.message) lines.push(`Gift message: ${gift.message}`);
+  }
+  lines.push(`Link: ${link}`, '', WA_CLOSING);
   return lines.join('\n');
 }
 
@@ -386,7 +483,14 @@ const tagList = (value: string | undefined) =>
     .map((v) => v.trim().toLowerCase())
     .filter(Boolean);
 
-export type GiftResult = { items: BoutiqueProduct[]; note: string };
+export type GiftResult = {
+  items: BoutiqueProduct[];
+  /** Structured fallback note — the UI localizes it (see gift-finder.tsx). */
+  note:
+    | null
+    | { kind: 'occasion'; occasion: string | null; recipient: string | null }
+    | { kind: 'recipient'; occasion: string | null; recipient: string | null };
+};
 
 /**
  * Reference-exact three-tier fallback:
@@ -417,27 +521,23 @@ export function findGiftIdeas(
   const untaggedPenalty = (p: BoutiqueProduct) =>
     +!tagsOf(p).some((t) => t === 'gift-idea' || t === 'festive');
 
-  const tiers: { items: BoutiqueProduct[]; note: string }[] = [
+  const tiers: { items: BoutiqueProduct[]; note: GiftResult['note'] }[] = [
     {
       items: products.filter((p) => inBudget(p) && matchesOccasion(p) && matchesRecipient(p)),
-      note: '',
+      note: null,
     },
     {
       items: products.filter((p) => inBudget(p) && matchesRecipient(p)),
-      note: `Nothing is tagged for ${occasion?.label ?? 'this occasion'} yet, so these are ${(
-        recipient?.label ?? 'general'
-      ).toLowerCase()} ideas in your budget.`,
+      note: { kind: 'occasion', occasion: occasion?.label ?? null, recipient: recipient?.label ?? null },
     },
     {
       items: products.filter((p) => inBudget(p) && matchesOccasion(p)),
-      note: `No exact match for ${(recipient?.label ?? 'this recipient').toLowerCase()}, so these are ${
-        occasion?.label ?? 'general'
-      } ideas in your budget.`,
+      note: { kind: 'recipient', occasion: occasion?.label ?? null, recipient: recipient?.label ?? null },
     },
   ];
 
   const tier = tiers.find((t) => t.items.length);
-  if (!tier) return { items: [], note: '' };
+  if (!tier) return { items: [], note: null };
 
   return {
     items: [...tier.items]

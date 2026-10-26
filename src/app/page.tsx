@@ -10,6 +10,7 @@
 import { useEffect, useState } from 'react';
 import { Eye, ArrowRight } from 'lucide-react';
 import { AnnouncementBar } from '@/components/mc/boutique/announcement-bar';
+import { FestivalCountdown } from '@/components/mc/boutique/festival-countdown';
 import { Header } from '@/components/mc/boutique/header';
 import {
   BudgetSection,
@@ -29,12 +30,14 @@ import { CartDrawer } from '@/components/mc/boutique/cart-drawer';
 import { DeliveryView } from '@/components/mc/delivery-view';
 import { ReportView } from '@/components/mc/report-view';
 import { BoutiqueProvider } from '@/lib/boutique-store';
+import { useLang } from '@/lib/i18n';
 import { NEW_ARRIVALS, OFFER_PRODUCTS, PRODUCTS } from '@/lib/boutique';
 
 type AppView = 'boutique' | 'delivery' | 'report';
 type Catalog = { products: typeof PRODUCTS; loaded: boolean };
 
 function PreviewBanner({ onDelivery }: { onDelivery: () => void }) {
+  const { t } = useLang();
   return (
     <div
       className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-blush px-4 py-2 text-center text-[12.5px] text-[#4A3320]"
@@ -42,8 +45,9 @@ function PreviewBanner({ onDelivery }: { onDelivery: () => void }) {
     >
       <span>
         <Eye className="mr-1.5 inline size-3.5 align-[-2px]" />
-        Visual preview with <strong>sample data</strong>. The Shopify theme shows your real
-        products, prices and brands.
+        {t(
+          'Visual preview with sample data. The Shopify theme shows your real products, prices and brands.',
+        )}
       </span>
       <button
         type="button"
@@ -51,7 +55,7 @@ function PreviewBanner({ onDelivery }: { onDelivery: () => void }) {
         className="inline-flex items-center gap-1 font-semibold underline underline-offset-[3px]"
         data-testid="preview-banner-delivery-link"
       >
-        Download theme &amp; guides
+        {t('Download theme & guides')}
         <ArrowRight className="size-3.5" />
       </button>
     </div>
@@ -63,6 +67,7 @@ function BoutiquePage({ products, onDelivery }: { products: typeof PRODUCTS; onD
     <div id="top" className="min-h-screen bg-paper text-ink">
       <PreviewBanner onDelivery={onDelivery} />
       <AnnouncementBar />
+      <FestivalCountdown />
       <Header />
       <main>
         <Hero />

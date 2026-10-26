@@ -17,7 +17,7 @@ import {
   type ReactNode,
 } from 'react';
 import { toast } from 'sonner';
-import type { BoutiqueProduct } from '@/lib/boutique';
+import { GIFT_WRAP, type BoutiqueProduct } from '@/lib/boutique';
 
 const WISHLIST_KEY = 'mahadev-preview:wishlist';
 const WISHLIST_EVENT = 'mahadev-preview:wishlist-changed';
@@ -77,13 +77,23 @@ function useWishlistIds(): string[] {
 
 // ── Context (cart + recent) ──────────────────────────────────────────────────
 
-export type CartLine = { product: BoutiqueProduct; variant: string | null; qty: number };
+export type CartLine = {
+  product: BoutiqueProduct;
+  variant: string | null;
+  qty: number;
+  /** Present when the shopper added gift wrapping (line-item property). */
+  giftWrap?: { message: string };
+};
 
 type BoutiqueStore = {
   lines: CartLine[];
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
-  add: (product: BoutiqueProduct, variant?: string | null) => void;
+  add: (
+    product: BoutiqueProduct,
+    variant?: string | null,
+    giftWrap?: { message?: string },
+  ) => void;
   setQty: (index: number, qty: number) => void;
   wishlist: string[];
   toggleWish: (id: string) => void;
@@ -91,6 +101,8 @@ type BoutiqueStore = {
   view: (id: string) => void;
   count: number;
   subtotal: number;
+  /** Qty of gift-wrapped items (drives the charged-mode fee, as theme.js does). */
+  wrappedQty: number;
 };
 
 const StoreContext = createContext<BoutiqueStore | null>(null);
@@ -101,20 +113,33 @@ export function BoutiqueProvider({ children }: { children: ReactNode }) {
   const [recent, setRecent] = useState<string[]>([]);
   const wishlist = useWishlistIds();
 
-  const add = useCallback((product: BoutiqueProduct, variant: string | null = null) => {
-    setLines((prev) => {
-      const index = prev.findIndex(
-        (line) => line.product.id === product.id && line.variant === variant,
-      );
-      if (index >= 0) {
-        return prev.map((line, i) =>
-          i === index ? { ...line, qty: line.qty + 1 } : line,
+  const add = useCallback(
+    (
+      product: BoutiqueProduct,
+      variant: string | null = null,
+      giftWrap?: { message?: string },
+    ) => {
+      const wrap = giftWrap
+        ? { message: giftWrap.message?.trim().slice(0, GIFT_WRAP.maxMessage) ?? '' }
+        : undefined;
+      setLines((prev) => {
+        const index = prev.findIndex(
+          (line) =>
+            line.product.id === product.id &&
+            line.variant === variant &&
+            line.giftWrap?.message === wrap?.message,
         );
-      }
-      return [...prev, { product, variant, qty: 1 }];
-    });
-    setCartOpen(true);
-  }, []);
+        if (index >= 0) {
+          return prev.map((line, i) =>
+            i === index ? { ...line, qty: line.qty + 1 } : line,
+          );
+        }
+        return [...prev, { product, variant, qty: 1, giftWrap: wrap }];
+      });
+      setCartOpen(true);
+    },
+    [],
+  );
 
   const setQty = useCallback((index: number, qty: number) => {
     setLines((prev) => {
@@ -138,8 +163,19 @@ export function BoutiqueProvider({ children }: { children: ReactNode }) {
     setRecent((prev) => (prev[0] === id ? prev : [id, ...prev.filter((seen) => seen !== id)].slice(0, 4)));
   }, []);
 
-  const value = useMemo<BoutiqueStore>(
-    () => ({
+  const value = useMemo<BoutiqueStore>(() => {
+    const wrappedQty = lines.reduce(
+      (sum, line) => sum + (line.giftWrap ? line.qty : 0),
+      0,
+    );
+    // Charged mode mirrors theme.js syncGiftWrap: the real "Gift Wrapping"
+    // product's actual price is added per wrapped item. With charged=false
+    // (default) or no configured fee, NOTHING is added — never invented.
+    const wrapFee =
+      GIFT_WRAP.charged && GIFT_WRAP.fee && GIFT_WRAP.fee > 0
+        ? GIFT_WRAP.fee * wrappedQty
+        : 0;
+    return {
       lines,
       cartOpen,
       setCartOpen,
@@ -150,10 +186,12 @@ export function BoutiqueProvider({ children }: { children: ReactNode }) {
       recent,
       view,
       count: lines.reduce((sum, line) => sum + line.qty, 0),
-      subtotal: lines.reduce((sum, line) => sum + line.qty * line.product.price, 0),
-    }),
-    [lines, cartOpen, add, setQty, wishlist, toggleWish, recent, view],
-  );
+      subtotal:
+        lines.reduce((sum, line) => sum + line.qty * line.product.price, 0) +
+        wrapFee,
+      wrappedQty,
+    };
+  }, [lines, cartOpen, add, setQty, wishlist, toggleWish, recent, view]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

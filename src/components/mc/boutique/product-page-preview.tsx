@@ -2,19 +2,22 @@
 
 // Product page preview — the theme's PDP demonstrated with a sample product:
 // gallery with thumbnails, variant pills, stock dot, quantity stepper,
+// gift-wrap option with message (line-item properties, as the theme does),
 // add-to-bag, and the WhatsApp order button with its honest note and a
 // peek at the exact message the shopper sends.
 
 import { useMemo, useState } from 'react';
-import { ArrowRight, Info, Minus, Plus } from 'lucide-react';
+import { ArrowRight, Gift, Info, Minus, Plus } from 'lucide-react';
 import {
   buildWhatsAppMessage,
+  GIFT_WRAP,
   inr,
   slugify,
   STORE,
   type BoutiqueProduct,
 } from '@/lib/boutique';
 import { useBoutique } from '@/lib/boutique-store';
+import { useLang } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { SECTION_PAD } from './primitives';
 
@@ -28,16 +31,32 @@ function WhatsAppIcon({ className }: { className?: string }) {
 
 export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
   const { add } = useBoutique();
+  const { t, tf } = useLang();
   const [variant, setVariant] = useState<string | null>(p.variants?.[0] ?? null);
   const [qty, setQty] = useState(1);
+  const [wrapOn, setWrapOn] = useState(false);
+  const [giftMessage, setGiftMessage] = useState('');
 
   const productUrl = `https://your-store-domain/products/${slugify(p.title)}${
     variant ? `?variant=${slugify(variant)}` : ''
   }`;
   const message = useMemo(
-    () => buildWhatsAppMessage(p, variant, qty, productUrl),
-    [p, variant, qty, productUrl],
+    () =>
+      buildWhatsAppMessage(
+        p,
+        variant,
+        qty,
+        productUrl,
+        wrapOn ? { message: giftMessage.trim() } : undefined,
+      ),
+    [p, variant, qty, productUrl, wrapOn, giftMessage],
   );
+
+  const addWithWrap = () => {
+    for (let i = 0; i < qty; i += 1) {
+      add(p, variant, wrapOn ? { message: giftMessage.trim() } : undefined);
+    }
+  };
 
   return (
     <section
@@ -46,7 +65,7 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
       data-testid="product-page-section"
     >
       <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:px-10">
-        <p className="eyebrow mb-6">Product page preview</p>
+        <p className="eyebrow mb-6">{t('Product page preview')}</p>
         <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <div className="grid grid-cols-[1fr_88px] gap-3">
             <div className="aspect-[4/5] overflow-hidden rounded-sm bg-stone">
@@ -78,13 +97,13 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
               {inr(p.price)}
             </p>
             <p className="mt-1 text-[13px] text-ink-2">
-              Inclusive of all taxes. Shipping calculated at checkout.
+              {t('Inclusive of all taxes. Shipping calculated at checkout.')}
             </p>
 
             {p.variants && (
               <fieldset className="mt-6">
                 <legend className="mb-2.5 text-[13px] font-semibold">
-                  Size:{' '}
+                  {t('Size:')}{' '}
                   <span className="font-normal text-ink-2" data-testid="pdp-selected-variant">
                     {variant}
                   </span>
@@ -117,14 +136,14 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
 
             <p className="mt-5 flex items-center gap-2 text-sm">
               <span className="size-2 rounded-full bg-ok" />
-              In stock
+              {t('In stock')}
             </p>
 
             <div className="mt-5 flex gap-2.5">
               <div className="inline-flex items-center rounded-[2px] border border-line">
                 <button
                   type="button"
-                  aria-label="Decrease quantity"
+                  aria-label={t('Decrease quantity')}
                   className="grid size-12 place-items-center"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
                   data-testid="pdp-qty-decrease"
@@ -136,7 +155,7 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
                 </span>
                 <button
                   type="button"
-                  aria-label="Increase quantity"
+                  aria-label={t('Increase quantity')}
                   className="grid size-12 place-items-center"
                   onClick={() => setQty((q) => q + 1)}
                   data-testid="pdp-qty-increase"
@@ -146,16 +165,68 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  for (let i = 0; i < qty; i += 1) add(p, variant);
-                }}
+                onClick={addWithWrap}
                 data-testid="pdp-add-to-bag-button"
                 className="group inline-flex min-h-14 flex-1 items-center justify-center gap-2.5 rounded-[2px] border border-ink bg-ink text-[13px] font-semibold tracking-[0.08em] text-warm uppercase transition-colors duration-300 hover:border-gold hover:bg-gold"
               >
-                Add to bag
+                {t('Add to bag')}
                 <ArrowRight className="size-[18px] transition-transform duration-300 ease-[var(--ease-lux)] group-hover:translate-x-1" />
               </button>
             </div>
+
+            {GIFT_WRAP.enabled && (
+              <div
+                className="mt-5 rounded-sm border border-line bg-warm p-4"
+                data-testid="pdp-gift-wrap"
+              >
+                <label className="flex cursor-pointer items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={wrapOn}
+                    onChange={(event) => setWrapOn(event.target.checked)}
+                    data-testid="pdp-gift-wrap-toggle"
+                    className="size-[18px] shrink-0 accent-[#20201e]"
+                  />
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold">
+                    <Gift className="size-4 text-gold" strokeWidth={1.5} />
+                    {t('Add gift wrapping')}
+                  </span>
+                </label>
+                <p className="mt-2 pl-[30px] text-[12.5px] text-ink-2" data-testid="pdp-gift-wrap-note">
+                  {GIFT_WRAP.charged && GIFT_WRAP.fee
+                    ? tf('Gift wrapping is added as the product “{title}” at {price}.', {
+                        title: 'Gift Wrapping',
+                        price: inr(GIFT_WRAP.fee),
+                      })
+                    : t('Gift wrapping is offered free by the store.')}
+                </p>
+                {wrapOn && (
+                  <div className="mt-3 grid gap-2 pl-[30px]">
+                    <label htmlFor="pdp-gift-message" className="text-[13px] font-medium">
+                      {t('Gift message (optional)')}
+                    </label>
+                    <textarea
+                      id="pdp-gift-message"
+                      rows={3}
+                      maxLength={GIFT_WRAP.maxMessage}
+                      value={giftMessage}
+                      onChange={(event) => setGiftMessage(event.target.value.slice(0, GIFT_WRAP.maxMessage))}
+                      data-testid="pdp-gift-message"
+                      className="rounded-[2px] border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-ink"
+                    />
+                    <span
+                      className="text-[12px] text-ink-2"
+                      aria-live="polite"
+                      data-testid="pdp-gift-count"
+                    >
+                      {tf('{count} characters left', {
+                        count: GIFT_WRAP.maxMessage - giftMessage.length,
+                      })}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="mt-3.5 grid animate-rise gap-2.5">
               <a
@@ -167,8 +238,8 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
                 className="group inline-flex min-h-14 items-center justify-center gap-2.5 rounded-[2px] border border-line bg-paper text-[13px] font-semibold tracking-[0.08em] uppercase transition-[border-color,background-color] duration-300 hover:border-[#1F8F55] hover:bg-[#F1F8F3] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1F8F55]"
               >
                 <WhatsAppIcon className="size-[18px] text-[#1F8F55] transition-transform duration-300 ease-[var(--ease-lux)] group-hover:scale-110 group-hover:-rotate-8" />
-                Order on WhatsApp
-                <span className="sr-only">(opens WhatsApp in a new window)</span>
+                {t('Order on WhatsApp')}
+                <span className="sr-only">{t('(opens WhatsApp in a new window)')}</span>
               </a>
               <p
                 id="pdp-wa-note"
@@ -176,8 +247,9 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
                 className="flex gap-2 rounded-r-sm border-l-2 border-gold bg-warm px-3 py-2.5 text-[12.5px] leading-normal text-ink-2"
               >
                 <Info className="mt-px size-4 shrink-0 text-gold" />
-                WhatsApp orders are confirmed only after we reply with availability and the final
-                price. Nothing is charged until you confirm with the store.
+                {t(
+                  'WhatsApp orders are confirmed only after we reply with availability and the final price. Nothing is charged until you confirm with the store.',
+                )}
               </p>
             </div>
 
@@ -186,7 +258,7 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
               data-testid="pdp-whatsapp-message-preview"
             >
               <summary className="cursor-pointer px-4 py-3 text-[13px] font-semibold">
-                Message the shopper sends
+                {t('Message the shopper sends')}
               </summary>
               <pre
                 className="px-4 pb-4 font-sans text-[13px] whitespace-pre-wrap text-ink-2"
@@ -197,9 +269,10 @@ export function ProductPagePreview({ p }: { p: BoutiqueProduct }) {
             </details>
 
             <p className="mt-3 text-[12px] text-ink-2">
-              Preview: the store&apos;s number is set in{' '}
-              <em>Theme settings → WhatsApp ordering</em>. This preview opens a chat with{' '}
-              {STORE.whatsappNumber}.
+              {tf(
+                "Preview: the store's number is set in Theme settings → WhatsApp ordering. This preview opens a chat with {number}.",
+                { number: STORE.whatsappNumber },
+              )}
             </p>
           </div>
         </div>

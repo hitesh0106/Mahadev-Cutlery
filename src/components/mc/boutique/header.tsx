@@ -24,8 +24,10 @@ import {
   type BoutiqueProduct,
 } from '@/lib/boutique';
 import { useBoutique } from '@/lib/boutique-store';
+import { useLang } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Logo } from './primitives';
+import { LanguageSwitcher } from './language-switcher';
 
 /** Maps each nav label to the closest real section anchor so no nav link is dead. */
 const NAV_TARGETS: Record<string, string> = {
@@ -52,6 +54,7 @@ const MENU_GROUP_TARGETS: Record<string, string> = {
 const POPULAR_SEARCHES = ['Face wash', 'Shampoo', 'Lipstick', 'Brief', 'Gift', 'Bangle'];
 
 function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t, tf } = useLang();
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -94,7 +97,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Search the store"
+        aria-label={t('Search the store')}
         className={cn(
           'relative max-h-[88vh] overflow-auto bg-paper transition-[transform,opacity] duration-500 ease-[var(--ease-lux)]',
           open ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0',
@@ -106,7 +109,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products, brands, categories…"
+            placeholder={t('Search products, brands, categories…')}
             data-testid="search-input"
             className="min-w-0 flex-1 bg-transparent py-2 font-serif text-[clamp(18px,2.4vw,26px)] outline-none"
           />
@@ -117,12 +120,12 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
               onClick={() => setQuery('')}
               data-testid="search-clear-button"
             >
-              Clear
+              {t('Clear')}
             </button>
           )}
           <button
             type="button"
-            aria-label="Close search"
+            aria-label={t('Close search')}
             onClick={onClose}
             data-testid="search-close-button"
             className="grid size-11 place-items-center rounded-full transition-colors hover:bg-stone"
@@ -134,7 +137,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
           {q ? (
             <div className="grid gap-8 md:grid-cols-[200px_1fr]">
               <div>
-                <p className="eyebrow mb-3">Brands</p>
+                <p className="eyebrow mb-3">{t('Brands')}</p>
                 {brandHits.length ? (
                   brandHits.map((brand) => (
                     <p key={brand} className="py-1 text-[15px]">
@@ -142,11 +145,11 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                     </p>
                   ))
                 ) : (
-                  <p className="text-sm text-ink-2">No brand match</p>
+                  <p className="text-sm text-ink-2">{t('No brand match')}</p>
                 )}
               </div>
               <div>
-                <p className="eyebrow mb-3">Products</p>
+                <p className="eyebrow mb-3">{t('Products')}</p>
                 {productHits.length ? (
                   <ul className="grid gap-3 sm:grid-cols-2">
                     {productHits.map((p) => (
@@ -169,15 +172,17 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                   </ul>
                 ) : (
                   <p className="text-ink-2" data-testid="search-empty">
-                    No products found for “{query}”. Try a brand name like “Lakmé” or a type like
-                    “shampoo”.
+                    {tf(
+                      'No products found for “{query}”. Try a brand name like “Lakmé” or a type like “shampoo”.',
+                      { query },
+                    )}
                   </p>
                 )}
               </div>
             </div>
           ) : (
             <div>
-              <p className="eyebrow mb-3">Popular searches</p>
+              <p className="eyebrow mb-3">{t('Popular searches')}</p>
               <div className="flex flex-wrap gap-2">
                 {POPULAR_SEARCHES.map((term) => (
                   <button
@@ -187,7 +192,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                     data-testid={`search-suggestion-${term.toLowerCase().replace(' ', '-')}`}
                     className="rounded-full border border-line px-3.5 py-1.5 text-[13px] transition-colors hover:border-ink"
                   >
-                    {term}
+                    {t(term)}
                   </button>
                 ))}
               </div>
@@ -203,6 +208,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
 
 export function Header() {
   const { count, setCartOpen, wishlist } = useBoutique();
+  const { t, tf } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -244,7 +250,7 @@ export function Header() {
           <button
             type="button"
             className="grid size-11 place-items-center rounded-full hover:bg-stone xl:hidden"
-            aria-label="Open menu"
+            aria-label={t('Open menu')}
             onClick={() => setDrawerOpen(true)}
             data-testid="mobile-menu-button"
           >
@@ -272,7 +278,7 @@ export function Header() {
                       data-testid={`nav-link-${label.toLowerCase().replace(/[^a-z]+/g, '-')}`}
                       className="group relative inline-block px-[7px] py-[26px] text-[13px] font-medium whitespace-nowrap 2xl:px-2.5 2xl:text-[13.5px]"
                     >
-                      {label}
+                      {t(label)}
                       <span
                         className={cn(
                           'absolute inset-x-[7px] bottom-[18px] h-px origin-right scale-x-0 bg-gold transition-transform duration-300 ease-[var(--ease-lux)] group-hover:origin-left group-hover:scale-x-100',
@@ -285,7 +291,7 @@ export function Header() {
                         type="button"
                         aria-expanded={isOpen}
                         aria-controls="mega-shop-all"
-                        aria-label="Show Shop All menu"
+                        aria-label={t('Show Shop All menu')}
                         data-testid="mega-menu-toggle"
                         onClick={() => setOpenMenu(isOpen ? null : label)}
                         onKeyDown={(event) => event.key === 'Escape' && setOpenMenu(null)}
@@ -306,9 +312,10 @@ export function Header() {
           </nav>
 
           <div className="flex items-center">
+            <LanguageSwitcher />
             <button
               type="button"
-              aria-label="Search"
+              aria-label={t('Search')}
               onClick={() => setSearchOpen(true)}
               data-testid="header-search-button"
               className="grid size-11 place-items-center rounded-full transition-colors hover:bg-stone"
@@ -323,7 +330,7 @@ export function Header() {
             </span>
             <a
               href="#wishlist"
-              aria-label="Wishlist"
+              aria-label={t('Wishlist')}
               data-testid="header-wishlist-link"
               className="relative grid size-11 place-items-center rounded-full transition-colors hover:bg-stone"
             >
@@ -339,7 +346,7 @@ export function Header() {
             </a>
             <button
               type="button"
-              aria-label={`Bag, ${count} items`}
+              aria-label={tf('Bag, {count} items', { count })}
               onClick={() => setCartOpen(true)}
               data-testid="header-cart-button"
               className="relative grid size-11 place-items-center rounded-full transition-colors hover:bg-stone"
@@ -375,7 +382,7 @@ export function Header() {
             <div className="grid grid-cols-3 gap-8">
               {MENU_GROUPS.map((group) => (
                 <div key={group.heading}>
-                  <p className="mb-3.5 font-serif text-[19px]">{group.heading}</p>
+                  <p className="mb-3.5 font-serif text-[19px]">{t(group.heading)}</p>
                   <ul className="grid gap-0.5">
                     {group.links.map((link) => (
                       <li key={link}>
@@ -383,7 +390,7 @@ export function Header() {
                           href={MENU_GROUP_TARGETS[group.heading] ?? '#top'}
                           className="inline-block py-1 text-sm text-ink-2 transition-[color,transform] duration-300 hover:translate-x-[3px] hover:text-ink"
                         >
-                          {link}
+                          {t(link)}
                         </a>
                       </li>
                     ))}
@@ -403,8 +410,8 @@ export function Header() {
                   className="size-full object-cover transition-transform duration-1000 ease-[var(--ease-lux)] group-hover:scale-105"
                 />
               </span>
-              <span className="eyebrow">The Edit</span>
-              <span className="-mt-2 font-serif text-[22px]">Everyday skincare essentials</span>
+              <span className="eyebrow">{t('The Edit')}</span>
+              <span className="-mt-2 font-serif text-[22px]">{t('Everyday skincare essentials')}</span>
             </a>
           </div>
         </div>
@@ -428,7 +435,7 @@ export function Header() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Menu"
+          aria-label={t('Menu')}
           className={cn(
             'absolute inset-y-0 left-0 w-[min(440px,92vw)] overflow-auto bg-paper transition-transform duration-500 ease-[var(--ease-lux)]',
             drawerOpen ? 'translate-x-0' : '-translate-x-full',
@@ -436,14 +443,17 @@ export function Header() {
         >
           <div className="flex items-center justify-between border-b border-line px-6 py-5">
             <p className="font-serif text-xl tracking-[0.14em]">MAHADEV</p>
-            <button
-              type="button"
-              aria-label="Close menu"
-              onClick={() => setDrawerOpen(false)}
-              className="grid size-10 place-items-center rounded-full hover:bg-stone"
-            >
-              <X className="size-5" strokeWidth={1.5} />
-            </button>
+            <div className="flex items-center">
+              <LanguageSwitcher />
+              <button
+                type="button"
+                aria-label={t('Close menu')}
+                onClick={() => setDrawerOpen(false)}
+                className="grid size-10 place-items-center rounded-full hover:bg-stone"
+              >
+                <X className="size-5" strokeWidth={1.5} />
+              </button>
+            </div>
           </div>
           <div className="px-6 py-4">
             <ul>
@@ -455,20 +465,20 @@ export function Header() {
                         data-testid="mobile-nav-shop-all"
                         className="flex min-h-[52px] cursor-pointer items-center justify-between font-serif text-xl"
                       >
-                        {label}
+                        {t(label)}
                         <ChevronDown className="size-4 transition-transform group-open:rotate-180" />
                       </summary>
                       <div className="ml-0.5 border-l border-line pb-3 pl-3.5">
                         {MENU_GROUPS.map((group) => (
                           <details key={group.heading} className="group/sub">
                             <summary className="flex min-h-11 cursor-pointer items-center justify-between text-[15px] text-ink-2">
-                              {group.heading}
+                              {t(group.heading)}
                               <ChevronDown className="size-4 transition-transform group-open/sub:rotate-180" />
                             </summary>
                             <ul className="pb-2 pl-3">
                               {group.links.map((link) => (
                                 <li key={link} className="py-1.5 text-sm text-ink-2">
-                                  {link}
+                                  {t(link)}
                                 </li>
                               ))}
                             </ul>
@@ -482,7 +492,7 @@ export function Header() {
                       className="flex min-h-[52px] items-center font-serif text-xl"
                       onClick={() => setDrawerOpen(false)}
                     >
-                      {label}
+                      {t(label)}
                     </a>
                   )}
                 </li>

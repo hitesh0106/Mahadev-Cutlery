@@ -6,9 +6,11 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ANNOUNCEMENTS } from '@/lib/boutique';
+import { useLang } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 export function AnnouncementBar() {
+  const { t } = useLang();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -31,7 +33,7 @@ export function AnnouncementBar() {
       <div className="mx-auto flex min-h-[38px] max-w-[1360px] items-center justify-center gap-2 px-4">
         <button
           type="button"
-          aria-label="Previous announcement"
+          aria-label={t('Previous announcement')}
           data-testid="announcement-prev"
           className="grid size-8 place-items-center opacity-70 transition-opacity hover:opacity-100"
           onClick={() => setIndex((i) => (i - 1 + ANNOUNCEMENTS.length) % ANNOUNCEMENTS.length)}
@@ -48,13 +50,13 @@ export function AnnouncementBar() {
                 i === index ? 'opacity-100' : 'pointer-events-none translate-y-1.5 opacity-0',
               )}
             >
-              {message}
+              {t(message)}
             </p>
           ))}
         </div>
         <button
           type="button"
-          aria-label="Next announcement"
+          aria-label={t('Next announcement')}
           data-testid="announcement-next"
           className="grid size-8 place-items-center opacity-70 transition-opacity hover:opacity-100"
           onClick={() => setIndex((i) => (i + 1) % ANNOUNCEMENTS.length)}

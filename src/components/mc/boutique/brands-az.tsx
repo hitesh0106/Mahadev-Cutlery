@@ -6,6 +6,7 @@
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { ALL_BRANDS } from '@/lib/boutique';
+import { useLang } from '@/lib/i18n';
 import { CONTAINER, SECTION_PAD, SectionHead } from './primitives';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
@@ -17,6 +18,7 @@ function firstLetter(value: string) {
 
 export function BrandsAZ() {
   const [query, setQuery] = useState('');
+  const { t, tf } = useLang();
 
   const filtered = useMemo(
     () => ALL_BRANDS.filter((b) => b.toLowerCase().includes(query.trim().toLowerCase())),
@@ -32,23 +34,25 @@ export function BrandsAZ() {
     <section id="brands-az" className={SECTION_PAD} data-testid="brand-directory-section">
       <div className={CONTAINER}>
         <SectionHead
-          eyebrow="Brand directory"
-          title="Brands A–Z"
-          text="In the live theme this list builds itself from your product vendors, so each brand appears once and only if it has products."
+          eyebrow={t('Brand directory')}
+          title={t('Brands A–Z')}
+          text={t(
+            'In the live theme this list builds itself from your product vendors, so each brand appears once and only if it has products.',
+          )}
         />
         <div className="sticky top-16 z-[5] mb-7 grid gap-3.5 border-b border-line bg-paper py-3.5 lg:top-[68px]">
           <label className="flex max-w-[420px] items-center gap-2.5 rounded-[2px] border border-line px-3.5">
             <Search className="size-5" strokeWidth={1.5} />
-            <span className="sr-only">Search brands</span>
+            <span className="sr-only">{t('Search brands')}</span>
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder={`Search ${ALL_BRANDS.length} brands`}
+              placeholder={tf('Search {count} brands', { count: ALL_BRANDS.length })}
               className="min-h-[46px] min-w-0 flex-1 bg-transparent outline-none"
               data-testid="brand-directory-search"
             />
           </label>
-          <nav className="flex flex-wrap gap-0.5" aria-label="Brands by letter">
+          <nav className="flex flex-wrap gap-0.5" aria-label={t('Brands by letter')}>
             {LETTERS.map((letter) =>
               availableLetters.has(letter) ? (
                 <a
@@ -100,7 +104,7 @@ export function BrandsAZ() {
           </div>
         ) : (
           <p className="text-ink-2" data-testid="brand-directory-empty">
-            No brand matches your search.
+            {t('No brand matches your search.')}
           </p>
         )}
       </div>

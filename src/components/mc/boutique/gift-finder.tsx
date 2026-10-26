@@ -2,16 +2,13 @@
 
 // Festive Gift Finder — three-tap wizard (occasion → recipient → budget)
 // with the reference-exact fallback logic, honest result notes and
-// animated step transitions.
+// animated step transitions. Interface localized via i18n; the underlying
+// tag/choice values stay canonical so results never change with language.
 
 import { useMemo, useRef, useState } from 'react';
 import { ArrowRight, Check, ChevronLeft, Gift, RotateCcw, Signal } from 'lucide-react';
-import {
-  findGiftIdeas,
-  GIFT_STEPS,
-  type BoutiqueProduct,
-  type GiftChoice,
-} from '@/lib/boutique';
+import { findGiftIdeas, GIFT_STEPS, type BoutiqueProduct, type GiftChoice } from '@/lib/boutique';
+import { useLang } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { ProductCard } from './product-card';
 import { Reveal, SECTION_PAD } from './primitives';
@@ -25,6 +22,7 @@ export function GiftFinder({
   products: BoutiqueProduct[];
   live?: string | null;
 }) {
+  const { t, tf, lang } = useLang();
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState<'fwd' | 'back'>('fwd');
   const [answers, setAnswers] = useState<Answers>([null, null, null]);
@@ -35,7 +33,7 @@ export function GiftFinder({
     () =>
       finished
         ? findGiftIdeas(products, answers[0], answers[1], answers[2])
-        : { items: [], note: '' },
+        : { items: [], note: null },
     [products, answers, finished],
   );
 
@@ -53,6 +51,33 @@ export function GiftFinder({
 
   const current = GIFT_STEPS[step];
 
+  /** Mid-sentence label: lowercased in English, translated elsewhere. */
+  const sentence = (label: string | null) => {
+    if (!label) return t('general');
+    const translated = t(label);
+    return lang === 'en' ? translated.toLowerCase() : translated;
+  };
+
+  const noteText = (() => {
+    if (!results.note) return null;
+    if (results.note.kind === 'occasion') {
+      return tf(
+        'Nothing is tagged for {occasion} yet, so these are {recipient} ideas in your budget.',
+        {
+          occasion: t(results.note.occasion ?? 'this occasion'),
+          recipient: sentence(results.note.recipient),
+        },
+      );
+    }
+    return tf(
+      'No exact match for {recipient}, so these are {occasion} ideas in your budget.',
+      {
+        recipient: t(results.note.recipient ?? 'this recipient'),
+        occasion: sentence(results.note.occasion),
+      },
+    );
+  })();
+
   return (
     <section
       ref={sectionRef}
@@ -63,16 +88,17 @@ export function GiftFinder({
     >
       <div className="mx-auto grid w-full max-w-[1360px] items-start gap-8 px-4 sm:px-6 lg:grid-cols-[5fr_7fr] lg:gap-20 lg:px-10">
         <Reveal>
-          <p className="eyebrow mb-4">Festive gift finder</p>
+          <p className="eyebrow mb-4">{t('Festive gift finder')}</p>
           <h2
             id="gift-finder-title"
             className="text-[clamp(32px,4.2vw,54px)] leading-[1.06]"
           >
-            Find the perfect gift in three taps
+            {t('Find the perfect gift in three taps')}
           </h2>
           <p className="mt-4 max-w-[44ch] text-ink-2">
-            Tell us the occasion, who it&apos;s for and your budget. We&apos;ll suggest in-stock
-            gifts from our shelves.
+            {t(
+              "Tell us the occasion, who it's for and your budget. We'll suggest in-stock gifts from our shelves.",
+            )}
           </p>
           <ol
             className="mt-6 grid grid-flow-col gap-0.5 lg:mt-8 lg:grid-flow-row"
@@ -97,14 +123,15 @@ export function GiftFinder({
                   >
                     0{i + 1}
                   </span>
-                  {answers[i]?.label ?? s.short}
+                  {answers[i] ? t(answers[i]!.label) : t(s.short)}
                 </li>
               );
             })}
           </ol>
           <p className="mt-5 hidden max-w-[44ch] text-[12.5px] text-ink-2 lg:block">
-            Suggestions come from products currently in stock. Prices are shown as listed in the
-            store.
+            {t(
+              'Suggestions come from products currently in stock. Prices are shown as listed in the store.',
+            )}
           </p>
           <p
             data-testid="gift-finder-source"
@@ -112,8 +139,8 @@ export function GiftFinder({
           >
             <Signal className={cn('size-3.5', live ? 'text-ok' : 'text-gold')} />
             {live
-              ? `Live products from ${live}`
-              : 'Sample data in this preview. The theme uses your real catalogue.'}
+              ? tf('Live products from {store}', { store: live })
+              : t('Sample data in this preview. The theme uses your real catalogue.')}
           </p>
         </Reveal>
 
@@ -122,23 +149,27 @@ export function GiftFinder({
             <div className="animate-step" data-testid="gift-results">
               <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="eyebrow mb-2">Your gift ideas</p>
+                  <p className="eyebrow mb-2">{t('Your gift ideas')}</p>
                   <p
                     className="font-serif text-[22px]"
                     role="status"
                     data-testid="gift-results-status"
                   >
                     {results.items.length
-                      ? `${results.items.length} ${results.items.length === 1 ? 'idea' : 'ideas'} · `
+                      ? `${
+                          results.items.length === 1
+                            ? tf('1 idea', {})
+                            : tf('{count} ideas', { count: results.items.length })
+                        } · `
                       : ''}
-                    {answers.map((a) => a?.label).join(' · ')}
+                    {answers.map((a) => (a ? t(a.label) : '')).join(' · ')}
                   </p>
-                  {results.note && (
+                  {noteText && (
                     <p
                       className="mt-1.5 max-w-[56ch] text-[13px] text-ink-2"
                       data-testid="gift-results-relaxed"
                     >
-                      {results.note}
+                      {noteText}
                     </p>
                   )}
                 </div>
@@ -148,7 +179,7 @@ export function GiftFinder({
                   data-testid="gift-restart-button"
                   className="inline-flex items-center gap-2 border-b border-line pb-1 text-[13px] font-semibold tracking-[0.06em] uppercase transition-colors duration-300 hover:border-gold hover:text-gold"
                 >
-                  Start again
+                  {t('Start again')}
                   <RotateCcw className="size-3.5" />
                 </button>
               </div>
@@ -171,10 +202,11 @@ export function GiftFinder({
                   <span className="grid size-16 place-items-center rounded-full bg-blush text-gold">
                     <Gift className="size-7" strokeWidth={1.5} />
                   </span>
-                  <h3 className="font-serif text-[26px]">No matching gifts right now</h3>
+                  <h3 className="font-serif text-[26px]">{t('No matching gifts right now')}</h3>
                   <p className="max-w-[46ch] text-ink-2">
-                    Nothing in stock matches these choices at the moment. Try another budget or
-                    recipient, or ask us. We&apos;ll gladly help in store or on WhatsApp.
+                    {t(
+                      "Nothing in stock matches these choices at the moment. Try another budget or recipient, or ask us. We'll gladly help in store or on WhatsApp.",
+                    )}
                   </p>
                   <div className="mt-2 flex w-full flex-col justify-center gap-2.5 sm:w-auto sm:flex-row">
                     <button
@@ -183,14 +215,14 @@ export function GiftFinder({
                       data-testid="gift-empty-change-button"
                       className="min-h-12 rounded-[2px] bg-ink px-6 text-[13px] font-semibold tracking-[0.08em] text-warm uppercase transition-colors duration-300 hover:bg-gold"
                     >
-                      Change my choices
+                      {t('Change my choices')}
                     </button>
                     <a
                       href="#trending"
                       data-testid="gift-empty-browse-link"
                       className="inline-flex min-h-12 items-center justify-center rounded-[2px] border border-ink px-6 text-[13px] font-semibold tracking-[0.08em] uppercase transition-colors duration-300 hover:bg-ink hover:text-warm"
                     >
-                      Browse all products
+                      {t('Browse all products')}
                     </a>
                   </div>
                 </div>
@@ -209,7 +241,7 @@ export function GiftFinder({
                 <span className="font-sans text-[11px] font-semibold tracking-[0.22em] text-gold">
                   0{step + 1} / 03
                 </span>
-                {current.q}
+                {t(current.q)}
               </legend>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(170px,1fr))] sm:gap-2.5">
                 {current.choices.map((choice, i) => {
@@ -235,9 +267,9 @@ export function GiftFinder({
                           setAnswers(next);
                         }}
                       />
-                      <span className="text-[15px] font-semibold">{choice.label}</span>
+                      <span className="text-[15px] font-semibold">{t(choice.label)}</span>
                       {choice.hint && (
-                        <span className="text-[12.5px] text-ink-2">{choice.hint}</span>
+                        <span className="text-[12.5px] text-ink-2">{t(choice.hint)}</span>
                       )}
                       <span
                         className={cn(
@@ -266,7 +298,7 @@ export function GiftFinder({
                     className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[2px] border border-ink px-6 text-[13px] font-semibold tracking-[0.08em] uppercase transition-colors duration-300 hover:bg-ink hover:text-warm sm:flex-none"
                   >
                     <ChevronLeft className="size-4" />
-                    Back
+                    {t('Back')}
                   </button>
                 )}
                 <button
@@ -279,7 +311,7 @@ export function GiftFinder({
                   }}
                   className="group ml-auto inline-flex min-h-12 flex-1 items-center justify-center gap-2.5 rounded-[2px] border border-ink bg-ink px-7 text-[13px] font-semibold tracking-[0.08em] text-warm uppercase transition-colors duration-300 hover:border-gold hover:bg-gold disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
                 >
-                  {step === 2 ? 'Show gift ideas' : 'Next'}
+                  {step === 2 ? t('Show gift ideas') : t('Next')}
                   <ArrowRight className="size-4 transition-transform duration-300 ease-[var(--ease-lux)] group-hover:translate-x-1" />
                 </button>
               </div>
