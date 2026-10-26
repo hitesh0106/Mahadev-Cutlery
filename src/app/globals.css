@@ -3,6 +3,83 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Reference palette (matches the approved design reference 1:1).
+ * Registered as Tailwind colors so bg-ink / text-warm / border-line etc.
+ * work as native utilities across the boutique preview.
+ */
+@theme {
+  --color-ink: #20201e;
+  --color-ink-2: #6f6b66;
+  --color-paper: #ffffff;
+  --color-warm: #faf8f5;
+  --color-cream: #f5f0e9;
+  --color-blush: #f2e5d8;
+  --color-stone: #f4f4f2;
+  --color-gold: #b8875a;
+  --color-sale: #b42318;
+  --color-ok: #287a53;
+  --color-line: #eae6e0;
+  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-rise: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-unveil: unveil 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-bump: bump 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-step: step-in 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-step-back: step-back 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes unveil {
+  0% {
+    clip-path: inset(8%);
+    opacity: 0.4;
+  }
+  100% {
+    clip-path: inset(0);
+    opacity: 1;
+  }
+}
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes step-in {
+  0% {
+    opacity: 0;
+    transform: translate(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes step-back {
+  0% {
+    opacity: 0;
+    transform: translate(-24px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -144,7 +221,15 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-mc-body), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-playfair), Georgia, serif;
+    letter-spacing: -0.015em;
   }
   ::selection {
     background: var(--mc-accent-soft);
@@ -152,9 +237,55 @@
   }
 }
 
-/* Elegant serif headings (DM Serif Display via next/font). */
+/* Serif heading helper kept for older views. */
 .font-heading {
-  font-family: var(--font-mc-heading), Georgia, "Times New Roman", serif;
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+/* ── Reference editorial primitives ─────────────────────────────────── */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2.5);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: 0.22em;
+  color: var(--color-ink-2);
+  text-transform: uppercase;
+}
+.eyebrow::before {
+  content: "";
+  background: var(--color-gold);
+  width: 22px;
+  height: 1px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.8s var(--ease-lux),
+    transform 0.8s var(--ease-lux);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* details/summary chevron rows in drawers */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
 }
 
 /* Thin, warm-neutral scrollbar for long scrollable lists. */
@@ -189,4 +320,12 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
 }
