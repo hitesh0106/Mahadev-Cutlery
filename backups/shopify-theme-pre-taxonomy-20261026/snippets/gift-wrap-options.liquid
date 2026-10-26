@@ -1,0 +1,58 @@
+{%- comment -%}
+  Renders the gift-wrap option block inside the product "add to cart" form.
+  Line item properties produced: "Gift wrap" = "Yes", "Gift message" = text (max 200 chars).
+  Never displays an invented fee:
+  - gift_wrap_charged = false  -> note_free ("gift wrapping is free")
+  - gift_wrap_charged = true   -> note_charged with the REAL price of the configured
+    "Gift Wrapping" product (fetched server-side by the calling section and passed in
+    as `gift_wrap_product`). If that product is missing/empty, NOTHING renders and a
+    console warning is emitted for the merchant.
+  Accepts:
+  - product: {Object} the product being purchased (for unique ids)
+  - gift_wrap_product: {Object} (optional) real Gift Wrapping product from all_products[settings.gift_wrap_product_handle]
+{%- endcomment -%}
+{%- if settings.gift_wrap_enabled -%}
+  {%- assign gw_charged = settings.gift_wrap_charged -%}
+  {%- assign gw_handle = settings.gift_wrap_product_handle -%}
+  {%- if gw_charged and (gw_handle == blank or gift_wrap_product == blank) -%}
+    {%- comment -%} Misconfiguration: never show an invented fee — render nothing, warn the merchant. {%- endcomment -%}
+    <script>console.warn('[Mahadev theme] Gift wrapping is set to "charged" but the gift wrap product (settings.gift_wrap_product_handle) is empty or missing. Gift-wrap option hidden. Create a real "Gift Wrapping" product and set its handle in theme settings.');</script>
+    {%- if request.design_mode -%}
+      <p class="mc-giftwrap__warning">{{ 'gift_wrap.product_required' | t }}</p>
+    {%- endif -%}
+  {%- else -%}
+    <div class="mc-giftwrap" data-mc-gift-wrap>
+      <label class="mc-giftwrap__row" for="mc-gift-wrap-{{ product.id }}">
+        <input
+          type="checkbox"
+          id="mc-gift-wrap-{{ product.id }}"
+          class="mc-checkbox"
+          name="properties[Gift wrap]"
+          value="Yes"
+          data-mc-gift-wrap-toggle
+        >
+        <span>{% render 'icon', name: 'gift', class: 'mc-giftwrap__icon' %} {{ 'gift_wrap.checkbox_label' | t }}</span>
+      </label>
+      <div class="mc-giftwrap__fields" data-mc-gift-wrap-fields hidden>
+        {%- if gw_charged -%}
+          {%- assign gw_title = gift_wrap_product.title -%}
+          {%- assign gw_price_text = gift_wrap_product.price | money -%}
+          <p class="mc-giftwrap__note">{{ 'gift_wrap.note_charged' | t: title: gw_title, price: gw_price_text }}</p>
+        {%- else -%}
+          <p class="mc-giftwrap__note">{{ 'gift_wrap.note_free' | t }}</p>
+        {%- endif -%}
+        <label class="mc-label" for="mc-gift-message-{{ product.id }}">{{ 'gift_wrap.message_label' | t }}</label>
+        <textarea
+          class="mc-textarea"
+          id="mc-gift-message-{{ product.id }}"
+          name="properties[Gift message]"
+          maxlength="200"
+          rows="3"
+          placeholder="{{ 'cart.gift_message_placeholder' | t }}"
+          data-mc-gift-message
+        ></textarea>
+        <span class="mc-giftwrap__count" data-mc-gift-count aria-live="polite">{{ 'gift_wrap.message_max' | t: count: 200 }}</span>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endif -%}

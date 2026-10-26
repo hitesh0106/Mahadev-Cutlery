@@ -1,0 +1,50 @@
+{
+  "current": {
+    "address_lines": "A-15, Shivalik Bungalows, Vastral Road\nOpposite Ratanpura Gam, Vastral\nAhmedabad, Gujarat 382418\nIndia",
+    "phone_1": "9898648776",
+    "phone_2": "9998268636",
+    "email": "mahadevcutlery@gmail.com",
+    "instagram_url": "https://www.instagram.com/mahadev_cutlery/",
+    "maps_url": "https://maps.app.goo.gl/P3AkDsq9bySkxAVbA",
+    "store_hours": "",
+    "logo_text": "MAHADEV",
+    "logo_subline": "CUTLERY & GIFT ARTICLES",
+    "whatsapp_enabled": true,
+    "whatsapp_number": "919898648776",
+    "gift_wrap_enabled": true,
+    "gift_wrap_charged": false,
+    "gift_wrap_product_handle": "",
+    "festival_1_enabled": true,
+    "festival_1_name": "Diwali",
+    "festival_1_date": "2026-11-08",
+    "festival_1_bg": "#B8875A",
+    "festival_1_text": "#FFFFFF",
+    "festival_1_link": "/pages/gift-finder",
+    "festival_2_enabled": false,
+    "festival_2_name": "Raksha Bandhan",
+    "festival_2_date": "2027-08-17",
+    "festival_2_bg": "#B8875A",
+    "festival_2_text": "#FFFFFF",
+    "festival_2_link": "/pages/gift-finder",
+    "festival_hide_after_days": 3,
+    "color_bg": "#FFFFFF",
+    "color_bg_soft": "#FAF8F5",
+    "color_ink": "#20201E",
+    "color_ink_soft": "#6F6B66",
+    "color_accent": "#B8875A",
+    "color_border": "#EAE6E0",
+    "social_link": "",
+    "cart_type": "drawer",
+    "show_vendor": true,
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {}
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {}
+      }
+    }
+  }
+}

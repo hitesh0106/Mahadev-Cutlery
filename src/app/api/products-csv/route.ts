@@ -1,8 +1,8 @@
 // GET /api/products-csv — downloadable Shopify product-import CSV template.
 //
 // Honesty rules (SPEC §0/§7):
-// - All data rows are clearly marked examples (title suffix + tags prefix)
-//   and must be deleted before a real import.
+// - All data rows are clearly marked examples (title suffix + tags prefix),
+//   Published=FALSE + Status=draft, and must be deleted before a real import.
 // - Image Src is left EMPTY — image URLs are never invented.
 // - Compare-at price is left empty — no invented discounts.
 
@@ -81,7 +81,7 @@ function buildRows(): string[][] {
       'Product Category': 'Apparel & Accessories > Clothing > Underwear & Socks',
       Type: zoiro.type,
       Tags: [EXAMPLE_TAG, ...zoiro.tags].join(','),
-      Published: 'TRUE',
+      Published: 'FALSE',
       'Option1 Name': 'Size',
       'Option2 Name': 'Colour',
       'Variant Inventory Tracker': 'shopify',
@@ -96,7 +96,7 @@ function buildRows(): string[][] {
       'SEO Title': seoTitle(zoiro.title),
       'SEO Description':
         'Sample SEO description for the template. Replace with your own honest text.',
-      Status: 'active',
+      Status: 'draft',
     };
     rows.push(
       rowFrom({
@@ -143,7 +143,7 @@ function buildRows(): string[][] {
           'Health & Beauty > Personal Care > Cosmetics > Skin Care > Cleanser',
         Type: lotus.type,
         Tags: [EXAMPLE_TAG, ...lotus.tags].join(','),
-        Published: 'TRUE',
+        Published: 'FALSE',
         'Variant SKU': 'EXAMPLE-MC007-DEFAULT',
         'Variant Inventory Tracker': 'shopify',
         'Variant Inventory Qty': '15',
@@ -159,7 +159,7 @@ function buildRows(): string[][] {
         'SEO Title': seoTitle(lotus.title),
         'SEO Description':
           'Sample SEO description for the template. Replace with your own honest text.',
-        Status: 'active',
+        Status: 'draft',
       }),
     );
   }
@@ -177,7 +177,7 @@ function buildRows(): string[][] {
         'Product Category': '',
         Type: hamper.type,
         Tags: [EXAMPLE_TAG, ...hamper.tags, ...hamper.gfTags].join(','),
-        Published: 'TRUE',
+        Published: 'FALSE',
         'Variant SKU': 'EXAMPLE-MC012-DEFAULT',
         'Variant Inventory Tracker': 'shopify',
         'Variant Inventory Qty': '5',
@@ -193,7 +193,7 @@ function buildRows(): string[][] {
         'SEO Title': seoTitle(hamper.title),
         'SEO Description':
           'Sample SEO description for the template. Replace with your own honest text.',
-        Status: 'active',
+        Status: 'draft',
       }),
     );
   }

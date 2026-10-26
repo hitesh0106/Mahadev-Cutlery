@@ -91,6 +91,11 @@ const HI: Record<string, string> = {
 
   // Header / nav
   'Shop All': 'सब खरीदें',
+  'Beauty & Makeup': 'ब्यूटी व मेकअप',
+  'Toys & Kids': 'खिलौने व बच्चे',
+  'Accessories & Grooming': 'एक्सेसरीज़ व ग्रूमिंग',
+  'Tools, grooming & more': 'टूल्स, ग्रूमिंग व अन्य',
+  Earrings: 'इयररिंग्स',
   'Beauty & Skincare': 'ब्यूटी व स्किनकेयर',
   Haircare: 'हेयरकेयर',
   Makeup: 'मेकअप',
@@ -415,6 +420,11 @@ const GU: Record<string, string> = {
 
   // Header / nav
   'Shop All': 'બધું ખરીદો',
+  'Beauty & Makeup': 'બ્યૂટી અને મેકઅપ',
+  'Toys & Kids': 'રમકડાં અને બાળકો',
+  'Accessories & Grooming': 'એક્સેસરી અને ગ્રૂમિંગ',
+  'Tools, grooming & more': 'ટૂલ્સ, ગ્રૂમિંગ અને વધુ',
+  Earrings: 'ઇયરરિંગ્સ',
   'Beauty & Skincare': 'બ્યૂટી અને સ્કિનકેર',
   Haircare: 'હેરકેર',
   Makeup: 'મેકઅપ',

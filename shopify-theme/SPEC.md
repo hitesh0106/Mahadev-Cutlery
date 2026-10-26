@@ -19,10 +19,14 @@ Single source of truth for ALL agents (Shopify theme + Next.js showcase). Read f
 - Footer/policies: no invented policies; link to Shopify policy pages via `shop.privacy_policy` etc.; empty fields must not render.
 
 ## 2. Departments (the ONLY ones — no kitchenware)
-1. Beauty & Skincare   2. Makeup   3. Haircare   4. Hosiery & Innerwear
-5. Kids & Toys   6. Gift Articles   7. Imitation Jewellery
-8. Beauty Tools & Grooming   9. Accessories & More   (+ Shop All, Brands, Offers)
-Mixed items (belts, goggles, perfumes) → "Accessories & More" / "All Products" only.
+THE EIGHT approved departments (2026-10-26 taxonomy, owner-approved):
+1. Beauty & Makeup (beauty-makeup)   2. Skincare (skincare)   3. Haircare (haircare)
+4. Hosiery & Innerwear (hosiery-innerwear)   5. Toys & Kids (toys-kids)
+6. Gift Articles (gift-articles)   7. Imitation Jewellery (imitation-jewellery)
+8. Accessories & Grooming (accessories-grooming)   (+ Shop All, Brands)
+Mixed items (belts, goggles, perfumes) → "Accessories & Grooming" only.
+NO kitchenware/cutlery department exists. Canonical vendor spellings: "L'Oréal Paris"
+and "L'Oréal Professionnel" (straight apostrophe + é), "Lakmé" (é), "MARS Cosmetics".
 
 ## 3. Brand rules (MUST be enforced in copy, CSV reference, brand directory, docs)
 - Zoiro → Men's nikar/innerwear ONLY. No women's Zoiro, no t-shirts/sportswear.

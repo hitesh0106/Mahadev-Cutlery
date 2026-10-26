@@ -1,0 +1,29 @@
+{%- comment -%}
+  Renders a wishlist toggle button (heart). Data is carried per-attribute + as escaped JSON in data-mc-product.
+  localStorage key: mc_wishlist_v1 — item shape: {handle,title,vendor,price,image,url,addedAt}
+  (price stored in Shopify minor units, e.g. paise).
+  Accepts:
+  - product: {Object} Product (required)
+  - style: {String} (optional) "icon" (default) or "full" (icon + label)
+{%- endcomment -%}
+{%- if product != blank -%}
+  {%- capture wl_img -%}{% if product.featured_image %}{{ product.featured_image | image_url: width: 300 }}{% else %}{% endif %}{%- endcapture -%}
+  {%- capture wl_json -%}{"handle":{{ product.handle | json }},"title":{{ product.title | json }},"vendor":{{ product.vendor | json }},"price":{{ product.price | default: 0 }},"image":"{{ wl_img | strip }}","url":"{{ product.url }}","addedAt":0}{%- endcapture -%}
+  <button
+    type="button"
+    class="mc-wl-btn{% if style == 'full' %} mc-wl-btn--full{% endif %}"
+    data-mc-wishlist
+    data-mc-wishlist-handle="{{ product.handle }}"
+    data-mc-product="{{ wl_json | escape }}"
+    aria-pressed="false"
+    aria-label="{{ 'wishlist.add' | t }}"
+  >
+    <span class="mc-wl-btn__icons" aria-hidden="true">
+      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+    </span>
+    {%- if style == 'full' -%}
+      <span class="mc-wl-btn__label" data-mc-wishlist-label aria-hidden="true">{{ 'wishlist.add' | t }}</span>
+    {%- endif -%}
+  </button>
+{%- endif -%}

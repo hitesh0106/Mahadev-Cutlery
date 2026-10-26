@@ -32,13 +32,14 @@ import { LanguageSwitcher } from './language-switcher';
 /** Maps each nav label to the closest real section anchor so no nav link is dead. */
 const NAV_TARGETS: Record<string, string> = {
   'Shop All': '#departments',
-  'Beauty & Skincare': '#skincare-edit',
+  'Beauty & Makeup': '#departments',
+  Skincare: '#skincare-edit',
   Haircare: '#departments',
-  Makeup: '#departments',
   'Hosiery & Innerwear': '#innerwear-edit',
-  'Kids & Toys': '#gifts-edit',
-  'Gifts & Jewellery': '#gifts-edit',
-  'Beauty Tools': '#product-types',
+  'Toys & Kids': '#gifts-edit',
+  'Gift Articles': '#gifts-edit',
+  'Imitation Jewellery': '#departments',
+  'Accessories & Grooming': '#product-types',
   Brands: '#brands-az',
   Offers: '#offers',
 };
@@ -243,13 +244,13 @@ export function Header() {
       >
         <div
           className={cn(
-            'mx-auto grid max-w-[1360px] grid-cols-[44px_1fr_auto] items-center gap-2 px-4 duration-300 sm:px-6 lg:px-10 xl:grid-cols-[auto_1fr_auto] xl:gap-4',
-            scrolled ? 'min-h-16' : 'min-h-16 xl:min-h-[76px]',
+            'mx-auto grid max-w-[1360px] grid-cols-[44px_1fr_auto] items-center gap-2 px-4 duration-300 sm:px-6 lg:px-10 min-[1400px]:grid-cols-[auto_1fr_auto] xl:gap-2 2xl:gap-4',
+            scrolled ? 'min-h-16' : 'min-h-16 min-[1400px]:min-h-[76px]',
           )}
         >
           <button
             type="button"
-            className="grid size-11 place-items-center rounded-full hover:bg-stone xl:hidden"
+            className="grid size-11 place-items-center rounded-full hover:bg-stone min-[1400px]:hidden"
             aria-label={t('Open menu')}
             onClick={() => setDrawerOpen(true)}
             data-testid="mobile-menu-button"
@@ -257,11 +258,11 @@ export function Header() {
             <Menu className="size-[22px]" strokeWidth={1.5} />
           </button>
 
-          <div className="justify-self-center xl:justify-self-start">
+          <div className="justify-self-center min-[1400px]:justify-self-start">
             <Logo />
           </div>
 
-          <nav className="hidden justify-center xl:flex" aria-label="Main">
+          <nav className="hidden justify-center min-[1400px]:flex" aria-label="Main">
             <ul className="flex flex-nowrap justify-center">
               {NAV_LINKS.map((label) => {
                 const isShopAll = label === 'Shop All';
@@ -276,12 +277,12 @@ export function Header() {
                     <a
                       href={NAV_TARGETS[label] ?? '#top'}
                       data-testid={`nav-link-${label.toLowerCase().replace(/[^a-z]+/g, '-')}`}
-                      className="group relative inline-block px-[7px] py-[26px] text-[13px] font-medium whitespace-nowrap 2xl:px-2.5 2xl:text-[13.5px]"
+                      className="group relative inline-block px-[4px] py-[26px] text-[12.5px] font-medium whitespace-nowrap 2xl:px-[6px]"
                     >
                       {t(label)}
                       <span
                         className={cn(
-                          'absolute inset-x-[7px] bottom-[18px] h-px origin-right scale-x-0 bg-gold transition-transform duration-300 ease-[var(--ease-lux)] group-hover:origin-left group-hover:scale-x-100',
+                          'absolute inset-x-[4px] bottom-[18px] h-px origin-right scale-x-0 bg-gold transition-transform duration-300 ease-[var(--ease-lux)] group-hover:origin-left group-hover:scale-x-100',
                           isOpen && 'origin-left scale-x-100',
                         )}
                       />
@@ -323,7 +324,7 @@ export function Header() {
               <Search className="size-[22px]" strokeWidth={1.5} />
             </button>
             <span
-              className="hidden size-11 place-items-center rounded-full hover:bg-stone xl:grid"
+              className="hidden size-11 place-items-center rounded-full hover:bg-stone min-[1400px]:grid"
               aria-hidden
             >
               <User className="size-[22px]" strokeWidth={1.5} />
@@ -372,7 +373,7 @@ export function Header() {
           onMouseLeave={() => hoverOpen(null)}
           data-testid="mega-menu-panel"
           className={cn(
-            'absolute inset-x-0 top-full hidden border-t border-line bg-paper shadow-[0_30px_50px_rgba(32,32,30,.08)] transition-[opacity,transform,visibility] duration-300 xl:block',
+            'absolute inset-x-0 top-full hidden border-t border-line bg-paper shadow-[0_30px_50px_rgba(32,32,30,.08)] transition-[opacity,transform,visibility] duration-300 min-[1400px]:block',
             openMenu === 'Shop All'
               ? 'visible translate-y-0 opacity-100'
               : 'invisible translate-y-2 opacity-0',

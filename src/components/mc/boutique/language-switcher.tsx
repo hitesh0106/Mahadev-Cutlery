@@ -42,14 +42,17 @@ export function LanguageSwitcher() {
         aria-label={t('Change language')}
         data-testid="language-switcher-button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-11 items-center gap-1.5 rounded-full px-2.5 text-[12.5px] font-semibold tracking-[0.06em] transition-colors hover:bg-stone"
+        className="inline-flex h-11 items-center gap-1 rounded-full px-1.5 text-[12.5px] font-semibold tracking-[0.06em] transition-colors hover:bg-stone sm:gap-1.5 sm:px-2.5"
       >
         <Languages className="size-[18px]" strokeWidth={1.5} />
         <span className="hidden sm:inline">
           {LANGUAGES.find((l) => l.code === lang)?.short}
         </span>
         <ChevronDown
-          className={cn('size-3.5 opacity-60 transition-transform duration-200', open && 'rotate-180')}
+          className={cn(
+            'hidden size-3.5 opacity-60 transition-transform duration-200 sm:block',
+            open && 'rotate-180',
+          )}
         />
       </button>
 

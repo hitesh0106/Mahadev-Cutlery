@@ -1,0 +1,245 @@
+{%- comment -%}
+  Site header (static section rendered from layout/theme.liquid).
+  - Logo from settings (falls back to shop.name)
+  - Desktop nav: Home, Shop All, Departments mega menu, Brands mega menu, Offers
+  - Search toggle, wishlist link, account link, cart (drawer or page)
+  - Mobile: hamburger opens the nav drawer
+  Menus come from Navigation linklists; a menu with no links hides its entry.
+{%- endcomment -%}
+{%- assign hh_main = section.settings.main_menu -%}
+{%- assign hh_departments = section.settings.departments_menu -%}
+{%- assign hh_brands = section.settings.brands_menu -%}
+{%- assign hh_logo_text = settings.logo_text -%}
+{%- if hh_logo_text == blank -%}{%- assign hh_logo_text = shop.name -%}{%- endif -%}
+
+<header class="mc-header" data-mc-header>
+  <div class="mc-header__inner mc-container">
+    <button
+      type="button"
+      class="mc-icon-btn mc-header__burger"
+      data-mc-nav-open
+      aria-controls="mc-nav-drawer"
+      aria-expanded="false"
+      aria-label="{{ 'general.menu' | t }}"
+    >
+      {% render 'icon', name: 'menu' %}
+    </button>
+
+    <a class="mc-logo" href="{{ routes.root_url }}" aria-label="{{ 'header.home' | t }} — {{ shop.name }}">
+      <span class="mc-logo__text">{{ hh_logo_text | escape }}</span>
+      {%- if settings.logo_subline != blank -%}
+        <span class="mc-logo__subline">{{ settings.logo_subline | escape }}</span>
+      {%- endif -%}
+    </a>
+
+    <nav class="mc-nav" aria-label="{{ 'general.menu' | t }}">
+      <ul class="mc-nav__list">
+        <li class="mc-nav__item"><a class="mc-nav__link" href="{{ routes.root_url }}">{{ 'header.home' | t }}</a></li>
+        <li class="mc-nav__item"><a class="mc-nav__link" href="{{ routes.all_products_collection_url }}">{{ 'header.shop_all' | t }}</a></li>
+
+        {%- if hh_departments != blank and hh_departments.links.size > 0 -%}
+          <li class="mc-nav__item mc-nav__item--mega" data-mc-mega>
+            <button
+              type="button"
+              class="mc-nav__link mc-nav__toggle"
+              data-mc-menu-toggle
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              {{ 'header.departments' | t }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}
+            </button>
+            <div class="mc-mega">
+              <div class="mc-mega__inner mc-container">
+                <p class="mc-mega__heading">{{ 'header.departments' | t }}</p>
+                <ul class="mc-mega__list">
+                  {%- for link in hh_departments.links -%}
+                    <li><a class="mc-mega__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </div>
+          </li>
+        {%- endif -%}
+
+        {%- if hh_brands != blank and hh_brands.links.size > 0 -%}
+          <li class="mc-nav__item mc-nav__item--mega" data-mc-mega>
+            <button
+              type="button"
+              class="mc-nav__link mc-nav__toggle"
+              data-mc-menu-toggle
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              {{ 'header.brands' | t }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}
+            </button>
+            <div class="mc-mega">
+              <div class="mc-mega__inner mc-container">
+                <p class="mc-mega__heading">{{ 'header.brands' | t }}</p>
+                <ul class="mc-mega__list mc-mega__list--cols">
+                  {%- for link in hh_brands.links -%}
+                    <li><a class="mc-mega__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </div>
+          </li>
+        {%- endif -%}
+
+        {%- if section.settings.offers_link != blank -%}
+          <li class="mc-nav__item"><a class="mc-nav__link" href="{{ section.settings.offers_link }}">{{ 'header.offers' | t }}</a></li>
+        {%- endif -%}
+      </ul>
+    </nav>
+
+    <div class="mc-header__actions">
+      {%- if section.settings.show_search -%}
+        <button
+          type="button"
+          class="mc-icon-btn"
+          data-mc-search-toggle
+          aria-controls="mc-header-search"
+          aria-expanded="false"
+          aria-label="{{ 'header.search' | t }}"
+        >
+          {% render 'icon', name: 'search' %}
+        </button>
+      {%- endif -%}
+
+      <a class="mc-icon-btn" href="{{ section.settings.wishlist_url | default: '/pages/wishlist' }}" aria-label="{{ 'header.wishlist' | t }}">
+        {% render 'icon', name: 'heart' %}
+      </a>
+
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="mc-icon-btn mc-header__account" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" aria-label="{{ 'header.account' | t }}">
+          {% render 'icon', name: 'user' %}
+        </a>
+      {%- endif -%}
+
+      {%- if settings.cart_type == 'page' -%}
+        <a class="mc-icon-btn mc-header__cart" href="{{ routes.cart_url }}" aria-label="{{ 'header.cart' | t }}">
+          {% render 'icon', name: 'cart' %}
+          <span class="mc-count-bubble" data-mc-cart-count-bubble>{{ cart.item_count }}</span>
+        </a>
+      {%- else -%}
+        <button type="button" class="mc-icon-btn mc-header__cart" data-mc-cart-open aria-label="{{ 'header.cart' | t }}">
+          {% render 'icon', name: 'cart' %}
+          <span class="mc-count-bubble" data-mc-cart-count-bubble>{{ cart.item_count }}</span>
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if section.settings.show_search -%}
+    <div class="mc-header__search" id="mc-header-search" data-mc-search hidden>
+      <form class="mc-search-form mc-container" action="{{ routes.search_url }}" method="get" role="search">
+        <input
+          type="search"
+          class="mc-input"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'general.search_placeholder' | t }}"
+          aria-label="{{ 'general.search' | t }}"
+          data-mc-search-input
+        >
+        <button type="submit" class="mc-btn mc-btn--primary">{{ 'general.search' | t }}</button>
+      </form>
+    </div>
+  {%- endif -%}
+</header>
+
+{%- comment -%} Mobile navigation drawer {%- endcomment -%}
+<div id="mc-nav-drawer" class="mc-drawer mc-nav-drawer" data-mc-nav-drawer role="dialog" aria-modal="true" aria-label="{{ 'general.menu' | t }}" hidden>
+  <div class="mc-drawer__overlay" data-mc-nav-close></div>
+  <aside class="mc-drawer__panel mc-nav-drawer__panel" data-mc-drawer-panel>
+    <header class="mc-nav-drawer__head">
+      <span class="mc-logo__text">{{ hh_logo_text | escape }}</span>
+      <button type="button" class="mc-icon-btn" data-mc-nav-close aria-label="{{ 'general.close' | t }}">
+        {% render 'icon', name: 'close' %}
+      </button>
+    </header>
+    <nav class="mc-nav-drawer__body" data-mc-drawer-scroll aria-label="{{ 'general.menu' | t }}">
+      <a class="mc-nav-drawer__link" href="{{ routes.root_url }}">{{ 'header.home' | t }}</a>
+      <a class="mc-nav-drawer__link" href="{{ routes.all_products_collection_url }}">{{ 'header.shop_all' | t }}</a>
+
+      {%- if hh_departments != blank and hh_departments.links.size > 0 -%}
+        <details class="mc-nav-drawer__group">
+          <summary class="mc-nav-drawer__link">{{ 'header.departments' | t }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}</summary>
+          <ul>
+            {%- for link in hh_departments.links -%}
+              <li><a class="mc-nav-drawer__sublink" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </details>
+      {%- endif -%}
+
+      {%- if hh_brands != blank and hh_brands.links.size > 0 -%}
+        <details class="mc-nav-drawer__group">
+          <summary class="mc-nav-drawer__link">{{ 'header.brands' | t }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}</summary>
+          <ul>
+            {%- for link in hh_brands.links -%}
+              <li><a class="mc-nav-drawer__sublink" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </details>
+      {%- endif -%}
+
+      {%- if section.settings.offers_link != blank -%}
+        <a class="mc-nav-drawer__link" href="{{ section.settings.offers_link }}">{{ 'header.offers' | t }}</a>
+      {%- endif -%}
+
+      <a class="mc-nav-drawer__link" href="{{ section.settings.wishlist_url | default: '/pages/wishlist' }}">{{ 'header.wishlist' | t }}</a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="mc-nav-drawer__link" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}">{{ 'header.account' | t }}</a>
+      {%- endif -%}
+
+      <form class="mc-nav-drawer__search" action="{{ routes.search_url }}" method="get" role="search">
+        <input type="search" class="mc-input" name="q" placeholder="{{ 'general.search_placeholder' | t }}" aria-label="{{ 'general.search' | t }}">
+        <button type="submit" class="mc-btn mc-btn--primary mc-btn--sm">{{ 'general.search' | t }}</button>
+      </form>
+    </nav>
+  </aside>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "main_menu",
+      "label": "Main menu",
+      "default": "main-menu",
+      "info": "Used for the footer 'Shop' column and as a fallback."
+    },
+    {
+      "type": "link_list",
+      "id": "departments_menu",
+      "label": "Departments menu",
+      "info": "Create a menu (e.g. 'departments-menu') with one link per department: Beauty & Skincare, Makeup, Haircare, Hosiery & Innerwear, Kids & Toys, Gift Articles, Imitation Jewellery, Beauty Tools & Grooming, Accessories & More. Hidden when empty."
+    },
+    {
+      "type": "link_list",
+      "id": "brands_menu",
+      "label": "Brands menu",
+      "info": "Create a menu (e.g. 'brands-menu') with links to brand collections. Hidden when empty."
+    },
+    {
+      "type": "url",
+      "id": "offers_link",
+      "label": "Offers link (optional)"
+    },
+    {
+      "type": "text",
+      "id": "wishlist_url",
+      "label": "Wishlist page URL",
+      "default": "/pages/wishlist"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

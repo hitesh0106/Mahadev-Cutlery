@@ -1,0 +1,34 @@
+{%- comment -%}
+  Renders default pagination. Must be used inside a {% paginate %} block.
+  Accepts:
+  - paginate: {Object} Liquid paginate object (required)
+{%- endcomment -%}
+{%- if paginate and paginate.pages > 1 -%}
+  <nav class="mc-pagination" role="navigation" aria-label="{{ 'collections.page' | t: number: paginate.current_page }}">
+    {%- if paginate.previous -%}
+      <a class="mc-pagination__item mc-pagination__arrow" href="{{ paginate.previous.url }}" aria-label="{{ 'general.previous' | t }}">
+        {% render 'icon', name: 'chevron', size: 16 %} {{ 'general.previous' | t }}
+      </a>
+    {%- else -%}
+      <span class="mc-pagination__item is-disabled" aria-hidden="true">{{ 'general.previous' | t }}</span>
+    {%- endif -%}
+
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <a class="mc-pagination__item" href="{{ part.url }}">{{ part.title }}</a>
+      {%- elsif part.title == paginate.current_page -%}
+        <span class="mc-pagination__item is-current" aria-current="page">{{ part.title }}</span>
+      {%- else -%}
+        <span class="mc-pagination__item is-disabled">{{ part.title }}</span>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if paginate.next -%}
+      <a class="mc-pagination__item mc-pagination__arrow" href="{{ paginate.next.url }}" aria-label="{{ 'general.next' | t }}">
+        {{ 'general.next' | t }} {% render 'icon', name: 'chevron', size: 16 %}
+      </a>
+    {%- else -%}
+      <span class="mc-pagination__item is-disabled" aria-hidden="true">{{ 'general.next' | t }}</span>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

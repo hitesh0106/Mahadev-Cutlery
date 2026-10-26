@@ -63,30 +63,29 @@ export const ANNOUNCEMENTS = [
 
 export const NAV_LINKS = [
   'Shop All',
-  'Beauty & Skincare',
+  'Beauty & Makeup',
+  'Skincare',
   'Haircare',
-  'Makeup',
   'Hosiery & Innerwear',
-  'Kids & Toys',
-  'Gifts & Jewellery',
-  'Beauty Tools',
+  'Toys & Kids',
+  'Gift Articles',
+  'Imitation Jewellery',
+  'Accessories & Grooming',
   'Brands',
-  'Offers',
 ];
 
 export const MENU_GROUPS = [
   {
     heading: 'Shop by Department',
     links: [
-      'Beauty & Skincare',
-      'Makeup',
+      'Beauty & Makeup',
+      'Skincare',
       'Haircare',
       'Hosiery & Innerwear',
-      'Kids & Toys',
+      'Toys & Kids',
       'Gift Articles',
       'Imitation Jewellery',
-      'Beauty Tools & Grooming',
-      'Accessories & More',
+      'Accessories & Grooming',
     ],
   },
   {
@@ -96,7 +95,7 @@ export const MENU_GROUPS = [
       'Jockey',
       'Lakmé',
       "L'Oréal Paris",
-      'L’Oréal Professionnel',
+      "L'Oréal Professionnel",
       'Lotus Herbals',
       'Maybelline New York',
       'Minimalist',
@@ -124,14 +123,14 @@ export const MENU_GROUPS = [
 // ── Departments ──────────────────────────────────────────────────────────────
 
 export const DEPARTMENTS = [
-  { title: 'Makeup & Cosmetics', sub: 'Lips, eyes, face', img: 'dept-makeup' },
+  { title: 'Beauty & Makeup', sub: 'Lips, eyes, face', img: 'dept-makeup' },
   { title: 'Skincare', sub: 'Cleanse, treat, protect', img: 'dept-beauty' },
   { title: 'Haircare', sub: 'Everyday & professional', img: 'dept-haircare' },
   { title: 'Hosiery & Innerwear', sub: 'Men, women & kids', img: 'dept-innerwear' },
-  { title: 'Kids & Toys', sub: 'Play & learn', img: 'dept-kids' },
+  { title: 'Toys & Kids', sub: 'Play & learn', img: 'dept-kids' },
   { title: 'Gift Articles', sub: 'For every occasion', img: 'dept-gifts' },
   { title: 'Imitation Jewellery', sub: 'Everyday sparkle', img: 'dept-jewellery' },
-  { title: 'Beauty Tools & Grooming', sub: 'Brushes, combs, trimmers', img: 'dept-tools' },
+  { title: 'Accessories & Grooming', sub: 'Tools, grooming & more', img: 'dept-tools' },
 ] as const;
 
 // ── Brands ───────────────────────────────────────────────────────────────────
@@ -152,7 +151,7 @@ const BRAND_GROUPS = [
   {
     group: 'Haircare',
     brands: [
-      'L’Oréal Professionnel',
+      "L'Oréal Professionnel",
       "L'Oréal Paris",
       'Matrix',
       'Wella Professionals',
@@ -161,8 +160,8 @@ const BRAND_GROUPS = [
     ],
   },
   {
-    group: 'Makeup & Cosmetics',
-    brands: ['Swiss Beauty', 'Lakmé', 'MARS', 'Maybelline New York', 'Colorbar', 'Faces Canada'],
+    group: 'Beauty & Makeup',
+    brands: ['Swiss Beauty', 'Lakmé', 'MARS Cosmetics', 'Maybelline New York', 'Colorbar', 'Faces Canada'],
   },
   {
     group: 'Skincare & Beauty',
@@ -180,7 +179,7 @@ const BRAND_GROUPS = [
     ],
   },
   {
-    group: 'Beauty Tools & Grooming',
+    group: 'Accessories & Grooming',
     brands: ['VEGA', 'Philips'],
   },
 ] as const;
@@ -195,7 +194,7 @@ export const FEATURED_BRANDS = [
   'Jockey',
   'Lakmé',
   "L'Oréal Paris",
-  'L’Oréal Professionnel',
+  "L'Oréal Professionnel",
   'Maybelline New York',
   'Lotus Herbals',
   'Swiss Beauty',
@@ -231,6 +230,7 @@ type ProductSeed = Omit<BoutiqueProduct, 'vendor' | 'available'> & {
 const seed = (p: ProductSeed): BoutiqueProduct => ({
   vendor: 'Sample brand',
   available: true,
+  tags: [],
   ...p,
 });
 
@@ -280,6 +280,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     image: img('dept-innerwear'),
     image2: img('dept-innerwear'),
     variants: ['S', 'M', 'L', 'XL'],
+    tags: ['recipient-him'],
     audience: 'Men',
   }),
   seed({
@@ -509,7 +510,7 @@ export function findGiftIdeas(
   const rec = tagList(recipient?.value);
   const aud = recipient?.aud ?? '';
   const [min, max] = (budget?.value ?? '0-0').split('-').map(Number);
-  const tagsOf = (p: BoutiqueProduct) => p.tags.map((t) => t.toLowerCase());
+  const tagsOf = (p: BoutiqueProduct) => (p.tags ?? []).map((t) => t.toLowerCase());
   const inBudget = (p: BoutiqueProduct) =>
     p.available && p.price >= min && (!max || p.price <= max);
   const matchesOccasion = (p: BoutiqueProduct) =>

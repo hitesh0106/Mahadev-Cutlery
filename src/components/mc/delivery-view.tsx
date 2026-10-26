@@ -99,7 +99,7 @@ const DOWNLOADS = [
     icon: FileSpreadsheet,
     title: 'CSV Import Template',
     description:
-      'Canonical Shopify product-import columns with 3 clearly marked EXAMPLE rows (delete before importing). Image URLs are left empty on purpose — never invent them.',
+      'Canonical Shopify product-import columns with clearly marked EXAMPLE rows (published=FALSE, draft — delete before importing). Tags follow the department_/audience_/type_/brand_ conventions. Image URLs are left empty on purpose.',
     accent: 'bg-[var(--mc-cream)] text-[var(--mc-ink)]',
   },
   {
@@ -109,8 +109,38 @@ const DOWNLOADS = [
     icon: FileText,
     title: 'XLSX Import Template',
     description:
-      'Excel workbook: Import sheet with brand/type dropdown validation, a hidden Lists sheet and a Reference sheet carrying the brand rules, allowed departments and honest notes.',
+      'Excel workbook: Import sheet with brand/type dropdown validation, a hidden Lists sheet (30 canonical vendors) and a Reference sheet carrying the brand rules, the eight approved departments, tag conventions and honest notes.',
     accent: 'bg-[var(--mc-grey)] text-[var(--mc-ink)]',
+  },
+  {
+    key: 'brand-map-csv',
+    href: '/api/catalog-csv?file=brand-department-map',
+    filename: 'mahadev-brand-department-map.csv',
+    icon: FileText,
+    title: 'Brand → Department Map (CSV)',
+    description:
+      'All 30 brand profiles: approved departments, allowed product types, customer groups, prohibited classifications and verification status (Zoiro men-only, Bodycare no men\'s, L\'Oréal brands separate, Sunny/Ghar Soaps gated).',
+    accent: 'bg-[var(--mc-cream)] text-[var(--mc-ink)]',
+  },
+  {
+    key: 'department-seed-csv',
+    href: '/api/catalog-csv?file=department-collection-seed',
+    filename: 'mahadev-department-collection-seed.csv',
+    icon: FileText,
+    title: 'Department Collections Seed (CSV)',
+    description:
+      'The eight approved departments with their Shopify handles, automated collection conditions, suggested combined collections and per-department filter recommendations. No kitchenware/cutlery department exists.',
+    accent: 'bg-[var(--mc-grey)] text-[var(--mc-ink)]',
+  },
+  {
+    key: 'import-template-static',
+    href: '/api/catalog-csv?file=product-import-template',
+    filename: 'mahadev-product-import-template.csv',
+    icon: FileSpreadsheet,
+    title: 'Import Template (canonical file)',
+    description:
+      'The validated data/product-import-template.csv exactly as it ships in the repo — Shopify-compatible columns, EXAMPLE rows marked and locked to draft.',
+    accent: 'bg-[var(--mc-accent-soft)] text-[var(--mc-accent)]',
   },
 ] as const;
 
@@ -228,7 +258,7 @@ export function DeliveryView() {
         </p>
       </header>
 
-      <section aria-label="Downloads" className="grid gap-4 md:grid-cols-3">
+      <section aria-label="Downloads" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {DOWNLOADS.map((item) => (
           <DownloadCard
             key={item.key}

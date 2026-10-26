@@ -1,0 +1,110 @@
+{%- comment -%}
+  Cart page: line items (with properties), qty steppers, remove, order note,
+  subtotal, Shopify-applied discounts, checkout + update, empty state.
+  Works without JS (form POST) — theme.js adds steppers + remove via AJAX.
+{%- endcomment -%}
+<section class="mc-section mc-cart">
+  <div class="mc-container">
+    <h1 class="mc-section__heading">{{ 'cart.title' | t }}</h1>
+
+    {%- if cart.item_count > 0 -%}
+      <form method="post" action="{{ routes.cart_url }}" class="mc-cart__form" data-mc-cart-page-form novalidate>
+        <ul class="mc-cart__lines">
+          {%- for line in cart.items -%}
+            {%- assign line_qty_name = 'updates[' | append: line.key | append: ']' -%}
+            {%- assign line_qty_id = 'mc-cart-qty-' | append: forloop.index -%}
+            <li class="mc-cart-line" data-mc-cart-line data-mc-line-key="{{ line.key }}">
+              <a class="mc-cart-line__media" href="{{ line.url }}" tabindex="-1" aria-hidden="true">
+                {%- if line.image != blank -%}
+                  <img src="{{ line.image | image_url: width: 200 }}" alt="{{ line.product.title | escape }}" width="100" height="125" loading="lazy">
+                {%- endif -%}
+              </a>
+              <div class="mc-cart-line__info">
+                <a class="mc-cart-line__title" href="{{ line.url }}">{{ line.product.title | escape }}</a>
+                {%- if settings.show_vendor and line.product.vendor != blank -%}
+                  <p class="mc-cart-line__vendor">{{ line.product.vendor | escape }}</p>
+                {%- endif -%}
+                {%- if line.variant_title != blank and line.variant_title != 'Default Title' -%}
+                  <p class="mc-cart-line__variant">{{ line.variant_title | escape }}</p>
+                {%- endif -%}
+                {%- for prop in line.properties -%}
+                  {%- assign prop_first = prop.first | slice: 0 -%}
+                  {%- unless prop_first == '_' or prop.last == blank -%}
+                    <p class="mc-cart-line__prop">{{ prop.first | escape }}: {{ prop.last | escape }}</p>
+                  {%- endunless -%}
+                {%- endfor -%}
+                {%- for discount in line.line_level_discount_allocations -%}
+                  <p class="mc-cart-line__discount">{{ discount.discount_application.title | escape }} (&minus;{{ discount.amount | money }})</p>
+                {%- endfor -%}
+                <p class="mc-cart-line__price">
+                  {%- if line.original_line_price != line.final_line_price -%}
+                    <s class="mc-cart-line__compare">{{ line.original_line_price | money }}</s>
+                  {%- endif -%}
+                  {{ line.final_line_price | money }}
+                </p>
+              </div>
+              <div class="mc-cart-line__controls">
+                {% render 'quantity-input', name: line_qty_name, value: line.quantity, id: line_qty_id %}
+                <button
+                  type="button"
+                  class="mc-cart-line__remove"
+                  data-mc-cart-change
+                  data-mc-cart-key="{{ line.key }}"
+                  data-mc-cart-qty="0"
+                >
+                  {{ 'cart.remove' | t }}
+                </button>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        <div class="mc-cart__footer">
+          {%- if section.settings.show_note -%}
+            <div class="mc-cart__note">
+              <label class="mc-label" for="mc-cart-note">{{ 'cart.note_label' | t }}</label>
+              <textarea class="mc-textarea" id="mc-cart-note" name="note" rows="4">{{ cart.note | escape }}</textarea>
+            </div>
+          {%- endif -%}
+
+          <div class="mc-cart__summary">
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <p class="mc-cart__discount">
+                {{ discount.title | escape }} (&minus;{{ discount.total_allocated_amount | money }})
+              </p>
+            {%- endfor -%}
+            <p class="mc-cart__subtotal">
+              <span>{{ 'cart.subtotal' | t }}</span>
+              <span data-mc-cart-subtotal-page>{{ cart.total_price | money }}</span>
+            </p>
+            <p class="mc-cart__taxes">{{ 'cart.taxes_note' | t }}</p>
+            <div class="mc-cart__actions">
+              <button type="submit" name="checkout" class="mc-btn mc-btn--primary mc-btn--lg">{{ 'cart.checkout' | t }}</button>
+              <button type="submit" name="update" class="mc-btn mc-btn--secondary">{{ 'cart.update' | t }}</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    {%- else -%}
+      <div class="mc-empty-state">
+        <span class="mc-empty-state__icon" aria-hidden="true">{% render 'icon', name: 'cart', size: 40 %}</span>
+        <p>{{ 'cart.empty' | t }}</p>
+        <a class="mc-btn mc-btn--primary" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_note",
+      "label": "Show order note field",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

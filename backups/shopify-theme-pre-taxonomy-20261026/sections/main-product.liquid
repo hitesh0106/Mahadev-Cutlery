@@ -1,0 +1,249 @@
+{%- comment -%}
+  Main product section:
+  - gallery (main image + thumbnails), variant picker, price, availability, SKU/vendor/type
+  - quantity stepper, add-to-cart form (AJAX via theme.js), gift wrap options inside the form
+  - WhatsApp ordering button, description
+  - related products (same collection, excluding current, max 4)
+  - same-brand products (from All Products, matching vendor, excluding current, max 4)
+  No invented products/prices — everything comes from the actual product.
+{%- endcomment -%}
+{%- assign mp_current = product.selected_or_first_available_variant -%}
+{%- assign mp_gw_product = all_products[settings.gift_wrap_product_handle] -%}
+{%- assign mp_hero_alt = product.title -%}
+{%- if product.featured_image != blank and product.featured_image.alt != blank -%}
+  {%- assign mp_hero_alt = product.featured_image.alt -%}
+{%- endif -%}
+
+<section class="mc-section mc-product" data-mc-product-page data-mc-product-handle="{{ product.handle }}">
+  <div class="mc-container">
+    <div class="mc-product__layout">
+      <div class="mc-product__gallery">
+        <div class="mc-product__main-media">
+          {%- if product.featured_image != blank -%}
+            <img
+              class="mc-product__main-img"
+              data-mc-main-image
+              src="{{ product.featured_image | image_url: width: 900 }}"
+              srcset="{{ product.featured_image | image_url: width: 450 }} 450w, {{ product.featured_image | image_url: width: 900 }} 900w, {{ product.featured_image | image_url: width: 1400 }} 1400w"
+              sizes="(min-width: 990px) 50vw, 100vw"
+              alt="{{ mp_hero_alt | escape }}"
+              width="900"
+              height="1125"
+              loading="eager"
+            >
+          {%- else -%}
+            <div class="mc-product__no-image" aria-hidden="true">{% render 'icon', name: 'gift', size: 56 %}</div>
+          {%- endif -%}
+        </div>
+        {%- if product.media.size > 1 -%}
+          <div class="mc-product__thumbs" data-mc-thumbs>
+            {%- for media in product.media -%}
+              <button
+                type="button"
+                class="mc-product__thumb{% if forloop.first %} is-active{% endif %}"
+                data-mc-thumb
+                data-mc-media-id="{{ media.id }}"
+                data-mc-thumb-src="{{ media.preview_image | image_url: width: 900 }}"
+                data-mc-thumb-alt="{{ media.alt | default: product.title | escape }}"
+                aria-label="{{ media.alt | default: product.title | escape }}"
+              >
+                <img src="{{ media.preview_image | image_url: width: 150 }}" alt="" loading="lazy" width="75" height="94">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="mc-product__info">
+        {%- if settings.show_vendor and product.vendor != blank -%}
+          <p class="mc-product__vendor">{{ product.vendor }}</p>
+        {%- endif -%}
+        <h1 class="mc-product__title">{{ product.title | escape }}</h1>
+
+        {% render 'price', product: product, variant: mp_current, class: 'mc-product__price' %}
+
+        <p class="mc-product__availability" data-mc-availability>
+          {%- if mp_current.available -%}
+            <span class="mc-badge mc-badge--instock">{{ 'products.in_stock' | t }}</span>
+          {%- else -%}
+            <span class="mc-badge mc-badge--soldout">{{ 'products.out_of_stock' | t }}</span>
+          {%- endif -%}
+        </p>
+
+        {%- if mp_current.sku != blank -%}
+          <p class="mc-product__meta">
+            <span class="mc-product__meta-label">{{ 'products.sku' | t }}</span>
+            <span data-mc-sku>{{ mp_current.sku }}</span>
+          </p>
+        {%- endif -%}
+        {%- if product.type != blank -%}
+          <p class="mc-product__meta">
+            <span class="mc-product__meta-label">{{ 'products.type' | t }}</span>
+            {{ product.type | escape }}
+          </p>
+        {%- endif -%}
+
+        {%- unless product.has_only_default_variant -%}
+          <div class="mc-variant-picker" data-mc-variant-selects>
+            {%- for option in product.options_with_values -%}
+              <div class="mc-field">
+                <label class="mc-label" for="mc-option-{{ forloop.index0 }}">
+                  {%- if option.name == 'Size' or option.name == 'size' -%}
+                    {{ 'products.size' | t }}
+                  {%- elsif option.name == 'Color' or option.name == 'Colour' or option.name == 'color' -%}
+                    {{ 'products.color' | t }}
+                  {%- else -%}
+                    {{ option.name | escape }}
+                  {%- endif -%}
+                </label>
+                <select
+                  class="mc-select"
+                  id="mc-option-{{ forloop.index0 }}"
+                  data-mc-option-select
+                  data-option-index="{{ forloop.index0 }}"
+                >
+                  {%- for value in option.values -%}
+                    <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>{{ value | escape }}</option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endunless -%}
+
+        {%- form 'product', product, id: 'mc-product-form', class: 'mc-product__form', novalidate: 'novalidate', data-mc-product-form: 'true' -%}
+          <input type="hidden" name="id" value="{{ mp_current.id }}" data-mc-variant-id>
+          <input type="hidden" name="quantity" value="1" data-mc-form-quantity>
+
+          <div class="mc-product__qty">
+            <span class="mc-label" id="mc-product-qty-label">{{ 'products.quantity' | t }}</span>
+            {% render 'quantity-input', name: 'quantity', value: 1, id: 'mc-product-qty' %}
+          </div>
+
+          {% render 'gift-wrap-options', product: product, gift_wrap_product: mp_gw_product %}
+
+          <button
+            type="submit"
+            name="add"
+            class="mc-btn mc-btn--primary mc-btn--lg mc-product__add"
+            data-mc-add-button
+            {% unless mp_current.available %}disabled{% endunless %}
+          >
+            <span data-mc-add-label>
+              {%- if mp_current.available -%}{{ 'cart.add_to_cart' | t }}{%- else -%}{{ 'cart.sold_out' | t }}{%- endif -%}
+            </span>
+          </button>
+          <p class="mc-form-error" data-mc-form-error role="alert" hidden></p>
+        {%- endform -%}
+
+        {% render 'whatsapp-button', product: product, variant: mp_current %}
+      </div>
+    </div>
+
+    {%- if product.description != blank -%}
+      <div class="mc-product__description mc-rte">
+        <h2 class="mc-section__heading">{{ 'products.description' | t }}</h2>
+        {{ product.description }}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.show_related -%}
+      {%- assign mp_rel_collection = product.collections.first -%}
+      {%- capture mp_rel_cards -%}
+        {%- assign mp_rel_count = 0 -%}
+        {%- if mp_rel_collection != blank -%}
+          {%- for rel in mp_rel_collection.products limit: 12 -%}
+            {%- if rel.id != product.id and mp_rel_count < 4 -%}
+              {% render 'product-card', card_product: rel %}
+              {%- assign mp_rel_count = mp_rel_count | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- if mp_rel_cards contains 'mc-card' -%}
+        <div class="mc-product__related mc-product__sub">
+          <h2 class="mc-section__heading">{{ 'products.related_title' | t }}</h2>
+          <div class="mc-grid mc-grid--products">
+            {{ mp_rel_cards }}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if section.settings.show_same_brand and product.vendor != blank and collections.all != blank -%}
+      {%- capture mp_sb_cards -%}
+        {%- assign mp_sb_count = 0 -%}
+        {%- for sb in collections.all.products -%}
+          {%- if sb.vendor == product.vendor and sb.id != product.id and mp_sb_count < 4 -%}
+            {% render 'product-card', card_product: sb %}
+            {%- assign mp_sb_count = mp_sb_count | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign mp_sb_heading = product.vendor -%}
+      {%- if mp_sb_cards contains 'mc-card' -%}
+        <div class="mc-product__same-brand mc-product__sub">
+          <h2 class="mc-section__heading">{{ 'products.same_brand_title' | t: vendor: mp_sb_heading }}</h2>
+          <div class="mc-grid mc-grid--products">
+            {{ mp_sb_cards }}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+
+  <script type="application/json" data-mc-product-json>
+    {
+      "id": {{ product.id }},
+      "handle": {{ product.handle | json }},
+      "title": {{ product.title | json }},
+      "options": {{ product.options | json }},
+      "variants": [
+        {%- for v in product.variants -%}
+          {
+            "id": {{ v.id }},
+            "title": {{ v.title | json }},
+            "available": {{ v.available }},
+            "price": {{ v.price | default: 0 }},
+            "compareAtPrice": {{ v.compare_at_price | default: 0 }},
+            "sku": {{ v.sku | json }},
+            "options": {{ v.options | json }},
+            "featuredMediaId": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+
+  <script type="application/json" data-mc-current-product>
+    {
+      "handle": {{ product.handle | json }},
+      "title": {{ product.title | json }},
+      "vendor": {{ product.vendor | json }},
+      "price": {{ mp_current.price | default: 0 }},
+      "image": "{{ product.featured_image | image_url: width: 300 }}",
+      "url": {{ product.url | json }},
+      "addedAt": 0
+    }
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_related",
+      "label": "Show related products (same collection)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_same_brand",
+      "label": "Show same-brand products",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

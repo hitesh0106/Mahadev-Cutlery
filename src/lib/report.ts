@@ -14,7 +14,7 @@ export type CheckRow = {
 export const REPORT_META = {
   project: 'MAHADEV CUTLERY & GIFT ARTICLES — Shopify theme + showcase app',
   updated:
-    'Verified 26 Oct 2026. The preview page was rebuilt as a 1:1 copy of the approved reference walkthrough (screen recording), then re-verified end-to-end with Agent-Browser (desktop 1440px + mobile 390px).',
+    'Verified 26 Oct 2026 (two rounds). Round 1: 1:1 reference-copy rebuild, re-verified end-to-end with Agent-Browser (desktop 1440px + mobile 390px). Round 2: official 8-department catalogue taxonomy (30 brand profiles, collection architecture, import templates, docs) implemented + validated (scripts/validate-catalog.ts, 45 checks); festival countdown, gift wrap and the EN/हिन्दी/ગુજરાતી switcher are now demonstrated in the preview; a real Gift Finder crash (missing tags array) was found on mobile and fixed.',
   legend: {
     passed: 'Verified working in this environment',
     failed: 'Attempted, found broken — fixed and re-verified',
@@ -45,10 +45,93 @@ export const REPORT_ROWS: CheckRow[] = [
       'Agent-Browser: mega panel opens on hover/toggle with 3 groups + promo card; search finds "shampoo" → 1 product and honest "No brand match"; badges react live; mobile drawer (390px) expands nested groups.',
   },
   {
+    area: 'Catalogue taxonomy (8 departments, 30 brands)',
+    item: 'Eight approved departments applied everywhere: Beauty & Makeup, Skincare, Haircare, Hosiery & Innerwear, Toys & Kids, Gift Articles, Imitation Jewellery, Accessories & Grooming — no kitchenware/cutlery department',
+    status: 'passed',
+    detail:
+      'validate-catalog.ts: preview grid, mega menu, main nav (Shop All + 8 + Brands), footer, XLSX reference sheet, theme editor info strings and collection seeds all match; kitchenware scanner passes across data/code/docs.',
+  },
+  {
+    area: 'Catalogue taxonomy (8 departments, 30 brands)',
+    item: '30 brand profiles with hard restrictions (Zoiro men-only; Bodycare women/kids only; Lady Care women-only; Lotus Herbals never auto-makeup; L\'Oréal Paris ≠ Professionnel; Sunny stock-gated; Ghar Soaps identity-gated)',
+    status: 'passed',
+    detail:
+      'data/brand-department-map.csv + docs/BRAND_DEPARTMENT_MAP.md + src/lib/taxonomy.ts kept in sync; validator asserts every prohibition text and verification status (rule-verified / stock-verification-required / identity-unverified).',
+  },
+  {
+    area: 'Catalogue taxonomy (8 departments, 30 brands)',
+    item: 'Canonical vendor spellings; no duplicates or variants (fixed: "MARS"→"MARS Cosmetics", curly L\'Oréal apostrophes normalized)',
+    status: 'passed',
+    detail:
+      'Validator duplicate + spelling scan passes for all 30 vendors incl. O3+; brand directory brands ⊆ canonical vendor list.',
+  },
+  {
+    area: 'Catalogue taxonomy (8 departments, 30 brands)',
+    item: 'Tag conventions department_/audience_/type_/brand_ (+ gf-* Gift Finder tags) in sample data and templates',
+    status: 'passed',
+    detail:
+      'All 18 sample products re-tagged; validator checks every tag prefix; XLSX Reference sheet gained the tag-conventions table; Vendor dropdown now lists the 30 canonical vendors.',
+  },
+  {
+    area: 'Delivery artifacts (taxonomy round)',
+    item: 'data/brand-department-map.csv, data/department-collection-seed.csv, data/product-import-template.csv + docs (BRAND_DEPARTMENT_MAP / PRODUCT_TAXONOMY / PRODUCT_IMPORT / TESTING_REPORT)',
+    status: 'passed',
+    detail:
+      'All files created and validated (45 validator checks). Import-template example rows are Published=FALSE + Status=draft so an accidental import cannot reach the storefront. New CSVs downloadable in-app (Delivery view) via /api/catalog-csv.',
+  },
+  {
+    area: 'Delivery artifacts (taxonomy round)',
+    item: 'Previous theme backup preserved',
+    status: 'passed',
+    detail: 'backups/shopify-theme-pre-taxonomy-20261026/ — full copy of shopify-theme/ taken before any taxonomy edits.',
+  },
+  {
+    area: 'Festival countdown banner',
+    item: 'Diwali countdown (2026-11-08, Asia/Kolkata): live ticker, Gift-Finder CTA, honest auto-hide (Raksha Bandhan passed → hidden; ended-state note; window-over → removed)',
+    status: 'passed',
+    detail:
+      'Browser: ticker ticks in real time (06→04 s), correct days/hours for IST; unit checks in bun: during-window → honest "ended" note, after window → banner absent. Theme section + countdown.js unchanged (structurally validated); owner re-verifies dates yearly (documented).',
+  },
+  {
+    area: 'Gift wrap (preview demonstration)',
+    item: 'PDP gift-wrap checkbox + message (≤200 chars, live counter), cart line-item properties, WhatsApp message includes wrap + message',
+    status: 'passed',
+    detail:
+      'Browser: counter shows 165 characters left after a 35-char message; cart line shows "Gift wrap: Yes · Gift message: …"; WhatsApp preview contains both lines; subtotal unchanged in free mode.',
+  },
+  {
+    area: 'Gift wrap (charged mode)',
+    item: 'Charged gift wrap adds the REAL "Gift Wrapping" product price to the cart/order',
+    status: 'not_performed',
+    detail:
+      'Implemented in theme.js (syncGiftWrap adds the configured product per wrapped item) and mirrored in the preview store; the preview never invents a fee (charged=false default). Verifying a real charge needs the owner\'s Gift Wrapping product + a connected store.',
+  },
+  {
+    area: 'Languages (EN / हिन्दी / ગુજરાતી)',
+    item: 'Language switcher in the preview: nav, buttons, headings, cart messages, gift-finder, footer translated; brand names, product titles and prices preserved; <html lang> + localStorage persistence',
+    status: 'passed',
+    detail:
+      'Browser: हिन्दी and ગુજરાતી render across chrome; "Jockey" stays Latin; documentElement.lang = hi/gu; choice survives reload. Store-level translation (Translate & Adapt) documented in the Languages guide — not performable here.',
+  },
+  {
+    area: 'Bugs found by browser verification (this round)',
+    item: 'Gift Finder crashed when a product without a tags array matched the selected budget (mobile walk: Birthday + Kids + ₹300–699)',
+    status: 'failed',
+    detail:
+      'Root cause: p.tags.map on undefined (product p5 had no tags). Fixed: seed default tags: [] + defensive (p.tags ?? []) in findGiftIdeas + recipient-him tag for p5. Re-verified: honest empty state AND results grid both render (2 ideas · Diwali · For the family · ₹700–₹1,499).',
+  },
+  {
+    area: 'Bugs found by browser verification (this round)',
+    item: '4px horizontal overflow on mobile (390px) caused by the added language switcher',
+    status: 'failed',
+    detail:
+      'Fixed with a compact mobile switcher (icon-only, tighter padding); scrollWidth = 390 = innerWidth re-verified.',
+  },
+  {
     area: 'Shopify theme (shopify-theme/)',
     item: 'Complete structure: assets, config, layout, locales, sections (16), snippets (10), templates (11)',
     status: 'passed',
-    detail: 'All folders authored; ZIP route packs 52 theme files with only the 7 theme folders at root.',
+    detail: 'All folders authored; ZIP route packs 52 theme files with only the 7 theme folders at root. Pre-taxonomy backup: backups/shopify-theme-pre-taxonomy-20261026/.',
   },
   {
     area: 'Shopify theme (shopify-theme/)',
@@ -153,22 +236,18 @@ export const REPORT_ROWS: CheckRow[] = [
     detail: 'bun run lint passes with 0 errors / 0 warnings (useSyncExternalStore for the localStorage wishlist; no setState-in-effect).',
   },
   {
-    area: 'Theme features not shown in this preview',
-    item: 'Festival countdown banner (Diwali / Raksha Bandhan, Asia/Kolkata, auto-hide)',
-    status: 'not_performed',
-    detail: 'Implemented in the theme (sections/festival-countdown.liquid + assets/countdown.js, structurally validated) but not rendered by this one-page preview and not verified on a live store. Owner must verify festival dates yearly.',
+    area: 'Theme features now shown in this preview',
+    item: 'Festival countdown banner (Diwali / Raksha Bandhan, Asia/Kolkata, auto-hide) — demonstrated in the preview; live-store rendering still not verified',
+    status: 'passed',
+    detail:
+      'Preview banner verified (see Festival countdown rows). The theme\'s sections/festival-countdown.liquid + assets/countdown.js remain structurally validated; rendering on the live store needs the connected store. Owner must verify festival dates yearly.',
   },
   {
-    area: 'Theme features not shown in this preview',
-    item: 'Gift wrap option on product form (free/charged, line-item properties)',
-    status: 'not_performed',
-    detail: 'Implemented in the theme (snippets/gift-wrap-options.liquid + cart sync in theme.js, structurally validated) but not verifiable without a live store.',
-  },
-  {
-    area: 'Theme features not shown in this preview',
-    item: 'Hindi/Gujarati storefront translation (en/hi/gu locale files)',
-    status: 'not_performed',
-    detail: 'Locale files ship in the ZIP with key parity enforced by the validator; store-level languages + Translate & Adapt must be configured in Shopify admin (documented in the Languages guide).',
+    area: 'Theme features now shown in this preview',
+    item: 'Hindi/Gujarati storefront translation — switcher demonstrated in the preview; store-level rendering needs Shopify languages + Translate & Adapt',
+    status: 'passed',
+    detail:
+      'Preview switcher verified (see Languages row). The theme\'s en/hi/gu locale files ship in the ZIP with key parity enforced by the validator; publishing the languages in Shopify admin is the owner\'s step.',
   },
   {
     area: 'Requires Shopify admin (by design, never embedded here)',

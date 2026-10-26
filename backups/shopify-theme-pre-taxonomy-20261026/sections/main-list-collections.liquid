@@ -1,0 +1,42 @@
+{%- comment -%}
+  /collections index — grid of all visible collections (paginated).
+  Shows the collection image when available; text card otherwise. Never invents collections.
+{%- endcomment -%}
+<section class="mc-section mc-list-collections">
+  <div class="mc-container">
+    <h1 class="mc-section__heading">{{ 'collections.list_title' | t }}</h1>
+    {%- paginate collections by 24 -%}
+      {%- if paginate.items == 0 -%}
+        <p class="mc-empty-note">{{ 'departments.empty_note' | t }}</p>
+      {%- else -%}
+        <div class="mc-grid mc-grid--collections">
+          {%- for collection in collections -%}
+            <a class="mc-collection-card mc-reveal" href="{{ collection.url }}">
+              <span class="mc-collection-card__media">
+                {%- if collection.image != blank -%}
+                  {{ collection.image | image_url: width: 600 | image_tag:
+                    loading: 'lazy',
+                    sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+                    widths: '300, 600',
+                    alt: collection.title
+                  }}
+                {%- else -%}
+                  <span class="mc-collection-card__placeholder" aria-hidden="true">{% render 'icon', name: 'gift', size: 36 %}</span>
+                {%- endif -%}
+              </span>
+              <span class="mc-collection-card__title">{{ collection.title | escape }}</span>
+            </a>
+          {%- endfor -%}
+        </div>
+        {% render 'pagination', paginate: paginate %}
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collections list",
+  "settings": []
+}
+{% endschema %}

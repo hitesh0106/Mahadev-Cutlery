@@ -116,20 +116,22 @@ The theme links only to collections you select in the theme editor — empty one
         body: `- **Zoiro** — men's nikar/innerwear ONLY. No women's Zoiro, no t-shirts/sportswear.
 - **Bodycare** — Kids-Boys, Kids-Girls and Women ONLY. No men's Bodycare.
 - **Lady Care** — women's nikar/panty ONLY.
-- **Lotus Herbals** — skincare, face care, haircare ONLY. Never under Makeup.
-- **L'Oréal Paris** and **L'Oréal Professionnel** are separate brands — never merge them.
-- **Sunny** — only items you confirm are stocked; the catalogue is not guessed.
-- **Ghar Soaps** — identity pending your confirmation; nothing is fabricated.`,
+- **Lotus Herbals** — never auto-classified as makeup; skincare/face care/haircare by default, and any actual cosmetic item is classified correctly per product.
+- **L'Oréal Paris** and **L'Oréal Professionnel** are separate brands — never merge vendors, collection handles or imports.
+- **Sunny** — only items you confirm are stocked; every product needs name, category, customer group, price, image and inventory confirmed.
+- **Ghar Soaps** — identity pending your confirmation; nothing is fabricated and the brand stays unpublished until verified.
+- Full 30-brand profiles: see docs/BRAND_DEPARTMENT_MAP.md and data/brand-department-map.csv.`,
       },
       {
         heading: 'Department rules',
-        body: `Only these departments exist: Beauty & Skincare, Makeup, Haircare, Hosiery & Innerwear, Kids & Toys, Gift Articles, Imitation Jewellery, Beauty Tools & Grooming, Accessories & More.
-**There is no kitchenware/cutlery department** — the store name includes "Cutlery", but the online taxonomy intentionally does not. Belts, goggles, perfumes and other mixed items belong to *Accessories & More* (or All Products) — never to invented brand-specific categories.`,
+        body: `Exactly these EIGHT departments exist: Beauty & Makeup, Skincare, Haircare, Hosiery & Innerwear, Toys & Kids, Gift Articles, Imitation Jewellery, Accessories & Grooming.
+**There is no kitchenware/cutlery department** — the store name includes "Cutlery", but the online taxonomy intentionally does not. Belts, goggles, perfumes and other mixed items belong to *Accessories & Grooming* (or All Products) — never to invented brand-specific categories. A product can have a secondary merchandising collection without changing its primary department.`,
       },
       {
         heading: 'How the theme enforces this',
         body: `- Brand collections are created by YOU with a "Product vendor is X" condition — the theme never auto-creates brands.
 - The Gift Finder only recommends products from your real catalogue that you tagged with gf-* tags.
+- Products also carry department_/audience_/type_/brand_ tags (see docs/PRODUCT_TAXONOMY.md) so filters and search work.
 - The showcase and templates never display invented products, prices, ratings or discounts.`,
       },
     ],

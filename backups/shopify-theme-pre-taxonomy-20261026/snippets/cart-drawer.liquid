@@ -1,0 +1,49 @@
+{%- comment -%}
+  Cart drawer shell — items, totals and counts are rendered by theme.js via the
+  Shopify Cart AJAX API (/cart/add.js, /cart.js, /cart/change.js).
+  Included once from layout/theme.liquid.
+{%- endcomment -%}
+<div
+  id="mc-cart-drawer"
+  class="mc-drawer mc-cart-drawer"
+  data-mc-cart-drawer
+  role="dialog"
+  aria-modal="true"
+  aria-label="{{ 'cart.title' | t }}"
+  hidden
+>
+  <div class="mc-drawer__overlay" data-mc-cart-close></div>
+  <aside class="mc-drawer__panel mc-cart-drawer__panel" data-mc-drawer-panel>
+    <header class="mc-cart-drawer__head">
+      <h2 class="mc-cart-drawer__title">
+        {{ 'cart.title' | t }}
+        <span class="mc-count-bubble" data-mc-cart-count-bubble>{{ cart.item_count }}</span>
+      </h2>
+      <button type="button" class="mc-icon-btn" data-mc-cart-close aria-label="{{ 'general.close' | t }}">
+        {% render 'icon', name: 'close' %}
+      </button>
+    </header>
+
+    <div class="mc-cart-drawer__body" data-mc-drawer-scroll>
+      <div class="mc-cart-drawer__items" data-mc-cart-items></div>
+
+      <div class="mc-cart-drawer__empty" data-mc-cart-empty {% if cart.item_count > 0 %}hidden{% endif %}>
+        <span class="mc-cart-drawer__empty-icon" aria-hidden="true">{% render 'icon', name: 'cart', size: 40 %}</span>
+        <p>{{ 'cart.empty' | t }}</p>
+        <a class="mc-btn mc-btn--primary" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+      </div>
+    </div>
+
+    <footer class="mc-cart-drawer__foot" data-mc-cart-footer {% if cart.item_count == 0 %}hidden{% endif %}>
+      <div class="mc-cart-drawer__subtotal">
+        <span>{{ 'cart.subtotal' | t }}</span>
+        <span data-mc-cart-subtotal>{{ cart.total_price | money }}</span>
+      </div>
+      <p class="mc-cart-drawer__taxes">{{ 'cart.taxes_note' | t }}</p>
+      <div class="mc-cart-drawer__actions">
+        <a class="mc-btn mc-btn--primary" href="/checkout" data-mc-cart-checkout>{{ 'cart.checkout' | t }}</a>
+        <a class="mc-btn mc-btn--secondary" href="{{ routes.cart_url }}">{{ 'cart.view_cart' | t }}</a>
+      </div>
+    </footer>
+  </aside>
+</div>

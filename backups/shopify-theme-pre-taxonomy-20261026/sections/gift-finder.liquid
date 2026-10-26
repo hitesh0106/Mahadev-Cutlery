@@ -1,0 +1,135 @@
+{%- comment -%}
+  Gift Finder page section (page.gift-finder template, linked from the festival CTA).
+  - Reads an optional collection picker; falls back to the whole catalogue (collections.all).
+  - Embeds ONLY real product data as JSON (SPEC §5): handle,title,vendor,price (paise),
+    compare_at_price,available,image,tags,url — gift-finder.js filters by gf-* tags.
+  - Empty catalogue => honest empty note, no fake products.
+{%- endcomment -%}
+{%- liquid
+  assign gf_collection = section.settings.collection
+  if gf_collection != blank
+    assign gf_products = gf_collection.products
+  elsif collections.all != blank
+    assign gf_products = collections.all.products
+  else
+    assign gf_products = null
+  endif
+-%}
+<section class="mc-section mc-finder" data-mc-gift-finder>
+  <div class="mc-container mc-finder__inner">
+    <header class="mc-finder__head">
+      <h1 class="mc-section__heading">{{ section.settings.title | default: 'finder.title' | t }}</h1>
+      {%- if section.settings.subtitle != blank -%}
+        <p class="mc-finder__subtitle">{{ section.settings.subtitle | escape }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- if gf_products == null or gf_products.size == 0 -%}
+      <p class="mc-empty-note">{{ 'departments.empty_note' | t }}</p>
+    {%- else -%}
+      <p class="mc-finder__progress" data-mc-gf-progress aria-live="polite"></p>
+
+      <div class="mc-finder__steps">
+        <div class="mc-finder__step" data-mc-gf-panel="occasion" data-mc-gf-active="true">
+          <h2 class="mc-finder__question">{{ 'finder.step_occasion' | t }}</h2>
+          <div class="mc-finder__options" role="radiogroup" aria-label="{{ 'finder.step_occasion' | t }}">
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="occasion" data-mc-gf-value="gf-oc-diwali">{{ 'finder.oc_diwali' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="occasion" data-mc-gf-value="gf-oc-rakhi">{{ 'finder.oc_rakhi' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="occasion" data-mc-gf-value="gf-oc-birthday">{{ 'finder.oc_birthday' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="occasion" data-mc-gf-value="gf-oc-anniversary">{{ 'finder.oc_anniversary' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="occasion" data-mc-gf-value="gf-oc-wedding">{{ 'finder.oc_wedding' | t }}</button>
+          </div>
+        </div>
+
+        <div class="mc-finder__step" data-mc-gf-panel="recipient" hidden>
+          <h2 class="mc-finder__question">{{ 'finder.step_recipient' | t }}</h2>
+          <div class="mc-finder__options" role="radiogroup" aria-label="{{ 'finder.step_recipient' | t }}">
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="recipient" data-mc-gf-value="gf-for-her">{{ 'finder.for_her' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="recipient" data-mc-gf-value="gf-for-him">{{ 'finder.for_him' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="recipient" data-mc-gf-value="gf-for-kids">{{ 'finder.for_kids' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="recipient" data-mc-gf-value="gf-for-couple">{{ 'finder.for_couple' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="recipient" data-mc-gf-value="gf-for-family">{{ 'finder.for_family' | t }}</button>
+          </div>
+          <div class="mc-finder__actions">
+            <button type="button" class="mc-btn mc-btn--ghost mc-btn--sm" data-mc-gf-back>{{ 'finder.back' | t }}</button>
+          </div>
+        </div>
+
+        <div class="mc-finder__step" data-mc-gf-panel="budget" hidden>
+          <h2 class="mc-finder__question">{{ 'finder.step_budget' | t }}</h2>
+          <div class="mc-finder__options" role="radiogroup" aria-label="{{ 'finder.step_budget' | t }}">
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="budget" data-mc-gf-value="gf-under-199">{{ 'finder.b_under_199' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="budget" data-mc-gf-value="gf-199-499">{{ 'finder.b_199_499' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="budget" data-mc-gf-value="gf-500-999">{{ 'finder.b_500_999' | t }}</button>
+            <button type="button" class="mc-finder__option" role="radio" aria-checked="false" data-mc-gf-choice="budget" data-mc-gf-value="gf-1000-plus">{{ 'finder.b_1000_plus' | t }}</button>
+          </div>
+          <div class="mc-finder__actions">
+            <button type="button" class="mc-btn mc-btn--ghost mc-btn--sm" data-mc-gf-back>{{ 'finder.back' | t }}</button>
+          </div>
+        </div>
+
+        <div class="mc-finder__step" data-mc-gf-panel="results" hidden>
+          <p class="mc-finder__count" data-mc-gf-count aria-live="polite"></p>
+          <div class="mc-grid mc-grid--products" data-mc-gf-results></div>
+          <div class="mc-finder__empty" data-mc-gf-empty hidden>
+            <h3>{{ 'finder.empty_title' | t }}</h3>
+            <p>{{ 'finder.empty_body' | t }}</p>
+          </div>
+          <div class="mc-finder__actions">
+            <button type="button" class="mc-btn mc-btn--ghost mc-btn--sm" data-mc-gf-back>{{ 'finder.back' | t }}</button>
+            <button type="button" class="mc-btn mc-btn--secondary mc-btn--sm" data-mc-gf-reset>{{ 'finder.restart' | t }}</button>
+          </div>
+        </div>
+      </div>
+
+      <script type="application/json" data-mc-gift-products>
+        [
+          {%- for p in gf_products limit: 250 -%}
+            {
+              "handle": {{ p.handle | json }},
+              "title": {{ p.title | json }},
+              "vendor": {{ p.vendor | json }},
+              "price": {{ p.price | default: 0 }},
+              "compare_at_price": {{ p.compare_at_price | default: 0 }},
+              "available": {{ p.available }},
+              "image": "{{ p.featured_image | image_url: width: 600 }}",
+              "tags": {{ p.tags | json }},
+              "url": {{ p.url | json }}
+            }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      </script>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Gift Finder",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Gift Finder"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Three quick questions to help you find a thoughtful gift."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection to search (optional)",
+      "info": "Leave empty to search the whole catalogue. Products need gf-* tags (see the product import guide) to appear in results."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gift Finder"
+    }
+  ]
+}
+{% endschema %}

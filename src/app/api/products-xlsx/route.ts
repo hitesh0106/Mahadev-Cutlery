@@ -18,6 +18,7 @@ import {
   DEPARTMENTS,
   DEMO_PRODUCTS,
 } from '@/lib/catalog';
+import { ALL_VENDORS, TAG_CONVENTIONS } from '@/lib/taxonomy';
 
 export const runtime = 'nodejs';
 
@@ -54,33 +55,9 @@ const COLUMNS = [
   'Status',
 ];
 
-// Brands allowed in the Vendor dropdown — SPEC §3 (rules brands + other known
-// brands). Merchants may extend this list in the hidden "Lists" sheet.
-const VENDOR_LIST: string[] = [
-  ...BRAND_RULES.map((b) => b.brand),
-  'Jockey',
-  'Van Heusen',
-  'Matrix',
-  'Wella Professionals',
-  'Garnier',
-  'Minimalist',
-  'O3+',
-  'Cetaphil',
-  'Sebamed',
-  'Pilgrim',
-  'Plix',
-  'NIVEA',
-  "POND'S",
-  'Dot & Key',
-  'Swiss Beauty',
-  'Lakmé',
-  'MARS',
-  'Maybelline New York',
-  'Colorbar',
-  'Faces Canada',
-  'VEGA',
-  'Philips',
-];
+// Canonical vendor dropdown — the full 30-brand list from the official
+// taxonomy (src/lib/taxonomy.ts). Merchants may extend the hidden "Lists" sheet.
+const VENDOR_LIST: string[] = ALL_VENDORS;
 
 const TYPE_LIST: string[] = [...new Set(DEMO_PRODUCTS.map((p) => p.type))].sort();
 
@@ -124,7 +101,7 @@ function exampleRows(): ExampleRow[] {
         'Apparel & Accessories > Clothing > Underwear & Socks',
         zoiro.type,
         [EXAMPLE_TAG, ...zoiro.tags].join(','),
-        'TRUE',
+        'FALSE',
         'Size',
         zoiro.sizes[0] ?? 'S',
         'Colour',
@@ -146,7 +123,7 @@ function exampleRows(): ExampleRow[] {
         'FALSE',
         zoiro.title.replace(' — SAMPLE', ''),
         SEO,
-        'active',
+        'draft',
       ],
       [
         zoiro.handle,
@@ -192,7 +169,7 @@ function exampleRows(): ExampleRow[] {
       'Health & Beauty > Personal Care > Cosmetics > Skin Care > Cleanser',
       lotus.type,
       [EXAMPLE_TAG, ...lotus.tags].join(','),
-      'TRUE',
+      'FALSE',
       null,
       null,
       null,
@@ -214,7 +191,7 @@ function exampleRows(): ExampleRow[] {
       'FALSE',
       lotus.title.replace(' — SAMPLE', ''),
       SEO,
-      'active',
+      'draft',
     ]);
   }
 
@@ -227,7 +204,7 @@ function exampleRows(): ExampleRow[] {
       null,
       hamper.type,
       [EXAMPLE_TAG, ...hamper.tags, ...hamper.gfTags].join(','),
-      'TRUE',
+      'FALSE',
       null,
       null,
       null,
@@ -249,7 +226,7 @@ function exampleRows(): ExampleRow[] {
       'FALSE',
       hamper.title.replace(' — SAMPLE', ''),
       SEO,
-      'active',
+      'draft',
     ]);
   }
 
@@ -458,7 +435,7 @@ export async function GET() {
     DEPARTMENTS.map((d) => [d.name, d.blurb]),
   );
   note(
-    'There is NO kitchenware/cutlery department — the store name includes "Cutlery", but the online taxonomy intentionally does not. Belts, goggles, perfumes and other mixed items belong to Accessories & More (or All Products).',
+    'There is NO kitchenware/cutlery department — the store name includes "Cutlery", but the online taxonomy intentionally does not. Belts, goggles, perfumes and other mixed items belong to Accessories & Grooming (or All Products).',
   );
 
   r += 1;
@@ -470,6 +447,13 @@ export async function GET() {
   twoColTable(
     ['Tag', 'Meaning'],
     GIFT_TAGS.map((t) => [t.tag, t.meaning]),
+  );
+
+  r += 1;
+  sectionHeader('Tag conventions (department_ / audience_ / type_ / brand_)');
+  twoColTable(
+    ['Tag', 'Meaning'],
+    TAG_CONVENTIONS.map((t) => [t.example, t.meaning]),
   );
 
   r += 1;

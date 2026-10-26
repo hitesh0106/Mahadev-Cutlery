@@ -1,0 +1,28 @@
+{%- comment -%}
+  Renders a quantity stepper (minus / input / plus) wired to theme.js qty logic.
+  Accepts:
+  - name: {String} (optional) input name, default "quantity"
+  - value: {Number} (optional) initial value, default 1
+  - min: {Number} (optional) default 1
+  - max: {Number} (optional)
+  - id: {String} (optional) input id
+{%- endcomment -%}
+{%- assign q_name = name | default: 'quantity' -%}
+{%- assign q_value = value | default: 1 -%}
+{%- assign q_min = min | default: 1 -%}
+<div class="mc-qty" data-mc-qty-wrapper>
+  <button type="button" class="mc-qty__btn" data-mc-qty="decrease" aria-label="{{ 'cart.qty_decrease' | t }}">&minus;</button>
+  <input
+    type="number"
+    class="mc-qty__input"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    name="{{ q_name }}"
+    id="{{ id | default: 'mc-quantity' }}"
+    value="{{ q_value }}"
+    min="{{ q_min }}"
+    {% if max != blank %}max="{{ max }}"{% endif %}
+    data-mc-qty-input
+  >
+  <button type="button" class="mc-qty__btn" data-mc-qty="increase" aria-label="{{ 'cart.qty_increase' | t }}">+</button>
+</div>

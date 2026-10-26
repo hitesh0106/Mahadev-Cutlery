@@ -79,11 +79,11 @@ const FOOTER_COLUMNS = [
   {
     heading: 'Departments',
     links: [
+      { label: 'Beauty & Makeup', href: '#departments' },
       { label: 'Skincare', href: '#skincare-edit' },
-      { label: 'Makeup', href: '#departments' },
       { label: 'Haircare', href: '#departments' },
       { label: 'Hosiery & Innerwear', href: '#innerwear-edit' },
-      { label: 'Kids & Toys', href: '#gifts-edit' },
+      { label: 'Toys & Kids', href: '#gifts-edit' },
       { label: 'Gift Articles', href: '#gifts-edit' },
     ],
   },
