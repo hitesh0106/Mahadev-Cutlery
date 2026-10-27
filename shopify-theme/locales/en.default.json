@@ -1,5 +1,11 @@
 {
-  "language": "en",
+  "language": {
+    "selector_label": "Language",
+    "partial_note": "Full-store translation is enabled via Shopify Translate & Adapt — some content may still appear in English.",
+    "english": "English",
+    "hindi": "हिंदी",
+    "gujarati": "ગુજરાતી"
+  },
   "native_name": "English",
   "general": {
     "menu": "Menu",
@@ -97,9 +103,11 @@
     "step_progress": "Step {{ current }} of {{ total }}",
     "oc_diwali": "Diwali",
     "oc_rakhi": "Raksha Bandhan",
+    "oc_bhai_dooj": "Bhai Dooj",
     "oc_birthday": "Birthday",
     "oc_anniversary": "Anniversary",
     "oc_wedding": "Wedding",
+    "oc_just_because": "Just because",
     "for_her": "For her",
     "for_him": "For him",
     "for_kids": "For kids",
@@ -188,13 +196,6 @@
     "copyright": "© {{ year }} {{ shop_name }}. All rights reserved.",
     "store_hours": "Store hours",
     "whatsapp_note": "Order on WhatsApp"
-  },
-  "language": {
-    "selector_label": "Language",
-    "partial_note": "Full-store translation is enabled via Shopify Translate & Adapt — some content may still appear in English.",
-    "english": "English",
-    "hindi": "हिंदी",
-    "gujarati": "ગુજરાતી"
   },
   "departments": {
     "title": "Shop by Department",

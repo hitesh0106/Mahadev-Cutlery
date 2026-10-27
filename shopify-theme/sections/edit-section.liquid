@@ -1,0 +1,204 @@
+{%- comment -%}
+  Edit story — split editorial section (image + eyebrow/title/text + chip
+  pills + optional two product cards). Three instances in the reference
+  design: Beauty & Skincare, Hosiery & Innerwear, Gifts/Toys/Jewellery.
+  Chips: label + optional link; without a link the chip is a static pill
+  (never a dead button). Product cards render only when a collection with
+  products is picked — nothing is invented.
+{%- endcomment -%}
+{%- liquid
+  assign es_has_content = false
+  if section.settings.eyebrow != blank or section.settings.title != blank
+    assign es_has_content = true
+  endif
+  assign es_rendered = 0
+  for block in section.blocks
+    if block.settings.label != blank
+      assign es_rendered = es_rendered | plus: 1
+    endif
+  endfor
+-%}
+{%- if es_has_content -%}
+  {%- liquid
+    case section.settings.tone
+      when 'warm'
+        assign es_tone_class = 'mc-section--soft'
+      when 'cream'
+        assign es_tone_class = 'mc-section--cream'
+      when 'blush'
+        assign es_tone_class = 'mc-section--blush'
+      else
+        assign es_tone_class = ''
+    endcase
+  -%}
+  <section class="mc-section {{ es_tone_class }} mc-edit{% if section.settings.image_side == 'right' %} mc-edit--right{% endif %}" id="{{ section.settings.anchor_id | default: section.id }}">
+    <div class="mc-container mc-edit__inner">
+      <div class="mc-edit__media mc-reveal">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image | image_url: width: 900 | image_tag:
+            loading: 'lazy',
+            sizes: '(min-width: 990px) 45vw, 100vw',
+            widths: '400, 600, 900',
+            class: 'mc-edit__img',
+            alt: section.settings.image.alt | default: section.settings.title
+          }}
+        {%- else -%}
+          <img class="mc-edit__img" src="{{ section.settings.fallback_image | default: 'editorial-skincare.jpg' | asset_url }}" alt="" loading="lazy" width="900" height="1125">
+        {%- endif -%}
+      </div>
+
+      <div class="mc-edit__body">
+        <div class="mc-edit__copy mc-reveal">
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.title != blank -%}
+            <h2 class="mc-edit__title">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <p class="mc-edit__text">{{ section.settings.text | escape }}</p>
+          {%- endif -%}
+        </div>
+
+        {%- if es_rendered > 0 -%}
+          <div class="mc-edit__chips mc-reveal">
+            {%- for block in section.blocks -%}
+              {%- assign es_label = block.settings.label -%}
+              {%- if es_label == blank -%}{%- continue -%}{%- endif -%}
+              {%- if block.settings.link != blank -%}
+                <a class="mc-chip" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ es_label | escape }}</a>
+              {%- else -%}
+                <span class="mc-chip mc-chip--static" {{ block.shopify_attributes }}>{{ es_label | escape }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- liquid
+          assign es_collection = section.settings.collection
+          if es_collection != blank and es_collection.products_count > 0
+            echo '<ul class="mc-edit__products mc-reveal">'
+            for es_product in es_collection.products limit: 2
+              echo '<li>'
+              render 'product-card', card_product: es_product
+              echo '</li>'
+            endfor
+            echo '</ul>'
+          endif
+        -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Edit story",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The Beauty & Skincare Edit"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Gentle routines for every skin"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Cleansers, serums, moisturisers and sunscreens chosen from the brands on our shelves."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Story image (optional)",
+      "info": "Uses a bundled editorial placeholder until an image is picked."
+    },
+    {
+      "type": "select",
+      "id": "fallback_image",
+      "label": "Bundled placeholder (when no image picked)",
+      "options": [
+        { "value": "editorial-skincare.jpg", "label": "Editorial skincare" },
+        { "value": "dept-innerwear.jpg", "label": "Hosiery & innerwear" },
+        { "value": "dept-gifts.jpg", "label": "Gift articles" },
+        { "value": "dept-makeup.jpg", "label": "Beauty & makeup" },
+        { "value": "dept-haircare.jpg", "label": "Haircare" },
+        { "value": "dept-kids.jpg", "label": "Toys & kids" },
+        { "value": "dept-jewellery.jpg", "label": "Imitation jewellery" },
+        { "value": "dept-tools.jpg", "label": "Accessories & grooming" }
+      ],
+      "default": "editorial-skincare.jpg"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Background tone",
+      "options": [
+        { "value": "paper", "label": "Paper (white)" },
+        { "value": "warm", "label": "Warm" },
+        { "value": "cream", "label": "Cream" },
+        { "value": "blush", "label": "Blush" }
+      ],
+      "default": "cream"
+    },
+    {
+      "type": "select",
+      "id": "image_side",
+      "label": "Image side (desktop)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection for the 2 product cards (optional)",
+      "info": "Cards render only when this collection has products. Nothing is invented."
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "HTML anchor id (optional)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "chip",
+      "name": "Chip",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "info": "A product type (e.g. Serums) or a brand (e.g. Cetaphil)."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)",
+          "info": "Without a link the chip renders as a static pill."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Edit story",
+      "blocks": [
+        { "type": "chip" },
+        { "type": "chip" },
+        { "type": "chip" },
+        { "type": "chip" }
+      ]
+    }
+  ]
+}
+{% endschema %}

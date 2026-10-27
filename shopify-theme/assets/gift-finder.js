@@ -80,9 +80,9 @@
         if (!product.available) return false;
         var tags = product.tags || [];
         return (
-          tags.indexOf(choices.occasion) >= 0 &&
-          tags.indexOf(choices.recipient) >= 0 &&
-          tags.indexOf(choices.budget) >= 0
+          (!choices.occasion || tags.indexOf(choices.occasion) >= 0) &&
+          (!choices.recipient || tags.indexOf(choices.recipient) >= 0) &&
+          (!choices.budget || tags.indexOf(choices.budget) >= 0)
         );
       });
     }

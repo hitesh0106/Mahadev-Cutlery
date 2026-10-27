@@ -1,36 +1,92 @@
 {%- comment -%}
-  Hero banner: image (optional) + heading + subtitle + CTA.
-  Without an image it falls back to the warm soft background — no invented imagery.
-  Hidden when heading, subtitle and image are all empty.
+  Hero — reference-exact editorial hero:
+  eyebrow, two-line serif headline, subheading, two CTAs and an
+  "unveil" image with a floating secondary card.
+  Images fall back to the bundled asset placeholders when the merchant
+  has not picked an image yet (settings images always win).
 {%- endcomment -%}
-{%- if section.settings.heading != blank or section.settings.subheading != blank or section.settings.image != blank -%}
-  {%- if section.settings.image != blank -%}
-    {%- assign hero_alt = section.settings.image.alt | default: section.settings.heading -%}
-  {%- endif -%}
-  <section class="mc-hero">
-    <div class="mc-hero__inner mc-container">
-      <div class="mc-hero__content mc-reveal">
-        {%- if section.settings.heading != blank -%}
-          <h1 class="mc-hero__heading">{{ section.settings.heading | escape }}</h1>
+{%- liquid
+  assign hero_eyebrow = section.settings.eyebrow
+  assign hero_heading_1 = section.settings.heading_line_1
+  assign hero_heading_2 = section.settings.heading_line_2
+  assign hero_img = section.settings.image
+  assign hero_float_img = section.settings.float_image
+  assign hero_cta2_label = section.settings.cta2_label
+  assign hero_cta2_link = section.settings.cta2_link
+-%}
+{%- if hero_heading_1 != blank or hero_heading_2 != blank or hero_img != blank -%}
+  <section class="mc-hero mc-hero--editorial">
+    <div class="mc-hero__inner mc-hero__inner--editorial mc-container">
+      <div class="mc-hero__content">
+        {%- if hero_eyebrow != blank -%}
+          <p class="mc-eyebrow mc-anim-rise">{{ hero_eyebrow | escape }}</p>
         {%- endif -%}
+        <h1 class="mc-hero__heading mc-hero__heading--display mc-anim-rise" style="--rise-delay: 80ms">
+          {%- if hero_heading_1 != blank -%}{{ hero_heading_1 | escape }}{%- endif -%}
+          {%- if hero_heading_2 != blank -%}<br>{{ hero_heading_2 | escape }}{%- endif -%}
+        </h1>
         {%- if section.settings.subheading != blank -%}
-          <p class="mc-hero__subheading">{{ section.settings.subheading | escape }}</p>
+          <p class="mc-hero__subheading mc-anim-rise" style="--rise-delay: 160ms">{{ section.settings.subheading | escape }}</p>
         {%- endif -%}
-        {%- if section.settings.cta_label != blank and section.settings.cta_link != blank -%}
-          <a class="mc-btn mc-btn--primary mc-hero__cta" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label | escape }}</a>
+        {%- if section.settings.cta_label != blank or hero_cta2_label != blank -%}
+          <div class="mc-hero__ctas mc-anim-rise" style="--rise-delay: 240ms">
+            {%- if section.settings.cta_label != blank -%}
+              <a class="mc-btn mc-btn--ink mc-btn--lg" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
+                {{ section.settings.cta_label | escape }}
+                <svg class="mc-icon mc-btn__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if hero_cta2_label != blank -%}
+              <a class="mc-btn mc-btn--outline-ink mc-btn--lg" href="{{ hero_cta2_link | default: '/pages/brands' }}">{{ hero_cta2_label | escape }}</a>
+            {%- endif -%}
+          </div>
         {%- endif -%}
       </div>
-      {%- if section.settings.image != blank -%}
-        <div class="mc-hero__media mc-reveal">
-          {{ section.settings.image | image_url: width: 1200 | image_tag:
-            loading: 'eager',
-            sizes: '(min-width: 990px) 50vw, 100vw',
-            widths: '400, 600, 800, 1000, 1200',
-            class: 'mc-hero__img',
-            alt: hero_alt
-          }}
-        </div>
-      {%- endif -%}
+
+      <div class="mc-hero__media mc-hero__media--editorial">
+        <figure class="mc-hero__figure mc-anim-unveil">
+          {%- if hero_img != blank -%}
+            {{ hero_img | image_url: width: 1400 | image_tag:
+              loading: 'eager',
+              fetchpriority: 'high',
+              sizes: '(min-width: 990px) 58vw, 100vw',
+              widths: '400, 600, 800, 1000, 1200, 1400',
+              class: 'mc-hero__img',
+              alt: hero_img.alt | default: section.settings.heading_line_1
+            }}
+          {%- else -%}
+            <img
+              src="{{ 'hero-editorial.jpg' | asset_url }}"
+              alt="{{ 'Curated beauty, gifts and jewellery arranged on cream linen' | escape }}"
+              class="mc-hero__img"
+              loading="eager"
+              fetchpriority="high"
+              width="1200"
+              height="960"
+            >
+          {%- endif -%}
+        </figure>
+
+        {%- if section.settings.show_float_card -%}
+          <a
+            class="mc-hero__float mc-anim-rise"
+            style="--rise-delay: 420ms"
+            href="{{ section.settings.float_link | default: '/collections/imitation-jewellery' }}"
+          >
+            <span class="mc-hero__float-media">
+              {%- if hero_float_img != blank -%}
+                {{ hero_float_img | image_url: width: 440 | image_tag: loading: 'lazy', class: 'mc-hero__float-img', alt: '' }}
+              {%- else -%}
+                <img src="{{ 'dept-jewellery.jpg' | asset_url }}" alt="" class="mc-hero__float-img" loading="lazy" width="440" height="550">
+              {%- endif -%}
+            </span>
+            <span class="mc-hero__float-row">
+              <span>{{ section.settings.float_label | default: 'Imitation jewellery' | escape }}</span>
+              <svg class="mc-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </a>
+        {%- endif -%}
+      </div>
     </div>
   </section>
 {%- endif -%}
@@ -40,32 +96,79 @@
   "name": "Hero",
   "settings": [
     {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Background/side image (optional)"
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Mahadev — Ahmedabad"
     },
     {
       "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Thoughtful gifts & everyday essentials"
+      "id": "heading_line_1",
+      "label": "Heading line 1",
+      "default": "Beauty, care & gifting,"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_2",
+      "label": "Heading line 2",
+      "default": "beautifully curated."
     },
     {
       "type": "textarea",
       "id": "subheading",
       "label": "Subheading",
-      "default": "Beauty, hosiery, kids, jewellery and more — from our store in Vastral, Ahmedabad."
+      "default": "Skincare, makeup, haircare, innerwear, toys and thoughtful gifts from the brands you know, all in one considered store."
     },
     {
       "type": "text",
       "id": "cta_label",
-      "label": "Button label",
-      "default": "Shop All"
+      "label": "Primary button label",
+      "default": "Shop Now"
     },
     {
       "type": "url",
       "id": "cta_link",
-      "label": "Button link"
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "cta2_label",
+      "label": "Secondary button label",
+      "default": "Explore Brands"
+    },
+    {
+      "type": "url",
+      "id": "cta2_link",
+      "label": "Secondary button link",
+      "info": "Defaults to the Brands A–Z page (/pages/brands)."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image (optional)",
+      "info": "Uses the bundled editorial placeholder until an image is picked."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_float_card",
+      "label": "Show floating secondary card",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "float_image",
+      "label": "Floating card image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "float_label",
+      "label": "Floating card label",
+      "default": "Imitation jewellery"
+    },
+    {
+      "type": "url",
+      "id": "float_link",
+      "label": "Floating card link"
     }
   ],
   "presets": [

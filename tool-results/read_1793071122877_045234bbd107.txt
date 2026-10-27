@@ -1,0 +1,666 @@
+     1→/* ==========================================================================
+     2→   Mahadev theme — theme.js (window.MC)
+     3→   Nav drawer, mega menus, search toggle, reveals, quantity steppers,
+     4→   AJAX cart (Shopify Cart API) with gift-wrap sync, variant picker wiring,
+     5→   gift-message counter, WhatsApp message refresh, filters toggle.
+     6→   No invented data: everything rendered comes from Shopify responses.
+     7→   ========================================================================== */
+     8→(function () {
+     9→  'use strict';
+    10→
+    11→  var MC = (window.MC = window.MC || {});
+    12→
+    13→  /* ── Config & i18n from Liquid JSON islands ───────────────────────────── */
+    14→  function readJSON(selector) {
+    15→    var el = document.querySelector(selector);
+    16→    if (!el) return {};
+    17→    try {
+    18→      return JSON.parse(el.textContent);
+    19→    } catch (e) {
+    20→      console.warn('[Mahadev theme] Invalid JSON island:', selector, e);
+    21→      return {};
+    22→    }
+    23→  }
+    24→
+    25→  var CONFIG = (MC.config = readJSON('[data-mc-config]'));
+    26→  var I18N = (MC.i18n = readJSON('[data-mc-i18n]'));
+    27→  var REDUCED_MOTION =
+    28→    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    29→
+    30→  function t(key, fallback) {
+    31→    return (I18N && I18N[key]) || fallback || '';
+    32→  }
+    33→
+    34→  /* ── Money formatting (Shopify money_format string, amounts in paise) ─── */
+    35→  function formatMoney(cents, format) {
+    36→    if (typeof cents !== 'number' || isNaN(cents)) cents = 0;
+    37→    var fmt = format || (CONFIG && CONFIG.moneyFormat) || '\u20B9{{amount}}';
+    38→    var value;
+    39→    var withCommas = function (n) {
+    40→      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    41→    };
+    42→    if (fmt.indexOf('{{amount_no_decimals}}') >= 0) {
+    43→      value = withCommas(Math.round(cents / 100));
+    44→      return fmt.replace('{{amount_no_decimals}}', value);
+    45→    }
+    46→    if (fmt.indexOf('{{amount_no_decimals_with_comma_separator}}') >= 0) {
+    47→      value = withCommas(Math.round(cents / 100)).replace(/,/g, '.');
+    48→      return fmt.replace('{{amount_no_decimals_with_comma_separator}}', value);
+    49→    }
+    50→    if (fmt.indexOf('{{amount_with_space_separator}}') >= 0) {
+    51→      value = withCommas(Math.floor(cents / 100)) + '.' + String(cents % 100).padStart(2, '0');
+    52→      return fmt.replace('{{amount_with_space_separator}}', value);
+    53→    }
+    54→    if (fmt.indexOf('{{amount_with_comma_separator}}') >= 0) {
+    55→      value = withCommas(Math.floor(cents / 100)) + ',' + String(cents % 100).padStart(2, '0');
+    56→      return fmt.replace('{{amount_with_comma_separator}}', value);
+    57→    }
+    58→    value = withCommas(Math.floor(cents / 100)) + '.' + String(cents % 100).padStart(2, '0');
+    59→    return fmt.replace('{{amount}}', value);
+    60→  }
+    61→  MC.formatMoney = formatMoney;
+    62→
+    63→  function escapeHtml(str) {
+    64→    return String(str == null ? '' : str)
+    65→      .replace(/&/g, '&amp;')
+    66→      .replace(/</g, '&lt;')
+    67→      .replace(/>/g, '&gt;')
+    68→      .replace(/"/g, '&quot;')
+    69→      .replace(/'/g, '&#39;');
+    70→  }
+    71→
+    72→  /* ── Cart API helpers ─────────────────────────────────────────────────── */
+    73→  function cartFetch(url, body) {
+    74→    return fetch(url, {
+    75→      method: 'POST',
+    76→      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    77→      body: JSON.stringify(body),
+    78→    }).then(function (res) {
+    79→      return res.json().then(function (data) {
+    80→        if (!res.ok) throw data;
+    81→        return data;
+    82→      });
+    83→    });
+    84→  }
+    85→
+    86→  MC.getCart = function () {
+    87→    return fetch((CONFIG && CONFIG.cartUrl ? CONFIG.cartUrl : '/cart') + '.js', {
+    88→      headers: { Accept: 'application/json' },
+    89→    }).then(function (res) {
+    90→      return res.json();
+    91→    });
+    92→  };
+    93→
+    94→  /* ── Cart drawer rendering ────────────────────────────────────────────── */
+    95→  function renderCart(cart) {
+    96→    document.querySelectorAll('[data-mc-cart-count-bubble]').forEach(function (el) {
+    97→      el.textContent = cart.item_count;
+    98→      el.hidden = cart.item_count === 0;
+    99→    });
+   100→
+   101→    var itemsEl = document.querySelector('[data-mc-cart-items]');
+   102→    var emptyEl = document.querySelector('[data-mc-cart-empty]');
+   103→    var footerEl = document.querySelector('[data-mc-cart-footer]');
+   104→    if (!itemsEl) return;
+   105→
+   106→    itemsEl.innerHTML = '';
+   107→
+   108→    if (!cart.items || cart.items.length === 0) {
+   109→      if (emptyEl) emptyEl.hidden = false;
+   110→      if (footerEl) footerEl.hidden = true;
+   111→      return;
+   112→    }
+   113→    if (emptyEl) emptyEl.hidden = true;
+   114→    if (footerEl) footerEl.hidden = false;
+   115→
+   116→    cart.items.forEach(function (item) {
+   117→      var media = item.image
+   118→        ? '<img src="' + escapeHtml(item.image) + '&width=150" alt="' + escapeHtml(item.product_title) + '" width="72" height="90" loading="lazy">'
+   119→        : '';
+   120→      var html = '<div class="mc-cart-item" data-mc-line-key="' + escapeHtml(item.key) + '">';
+   121→
+   122→      html += '<a class="mc-cart-item__media" href="' + escapeHtml(item.url) + '" tabindex="-1" aria-hidden="true">' + media + '</a>';
+   123→      html += '<div>';
+   124→      html += '<a class="mc-cart-item__title" href="' + escapeHtml(item.url) + '">' + escapeHtml(item.product_title) + '</a>';
+   125→      if (CONFIG.show_vendor !== false && item.vendor) {
+   126→        html += '<p class="mc-cart-item__vendor">' + escapeHtml(item.vendor) + '</p>';
+   127→      }
+   128→      if (item.variant_title && item.variant_title !== 'Default Title') {
+   129→        html += '<p class="mc-cart-item__variant">' + escapeHtml(item.variant_title) + '</p>';
+   130→      }
+   131→      if (item.properties) {
+   132→        Object.keys(item.properties).forEach(function (key) {
+   133→          var val = item.properties[key];
+   134→          if (key.charAt(0) === '_' || val === '' || val == null) return;
+   135→          html += '<p class="mc-cart-item__prop">' + escapeHtml(key) + ': ' + escapeHtml(val) + '</p>';
+   136→        });
+   137→      }
+   138→      if (item.line_level_discount_allocations && item.line_level_discount_allocations.length) {
+   139→        item.line_level_discount_allocations.forEach(function (d) {
+   140→          html += '<p class="mc-cart-item__prop">' + escapeHtml(d.discount_application.title) + ' (&minus;' + formatMoney(d.amount) + ')</p>';
+   141→        });
+   142→      }
+   143→      html += '<p class="mc-cart-item__price">' + formatMoney(item.final_line_price) + '</p>';
+   144→      html +=
+   145→        '<div class="mc-cart-item__controls">' +
+   146→        '<div class="mc-qty" data-mc-qty-wrapper>' +
+   147→        '<button type="button" class="mc-qty__btn" data-mc-qty="decrease" data-mc-line-key="' + escapeHtml(item.key) + '" aria-label="' + escapeHtml(t('qtyDecrease', 'Decrease quantity')) + '">&minus;</button>' +
+   148→        '<input class="mc-qty__input" type="number" inputmode="numeric" min="0" value="' + item.quantity + '" data-mc-line-qty data-mc-line-key="' + escapeHtml(item.key) + '" aria-label="' + escapeHtml(t('cartQty', 'Quantity')) + '">' +
+   149→        '<button type="button" class="mc-qty__btn" data-mc-qty="increase" data-mc-line-key="' + escapeHtml(item.key) + '" aria-label="' + escapeHtml(t('qtyIncrease', 'Increase quantity')) + '">+</button>' +
+   150→        '</div>' +
+   151→        '<button type="button" class="mc-cart-item__remove" data-mc-line-remove data-mc-line-key="' + escapeHtml(item.key) + '">' + escapeHtml(t('cartRemove', 'Remove')) + '</button>' +
+   152→        '</div>';
+   153→      html += '</div></div>';
+   154→      itemsEl.insertAdjacentHTML('beforeend', html);
+   155→    });
+   156→
+   157→    var subtotalEl = document.querySelector('[data-mc-cart-subtotal]');
+   158→    if (subtotalEl) subtotalEl.textContent = formatMoney(cart.total_price);
+   159→  }
+   160→
+   161→  MC.refreshCart = function () {
+   162→    return MC.getCart().then(renderCart);
+   163→  };
+   164→
+   165→  /* ── Gift wrap sync (charged mode uses a REAL product) ────────────────── */
+   166→  /* Lines for a product carry the hidden property "_for" = product handle.  */
+   167→  function syncGiftWrap(handle, quantity) {
+   168→    if (!CONFIG.giftWrap || !CONFIG.giftWrap.enabled || !CONFIG.giftWrap.charged) {
+   169→      return Promise.resolve();
+   170→    }
+   171→    if (!CONFIG.giftWrap.variantId) return Promise.resolve();
+   172→    return MC.getCart().then(function (cart) {
+   173→      var wrapLines = (cart.items || []).filter(function (item) {
+   174→        return item.properties && item.properties._for === handle;
+   175→      });
+   176→      var currentQty = wrapLines.reduce(function (sum, line) {
+   177→        return sum + line.quantity;
+   178→      }, 0);
+   179→      if (quantity > 0 && currentQty < quantity) {
+   180→        return cartFetch((CONFIG.cartUrl || '/cart') + '/add.js', {
+   181→          items: [
+   182→            {
+   183→              id: CONFIG.giftWrap.variantId,
+   184→              quantity: quantity - currentQty,
+   185→              properties: { _for: handle },
+   186→            },
+   187→          ],
+   188→        }).then(function () {
+   189→          return MC.refreshCart();
+   190→        });
+   191→      }
+   192→      if (quantity === 0 && wrapLines.length) {
+   193→        return Promise.all(
+   194→          wrapLines.map(function (line) {
+   195→            return cartFetch((CONFIG.cartUrl || '/cart') + '/change.js', {
+   196→              id: line.key,
+   197→              quantity: 0,
+   198→            });
+   199→          }),
+   200→        ).then(function () {
+   201→          return MC.refreshCart();
+   202→        });
+   203→      }
+   204→      return MC.refreshCart();
+   205→    });
+   206→  }
+   207→  MC.syncGiftWrap = syncGiftWrap;
+   208→
+   209→  /* ── Drawer helpers (focus trap, escape) ──────────────────────────────── */
+   210→  var lastFocused = null;
+   211→
+   212→  function trapFocus(drawer, event) {
+   213→    var focusables = drawer.querySelectorAll(
+   214→      'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])',
+   215→    );
+   216→    if (!focusables.length) return;
+   217→    var first = focusables[0];
+   218→    var last = focusables[focusables.length - 1];
+   219→    if (event.shiftKey && document.activeElement === first) {
+   220→      event.preventDefault();
+   221→      last.focus();
+   222→    } else if (!event.shiftKey && document.activeElement === last) {
+   223→      event.preventDefault();
+   224→      first.focus();
+   225→    }
+   226→  }
+   227→
+   228→  function openDrawer(drawer) {
+   229→    if (!drawer) return;
+   230→    lastFocused = document.activeElement;
+   231→    drawer.hidden = false;
+   232→    document.body.style.overflow = 'hidden';
+   233→    var panel = drawer.querySelector('[data-mc-drawer-panel]');
+   234→    var focusTarget = panel && panel.querySelector('button, a, input');
+   235→    if (focusTarget) focusTarget.focus();
+   236→    drawer.addEventListener('keydown', function drawerKeys(e) {
+   237→      if (e.key === 'Escape') {
+   238→        closeDrawer(drawer);
+   239→        return;
+   240→      }
+   241→      if (e.key === 'Tab') trapFocus(drawer, e);
+   242→    });
+   243→    if (!REDUCED_MOTION) drawer.setAttribute('data-mc-open', 'true');
+   244→  }
+   245→
+   246→  function closeDrawer(drawer) {
+   247→    if (!drawer) return;
+   248→    drawer.hidden = true;
+   249→    document.body.style.overflow = '';
+   250→    if (lastFocused && lastFocused.focus) lastFocused.focus();
+   251→  }
+   252→  MC.closeDrawers = function () {
+   253→    document.querySelectorAll('.mc-drawer').forEach(function (d) {
+   254→      closeDrawer(d);
+   255→    });
+   256→  };
+   257→
+   258→  function initDrawers() {
+   259→    var navDrawer = document.getElementById('mc-nav-drawer');
+   260→    var cartDrawer = document.getElementById('mc-cart-drawer');
+   261→
+   262→    document.querySelectorAll('[data-mc-nav-open]').forEach(function (btn) {
+   263→      btn.addEventListener('click', function () {
+   264→        btn.setAttribute('aria-expanded', 'true');
+   265→        openDrawer(navDrawer);
+   266→      });
+   267→    });
+   268→    document.querySelectorAll('[data-mc-nav-close]').forEach(function (el) {
+   269→      el.addEventListener('click', function () {
+   270→        document.querySelectorAll('[data-mc-nav-open]').forEach(function (b) {
+   271→          b.setAttribute('aria-expanded', 'false');
+   272→        });
+   273→        closeDrawer(navDrawer);
+   274→      });
+   275→    });
+   276→
+   277→    document.querySelectorAll('[data-mc-cart-open]').forEach(function (btn) {
+   278→      btn.addEventListener('click', function () {
+   279→        MC.refreshCart().then(function () {
+   280→          openDrawer(cartDrawer);
+   281→        });
+   282→      });
+   283→    });
+   284→    document.querySelectorAll('[data-mc-cart-close]').forEach(function (el) {
+   285→      el.addEventListener('click', function () {
+   286→        closeDrawer(cartDrawer);
+   287→      });
+   288→    });
+   289→
+   290→    document.addEventListener('keydown', function (e) {
+   291→      if (e.key === 'Escape') MC.closeDrawers();
+   292→    });
+   293→  }
+   294→
+   295→  /* ── Mega menus + search toggle ───────────────────────────────────────── */
+   296→  function initMenus() {
+   297→    var toggles = document.querySelectorAll('[data-mc-menu-toggle]');
+   298→    toggles.forEach(function (toggle) {
+   299→      toggle.addEventListener('click', function (e) {
+   300→        e.stopPropagation();
+   301→        var item = toggle.closest('[data-mc-mega]');
+   302→        var isOpen = item.classList.contains('is-open');
+   303→        document.querySelectorAll('[data-mc-mega].is-open').forEach(function (other) {
+   304→          other.classList.remove('is-open');
+   305→          var b = other.querySelector('[data-mc-menu-toggle]');
+   306→          if (b) b.setAttribute('aria-expanded', 'false');
+   307→        });
+   308→        if (!isOpen) {
+   309→          item.classList.add('is-open');
+   310→          toggle.setAttribute('aria-expanded', 'true');
+   311→        }
+   312→      });
+   313→    });
+   314→    document.addEventListener('click', function (e) {
+   315→      if (!e.target.closest('[data-mc-mega]')) {
+   316→        document.querySelectorAll('[data-mc-mega].is-open').forEach(function (item) {
+   317→          item.classList.remove('is-open');
+   318→          var b = item.querySelector('[data-mc-menu-toggle]');
+   319→          if (b) b.setAttribute('aria-expanded', 'false');
+   320→        });
+   321→      }
+   322→    });
+   323→
+   324→    var searchToggle = document.querySelector('[data-mc-search-toggle]');
+   325→    var searchPanel = document.querySelector('[data-mc-search]');
+   326→    if (searchToggle && searchPanel) {
+   327→      searchToggle.addEventListener('click', function () {
+   328→        var willShow = searchPanel.hidden;
+   329→        searchPanel.hidden = !willShow;
+   330→        searchToggle.setAttribute('aria-expanded', String(willShow));
+   331→        if (willShow) {
+   332→          var input = searchPanel.querySelector('[data-mc-search-input]');
+   333→          if (input) input.focus();
+   334→        }
+   335→      });
+   336→    }
+   337→  }
+   338→
+   339→  /* ── Reveal on scroll ─────────────────────────────────────────────────── */
+   340→  function initReveals() {
+   341→    var items = document.querySelectorAll('.mc-reveal');
+   342→    if (!items.length) return;
+   343→    if (REDUCED_MOTION || !('IntersectionObserver' in window)) {
+   344→      items.forEach(function (el) {
+   345→        el.classList.add('is-visible');
+   346→      });
+   347→      return;
+   348→    }
+   349→    var observer = new IntersectionObserver(
+   350→      function (entries) {
+   351→        entries.forEach(function (entry) {
+   352→          if (entry.isIntersecting) {
+   353→            entry.target.classList.add('is-visible');
+   354→            observer.unobserve(entry.target);
+   355→          }
+   356→        });
+   357→      },
+   358→      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+   359→    );
+   360→    items.forEach(function (el) {
+   361→      observer.observe(el);
+   362→    });
+   363→  }
+   364→  MC.initReveals = initReveals;
+   365→
+   366→  /* ── Quantity steppers (product form + rendered cart lines) ───────────── */
+   367→  function bindQty(context) {
+   368→    (context || document).querySelectorAll('[data-mc-qty-wrapper]').forEach(function (wrap) {
+   369→      if (wrap.dataset.mcQtyBound) return;
+   370→      wrap.dataset.mcQtyBound = 'true';
+   371→      var input = wrap.querySelector('[data-mc-qty-input]');
+   372→      if (!input) return;
+   373→      var isCartLine = input.hasAttribute('data-mc-line-qty');
+   374→      wrap.querySelectorAll('[data-mc-qty]').forEach(function (btn) {
+   375→        btn.addEventListener('click', function () {
+   376→          var min = parseInt(input.getAttribute('min') || '1', 10);
+   377→          var value = parseInt(input.value || '1', 10);
+   378→          if (btn.getAttribute('data-mc-qty') === 'decrease') value = Math.max(min, value - 1);
+   379→          else value = value + 1;
+   380→          input.value = value;
+   381→          input.dispatchEvent(new Event('change', { bubbles: true }));
+   382→          if (isCartLine) updateLine(input.getAttribute('data-mc-line-key'), value);
+   383→        });
+   384→      });
+   385→    });
+   386→  }
+   387→
+   388→  /* ── Cart line updates ────────────────────────────────────────────────── */
+   389→  function updateLine(key, quantity) {
+   390→    if (!key) return;
+   391→    cartFetch((CONFIG.cartUrl || '/cart') + '/change.js', { id: key, quantity: quantity })
+   392→      .then(function (cart) {
+   393→        renderCart(cart);
+   394→        var onCartPage = document.querySelector('[data-mc-cart-page-form]');
+   395→        if (onCartPage) window.location.reload();
+   396→      })
+   397→      .catch(function (err) {
+   398→        console.warn('[Mahadev theme] Cart update failed', err);
+   399→        showCartError(err);
+   400→      });
+   401→  }
+   402→
+   403→  function showCartError(err) {
+   404→    var message =
+   405→      (err && err.description) || t('cartError', 'Sorry, something went wrong. Please try again.');
+   406→    var errorEl = document.querySelector('[data-mc-form-error]');
+   407→    if (errorEl) {
+   408→      errorEl.textContent = message;
+   409→      errorEl.hidden = false;
+   410→    } else {
+   411→      console.warn('[Mahadev theme]', message);
+   412→    }
+   413→  }
+   414→
+   415→  document.addEventListener('click', function (e) {
+   416→    var removeBtn = e.target.closest('[data-mc-line-remove]');
+   417→    if (removeBtn) {
+   418→      updateLine(removeBtn.getAttribute('data-mc-line-key'), 0);
+   419→      return;
+   420→    }
+   421→    var changeBtn = e.target.closest('[data-mc-cart-change]');
+   422→    if (changeBtn) {
+   423→      updateLine(changeBtn.getAttribute('data-mc-cart-key'), parseInt(changeBtn.getAttribute('data-mc-cart-qty') || '0', 10));
+   424→    }
+   425→  });
+   426→
+   427→  document.addEventListener('change', function (e) {
+   428→    var lineQty = e.target.closest('[data-mc-line-qty]');
+   429→    if (lineQty && !lineQty.hasAttribute('data-mc-qty-input')) {
+   430→      var min = parseInt(lineQty.getAttribute('min') || '0', 10);
+   431→      var value = parseInt(lineQty.value || '0', 10);
+   432→      if (isNaN(value) || value < min) value = min;
+   433→      updateLine(lineQty.getAttribute('data-mc-line-key'), value);
+   434→    }
+   435→  });
+   436→
+   437→  /* ── Product page: variants, gift wrap, WhatsApp, add-to-cart ─────────── */
+   438→  function initProductPage() {
+   439→    var root = document.querySelector('[data-mc-product-page]');
+   440→    if (!root) return;
+   441→
+   442→    var productData = readJSON('[data-mc-product-json]');
+   443→    var currentHandle = root.getAttribute('data-mc-product-handle');
+   444→    var selects = Array.prototype.slice.call(root.querySelectorAll('[data-mc-option-select]'));
+   445→    var variantInput = root.querySelector('[data-mc-variant-id]');
+   446→    var formQty = root.querySelector('[data-mc-form-quantity]');
+   447→    var addBtn = root.querySelector('[data-mc-add-button]');
+   448→    var addLabel = root.querySelector('[data-mc-add-label]');
+   449→    var priceEl = root.querySelector('[data-mc-price-value]');
+   450→    var availabilityEl = root.querySelector('[data-mc-availability]');
+   451→    var skuEl = root.querySelector('[data-mc-sku]');
+   452→    var mainImg = root.querySelector('[data-mc-main-image]');
+   453→    var waLink = root.querySelector('[data-mc-wa-link]');
+   454→
+   455→    function currentSelection() {
+   456→      return selects.map(function (select) {
+   457→        return select.value;
+   458→      });
+   459→    }
+   460→
+   461→    function findVariant() {
+   462→      var selection = currentSelection();
+   463→      return (productData.variants || []).find(function (variant) {
+   464→        return variant.options && selection.every(function (value, index) {
+   465→          return String(variant.options[index]) === String(value);
+   466→        });
+   467→      });
+   468→    }
+   469→
+   470→    function refreshWhatsApp(variant) {
+   471→      if (!waLink) return;
+   472→      var template = waLink.getAttribute('data-mc-wa-template') || '';
+   473→      var qty = formQty ? formQty.value : '1';
+   474→      var message = template
+   475→        .replace('{variant}', variant && variant.title ? variant.title : 'Default')
+   476→        .replace('{qty}', qty);
+   477→      waLink.setAttribute(
+   478→        'href',
+   479→        'https://wa.me/' + (waLink.getAttribute('data-mc-wa-number') || '') + '?text=' + encodeURIComponent(message),
+   480→      );
+   481→    }
+   482→
+   483→    function applyVariant(variant) {
+   484→      if (!variant) {
+   485→        if (addBtn) addBtn.disabled = true;
+   486→        if (addLabel) addLabel.textContent = t('unavailable', 'Unavailable');
+   487→        if (availabilityEl) {
+   488→          availabilityEl.innerHTML = '<span class="mc-badge mc-badge--soldout">' + escapeHtml(t('unavailable', 'Unavailable')) + '</span>';
+   489→        }
+   490→        refreshWhatsApp(null);
+   491→        return;
+   492→      }
+   493→      if (variantInput) variantInput.value = variant.id;
+   494→      if (priceEl) priceEl.textContent = formatMoney(variant.price);
+   495→      if (skuEl) skuEl.textContent = variant.sku || '';
+   496→      if (availabilityEl) {
+   497→        availabilityEl.innerHTML = variant.available
+   498→          ? '<span class="mc-badge mc-badge--instock">' + escapeHtml(t('inStock', 'In stock')) + '</span>'
+   499→          : '<span class="mc-badge mc-badge--soldout">' + escapeHtml(t('soldOut', 'Sold out')) + '</span>';
+   500→      }
+   501→      if (addBtn) addBtn.disabled = !variant.available;
+   502→      if (addLabel) addLabel.textContent = variant.available ? t('addToCart', 'Add to cart') : t('soldOut', 'Sold out');
+   503→      if (mainImg && variant.featuredMediaId) {
+   504→        var thumb = root.querySelector('[data-mc-media-id="' + variant.featuredMediaId + '"]');
+   505→        if (thumb) {
+   506→          mainImg.src = thumb.getAttribute('data-mc-thumb-src') || mainImg.src;
+   507→          mainImg.alt = thumb.getAttribute('data-mc-thumb-alt') || mainImg.alt;
+   508→        }
+   509→      }
+   510→      refreshWhatsApp(variant);
+   511→    }
+   512→
+   513→    selects.forEach(function (select) {
+   514→      select.addEventListener('change', function () {
+   515→        applyVariant(findVariant());
+   516→      });
+   517→    });
+   518→
+   519→    /* Qty stepper on the product form keeps hidden form quantity in sync */
+   520→    var qtyWrap = root.querySelector('.mc-product__qty [data-mc-qty-wrapper]');
+   521→    if (qtyWrap && formQty) {
+   522→      var qtyInput = qtyWrap.querySelector('[data-mc-qty-input]');
+   523→      qtyInput.addEventListener('change', function () {
+   524→        var value = Math.max(1, parseInt(qtyInput.value || '1', 10));
+   525→        qtyInput.value = value;
+   526→        formQty.value = value;
+   527→        refreshWhatsApp(findVariant());
+   528→      });
+   529→    }
+   530→
+   531→    /* Gallery thumbnails */
+   532→    root.querySelectorAll('[data-mc-thumb]').forEach(function (thumb) {
+   533→      thumb.addEventListener('click', function () {
+   534→        root.querySelectorAll('[data-mc-thumb]').forEach(function (other) {
+   535→          other.classList.remove('is-active');
+   536→        });
+   537→        thumb.classList.add('is-active');
+   538→        if (mainImg) {
+   539→          mainImg.src = thumb.getAttribute('data-mc-thumb-src') || mainImg.src;
+   540→          mainImg.alt = thumb.getAttribute('data-mc-thumb-alt') || mainImg.alt;
+   541→        }
+   542→      });
+   543→    });
+   544→
+   545→    /* Gift wrap toggle: show fields + disable message textarea when unchecked */
+   546→    var giftToggle = root.querySelector('[data-mc-gift-wrap-toggle]');
+   547→    var giftFields = root.querySelector('[data-mc-gift-wrap-fields]');
+   548→    var giftMessage = root.querySelector('[data-mc-gift-message]');
+   549→    if (giftToggle && giftFields) {
+   550→      giftToggle.addEventListener('change', function () {
+   551→        giftFields.hidden = !giftToggle.checked;
+   552→        if (giftMessage) {
+   553→          giftMessage.disabled = !giftToggle.checked;
+   554→          if (!giftToggle.checked) giftMessage.value = '';
+   555→        }
+   556→      });
+   557→      if (giftMessage) giftMessage.disabled = !giftToggle.checked;
+   558→    }
+   559→    var giftCount = root.querySelector('[data-mc-gift-count]');
+   560→    if (giftMessage && giftCount) {
+   561→      giftMessage.addEventListener('input', function () {
+   562→        if (giftMessage.value.length > 200) giftMessage.value = giftMessage.value.slice(0, 200);
+   563→        giftCount.textContent = (200 - giftMessage.value.length) + ' ' + 'characters left';
+   564→      });
+   565→    }
+   566→
+   567→    /* Add to cart (AJAX) */
+   568→    var form = root.querySelector('[data-mc-product-form]');
+   569→    if (form) {
+   570→      form.addEventListener('submit', function (e) {
+   571→        e.preventDefault();
+   572→        var errorEl = root.querySelector('[data-mc-form-error]');
+   573→        if (errorEl) errorEl.hidden = true;
+   574→
+   575→        var variant = findVariant() || { id: parseInt(variantInput ? variantInput.value : '0', 10), title: 'Default' };
+   576→        var quantity = formQty ? Math.max(1, parseInt(formQty.value || '1', 10)) : 1;
+   577→        var properties = {};
+   578→        if (giftToggle && giftToggle.checked) {
+   579→          properties['Gift wrap'] = 'Yes';
+   580→          if (giftMessage && giftMessage.value.trim() !== '') {
+   581→            properties['Gift message'] = giftMessage.value.trim().slice(0, 200);
+   582→          }
+   583→        }
+   584→
+   585→        if (addBtn) {
+   586→          addBtn.disabled = true;
+   587→          if (addLabel) addLabel.textContent = t('adding', 'Adding…');
+   588→        }
+   589→
+   590→        var items = [
+   591→          {
+   592→            id: variant.id,
+   593→            quantity: quantity,
+   594→            properties: properties,
+   595→          },
+   596→        ];
+   597→
+   598→        cartFetch((CONFIG.cartUrl || '/cart') + '/add.js', { items: items })
+   599→          .then(function () {
+   600→            return syncGiftWrap(currentHandle, giftToggle && giftToggle.checked ? quantity : 0);
+   601→          })
+   602→          .then(function () {
+   603→            return MC.refreshCart();
+   604→          })
+   605→          .then(function () {
+   606→            if (addBtn) {
+   607→              addBtn.disabled = !variant.available;
+   608→              if (addLabel) addLabel.textContent = variant.available ? t('addToCart', 'Add to cart') : t('soldOut', 'Sold out');
+   609→            }
+   610→            var cartDrawer = document.getElementById('mc-cart-drawer');
+   611→            if (cartDrawer && CONFIG.cartType !== 'page') {
+   612→              openDrawer(cartDrawer);
+   613→            } else if (CONFIG.cartUrl) {
+   614→              window.location.href = CONFIG.cartUrl;
+   615→            }
+   616→          })
+   617→          .catch(function (err) {
+   618→            if (addBtn) {
+   619→              addBtn.disabled = false;
+   620→              if (addLabel) addLabel.textContent = t('addToCart', 'Add to cart');
+   621→            }
+   622→            showCartError(err);
+   623→          });
+   624→      });
+   625→    }
+   626→  }
+   627→
+   628→  /* ── Filters toggle (collection page) ─────────────────────────────────── */
+   629→  function initFilters() {
+   630→    var toggle = document.querySelector('[data-mc-filters-toggle]');
+   631→    var panel = document.querySelector('[data-mc-filters-panel]');
+   632→    if (toggle && panel) {
+   633→      toggle.addEventListener('click', function () {
+   634→        var willShow = panel.hidden;
+   635→        panel.hidden = !willShow;
+   636→        toggle.setAttribute('aria-expanded', String(willShow));
+   637→      });
+   638→    }
+   639→  }
+   640→
+   641→  /* ── Cart page form (works without JS; JS only enhances steppers) ─────── */
+   642→  function initCartPage() {
+   643→    var form = document.querySelector('[data-mc-cart-page-form]');
+   644→    if (!form) return;
+   645→    bindQty(form);
+   646→  }
+   647→
+   648→  /* ── Boot ─────────────────────────────────────────────────────────────── */
+   649→  function init() {
+   650→    initDrawers();
+   651→    initMenus();
+   652→    initReveals();
+   653→    bindQty(document);
+   654→    initProductPage();
+   655→    initFilters();
+   656→    initCartPage();
+   657→    MC.refreshCart();
+   658→  }
+   659→
+   660→  if (document.readyState === 'loading') {
+   661→    document.addEventListener('DOMContentLoaded', init);
+   662→  } else {
+   663→    init();
+   664→  }
+   665→})();
+   666→

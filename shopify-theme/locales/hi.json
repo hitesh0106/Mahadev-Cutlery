@@ -1,5 +1,11 @@
 {
-  "language": "hi",
+  "language": {
+    "selector_label": "भाषा",
+    "partial_note": "पूरे स्टोर का अनुवाद Shopify Translate & Adapt से सक्रिय होता है — कुछ सामग्री अंग्रेज़ी में दिख सकती है।",
+    "english": "अंग्रेज़ी",
+    "hindi": "हिंदी",
+    "gujarati": "गुजराती"
+  },
   "native_name": "हिंदी",
   "general": {
     "menu": "मेनू",
@@ -97,9 +103,11 @@
     "step_progress": "चरण {{ current }} / {{ total }}",
     "oc_diwali": "दिवाली",
     "oc_rakhi": "रक्षा बंधन",
+    "oc_bhai_dooj": "भाई दूज",
     "oc_birthday": "जन्मदिन",
     "oc_anniversary": "सालगिरह",
     "oc_wedding": "शादी",
+    "oc_just_because": "बस ऐसे ही",
     "for_her": "महिला के लिए",
     "for_him": "पुरुष के लिए",
     "for_kids": "बच्चों के लिए",
@@ -188,13 +196,6 @@
     "copyright": "© {{ year }} {{ shop_name }}। सर्वाधिकार सुरक्षित।",
     "store_hours": "स्टोर समय",
     "whatsapp_note": "WhatsApp पर ऑर्डर करें"
-  },
-  "language": {
-    "selector_label": "भाषा",
-    "partial_note": "पूरे स्टोर का अनुवाद Shopify Translate & Adapt से सक्रिय होता है — कुछ सामग्री अंग्रेज़ी में दिख सकती है।",
-    "english": "अंग्रेज़ी",
-    "hindi": "हिंदी",
-    "gujarati": "गुजराती"
   },
   "departments": {
     "title": "डिपार्टमेंट के अनुसार खरीदें",

@@ -41,18 +41,19 @@ and "L'Oréal Professionnel" (straight apostrophe + é), "Lakmé" (é), "MARS Co
   MARS, Maybelline New York, Colorbar, Faces Canada, VEGA, Philips.
 - Never auto-generate brand collections for manufacturers whose stock is unconfirmed.
 
-## 4. Design tokens (exact names)
+## 4. Design tokens (exact names) — updated to the approved reference design
 ```css
 --mc-bg:#FFFFFF; --mc-bg-soft:#FAF8F5; --mc-cream:#F5F0E9; --mc-grey:#F4F4F2;
 --mc-ink:#20201E; --mc-ink-soft:#6F6B66; --mc-accent:#B8875A; --mc-accent-soft:#F2E5D8;
 --mc-border:#EAE6E0; --mc-success:#287A53; --mc-error:#B42318;
---mc-radius:14px; --mc-radius-sm:10px; --mc-shadow:0 10px 30px rgba(32,32,30,.07);
---mc-ease:cubic-bezier(.22,.61,.36,1); --mc-dur:.45s;
+--mc-radius:4px; --mc-radius-sm:2px; --mc-shadow:0 10px 30px rgba(32,32,30,.07);
+--mc-ease:cubic-bezier(.16,1,.3,1); --mc-dur:.45s;
 ```
-Typography: headings = elegant serif ("DM Serif Display", fallback Georgia/serif); body = Inter
-(fallback system sans). Fluid clamp() sizes. Section padding ~ clamp(56px, 8vw, 110px).
-Motion: CSS transitions + IntersectionObserver reveals (`.mc-reveal` → `.is-visible`),
-`prefers-reduced-motion` respected, no layout shift, no oversized scaling.
+Typography (reference-exact): headings = "Playfair Display" (variable, serif); body = Inter
+(variable sans). Loaded from Google Fonts in layout/theme.liquid. Fluid clamp() sizes.
+Section padding ~ clamp(56px, 8vw, 112px); container max-width 1360px.
+Motion: ease-lux cubic-bezier(.16,1,.3,1); IntersectionObserver reveals (`.mc-reveal`),
+`mc-rise`/`mc-unveil` entrance animations, `prefers-reduced-motion` respected.
 
 ## 5. Shopify theme conventions (shopify-theme/)
 - Prefix all CSS classes with `mc-`; JS under `window.MC` namespace; attributes `data-mc-*`.
@@ -133,3 +134,26 @@ Motion: CSS transitions + IntersectionObserver reveals (`.mc-reveal` → `.is-vi
 }
 ```
 (A key listed here but unused is fine; a key used but missing from en.default.json is NOT fine.)
+
+## 9. Reference mirror upgrade (Task 7-a — "same-to-same Shopify ZIP")
+The theme now mirrors the approved one-page showcase design:
+- Fonts: Playfair Display + Inter (theme.liquid); tokens/ease/radii per §4; bundled
+  placeholder images in assets/ (hero, 8 departments, editorial, gift) used until the
+  merchant picks their own.
+- templates/index.json section order (reference-exact): announcement (2 rotating
+  messages + arrows) → festival countdown → hero (eyebrow, 2-line serif display,
+  2 CTAs, unveil image + floating card) → departments (8 approved, handle fallbacks)
+  → featured brands (12 cards, carousel) → trending products → new arrivals (warm bg)
+  → product types (11 circles) → edit stories ×3 (Beauty & Skincare / Hosiery &
+  Innerwear / Gifts-Toys-Jewellery with chip pills) → gift finder → budget cards (3)
+  → offers → recently viewed → brands A–Z (30 blocks, live search + letter nav)
+  → newsletter. Header/footer render from layout (theme.liquid).
+- New sections: featured-brands, product-types, edit-section, budget-cards, brands-az.
+- Department/brand blocks pre-fill the 8 approved handles + 30 vendor handles
+  (matches data/department-collection-seed.csv + data/brand-department-map.csv);
+  links resolve to /collections/<handle> until collections are picked/created.
+- Gift finder matches the reference options: 7 occasion choices incl. Bhai Dooj and
+  "Just because" (empty occasion = wildcard), 5 recipients, 5 budgets; empty-value
+  selections are wildcards in gift-finder.js; in-stock only; honest empty state.
+- No invented products/prices anywhere: product rows, edit cards and finder results
+  render real catalogue data only and hide when the catalogue is empty.

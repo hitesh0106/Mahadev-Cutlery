@@ -1,0 +1,178 @@
+{%- comment -%}
+  Featured brands — horizontally scrollable card carousel (12 brand cards in
+  the reference design). Blocks: brand name + optional collection picker +
+  optional one-line note. When no collection is picked the card links to
+  /collections/<handle> using the handle field (merchant creates collections
+  from the seed CSV; documented). Blocks without a name are skipped.
+{%- endcomment -%}
+{%- liquid
+  assign fb_rendered = 0
+  for block in section.blocks
+    if block.settings.name != blank
+      assign fb_rendered = fb_rendered | plus: 1
+    endif
+  endfor
+-%}
+{%- if fb_rendered > 0 -%}
+  <section class="mc-section mc-section--soft mc-fbrands" data-mc-carousel>
+    <div class="mc-container">
+      <div class="mc-section__head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.heading != blank -%}
+            <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.action_label != blank -%}
+          <a class="mc-action-link" href="{{ section.settings.action_link | default: '/pages/brands' }}">
+            {{ section.settings.action_label | escape }}
+            <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div
+      class="mc-fbrands__scroller no-scrollbar"
+      data-mc-carousel-track
+      tabindex="0"
+      aria-label="{{ section.settings.heading | default: 'Featured brands' | escape }}"
+    >
+      {%- for block in section.blocks -%}
+        {%- assign fb_name = block.settings.name -%}
+        {%- if fb_name == blank -%}{%- continue -%}{%- endif -%}
+        {%- liquid
+          if block.settings.collection != blank
+            assign fb_href = block.settings.collection.url
+          elsif block.settings.handle != blank
+            assign fb_href = '/collections/' | append: block.settings.handle
+          else
+            assign fb_href = '/pages/brands'
+          endif
+        -%}
+        <a
+          class="mc-fbrand"
+          href="{{ fb_href }}"
+          {{ block.shopify_attributes }}
+        >
+          <span class="mc-fbrand__name">{{ fb_name | escape }}</span>
+          {%- if block.settings.note != blank -%}
+            <span class="mc-fbrand__note">{{ block.settings.note | escape }}</span>
+          {%- endif -%}
+          <span class="mc-fbrand__shop">
+            {{ section.settings.card_cta_label | default: 'Shop' | escape }}
+            <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </a>
+      {%- endfor -%}
+    </div>
+
+    <div class="mc-container mc-fbrands__nav">
+      <button type="button" class="mc-carousel-arrow" data-mc-carousel-prev aria-label="{{ 'general.previous' | t }}">
+        <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="mc-carousel-arrow" data-mc-carousel-next aria-label="{{ 'general.next' | t }}">
+        <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      'use strict';
+      var sectionEl = document.currentScript.previousElementSibling;
+      var track = sectionEl && sectionEl.querySelector('[data-mc-carousel-track]');
+      if (!track || track.dataset.mcCarouselReady) return;
+      track.dataset.mcCarouselReady = '1';
+      var step = function () { return Math.max(track.clientWidth * 0.7, 240); };
+      sectionEl.querySelector('[data-mc-carousel-prev]').addEventListener('click', function () {
+        track.scrollBy({ left: -step(), behavior: 'smooth' });
+      });
+      sectionEl.querySelector('[data-mc-carousel-next]').addEventListener('click', function () {
+        track.scrollBy({ left: step(), behavior: 'smooth' });
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Featured brands",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Brands we stock"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured brands"
+    },
+    {
+      "type": "text",
+      "id": "action_label",
+      "label": "Header action label",
+      "default": "All brands A–Z"
+    },
+    {
+      "type": "url",
+      "id": "action_link",
+      "label": "Header action link",
+      "info": "Defaults to /pages/brands."
+    },
+    {
+      "type": "text",
+      "id": "card_cta_label",
+      "label": "Card footer label",
+      "default": "Shop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Brand name"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection (optional)",
+          "info": "When picked, the card links to this collection."
+        },
+        {
+          "type": "text",
+          "id": "handle",
+          "label": "Collection handle (fallback)",
+          "info": "Used when no collection is picked, e.g. lakme → /collections/lakme."
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "One-line note (optional)",
+          "info": "e.g. “Men's nikar / underwear only” for Zoiro."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured brands",
+      "blocks": [
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}

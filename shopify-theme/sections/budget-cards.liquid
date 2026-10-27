@@ -1,0 +1,113 @@
+{%- comment -%}
+  Shop by budget — three gradient cards from the reference design.
+  Each block: small label (e.g. "Under"), big label (e.g. "₹199"), link.
+  Default links point to price-based collections the owner creates once
+  real prices are entered (documented in the guides).
+{%- endcomment -%}
+{%- liquid
+  assign bc_rendered = 0
+  for block in section.blocks
+    if block.settings.big != blank
+      assign bc_rendered = bc_rendered | plus: 1
+    endif
+  endfor
+-%}
+{%- if bc_rendered > 0 -%}
+  <section class="mc-section mc-budget">
+    <div class="mc-container">
+      <div class="mc-section__head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.heading != blank -%}
+            <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <p class="mc-section__text">{{ section.settings.text | escape }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+      <ul class="mc-budget__grid">
+        {%- for block in section.blocks -%}
+          {%- assign bc_big = block.settings.big -%}
+          {%- if bc_big == blank -%}{%- continue -%}{%- endif -%}
+          <li {{ block.shopify_attributes }}>
+            <a
+              class="mc-budget__card"
+              href="{{ block.settings.link | default: routes.all_products_collection_url }}"
+            >
+              {%- if block.settings.small != blank -%}
+                <span class="mc-budget__small">{{ block.settings.small | escape }}</span>
+              {%- endif -%}
+              <span class="mc-budget__big">{{ bc_big | escape }}</span>
+              <svg class="mc-icon mc-budget__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Budget cards",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Gifting made easy"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by budget"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "In the live theme each card links to a price-based collection you create once real prices are entered."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Budget card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "small",
+          "label": "Small label",
+          "default": "Under"
+        },
+        {
+          "type": "text",
+          "id": "big",
+          "label": "Big label",
+          "default": "₹199"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)",
+          "info": "e.g. the “under-199” automated collection (condition: Product price < 199)."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Budget cards",
+      "blocks": [
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

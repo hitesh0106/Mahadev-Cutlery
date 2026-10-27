@@ -1,52 +1,105 @@
 {%- comment -%}
-  Department grid — blocks of collection picker cards.
-  Renders ONLY collections explicitly picked by the merchant (never auto-generates),
-  and hides entirely when no blocks are configured. NO kitchenware/cutlery department.
+  Shop by department — the reference grid (2 featured cards + 3-across rows).
+  Blocks: collection picker (wins when picked) OR a text handle for the
+  pre-launch state → /collections/<handle>; title, sub-line, optional note
+  and an image that falls back to the bundled department placeholder chosen
+  by handle. Only merchant-configured blocks render — nothing auto-generates.
+  NO kitchenware/cutlery department exists (the eight approved only).
 {%- endcomment -%}
-{%- if section.blocks.size > 0 -%}
-  <section class="mc-section mc-departments">
+{%- liquid
+  assign dg_rendered = 0
+  for block in section.blocks
+    if block.settings.collection != blank or block.settings.handle != blank
+      assign dg_rendered = dg_rendered | plus: 1
+    endif
+  endfor
+-%}
+{%- if dg_rendered > 0 -%}
+  <section class="mc-section mc-departments" id="{{ section.settings.anchor_id | default: 'departments' }}">
     <div class="mc-container">
-      {%- if section.settings.heading != blank -%}
-        <h2 class="mc-section__heading">{{ section.settings.heading | escape }}</h2>
-      {%- endif -%}
-      <div class="mc-grid mc-grid--departments">
+      <div class="mc-section__head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.heading != blank -%}
+            <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.action_label != blank -%}
+          <a class="mc-action-link" href="{{ section.settings.action_link | default: routes.all_products_collection_url }}">
+            {{ section.settings.action_label | escape }}
+            <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        {%- endif -%}
+      </div>
+
+      <ul class="mc-departments__grid">
         {%- for block in section.blocks -%}
-          {%- assign dept_collection = block.settings.collection -%}
-          {%- if dept_collection != blank -%}
-            {%- assign dept_title = block.settings.title | default: dept_collection.title -%}
-            {%- assign dept_img = block.settings.image | default: dept_collection.image -%}
-            {%- assign dept_alt = dept_title -%}
-            {%- if dept_img != blank and dept_img.alt != blank -%}
-              {%- assign dept_alt = dept_img.alt -%}
-            {%- endif -%}
-            <a
-              class="mc-dept-card mc-reveal"
-              href="{{ dept_collection.url }}"
-              {{ block.shopify_attributes }}
-            >
-              <span class="mc-dept-card__media">
-                {%- if dept_img != blank -%}
-                  {{ dept_img | image_url: width: 600 | image_tag:
+          {%- liquid
+            assign dg_collection = block.settings.collection
+            assign dg_handle = block.settings.handle
+            if dg_collection == blank and dg_handle == blank
+              continue
+            endif
+            if dg_collection != blank
+              assign dg_href = dg_collection.url
+              assign dg_handle_key = dg_collection.handle
+            else
+              assign dg_handle_key = dg_handle
+              assign dg_href = '/collections/' | append: dg_handle
+            endif
+            assign dg_title = block.settings.title | default: dg_collection.title | default: dg_handle
+            assign dg_alt = dg_title
+          -%}
+          <li class="mc-dept-cell mc-reveal" {{ block.shopify_attributes }}>
+            <a class="mc-dept-cell__link" href="{{ dg_href }}">
+              <span class="mc-dept-cell__media">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 900 | image_tag:
                     loading: 'lazy',
-                    sizes: '(min-width: 990px) 300px, (min-width: 750px) 33vw, 50vw',
-                    widths: '300, 450, 600',
-                    class: 'mc-dept-card__img',
-                    alt: dept_alt
+                    sizes: '(min-width: 990px) 30vw, 50vw',
+                    widths: '300, 600, 900',
+                    class: 'mc-dept-cell__img',
+                    alt: dg_alt
                   }}
                 {%- else -%}
-                  <span class="mc-dept-card__placeholder" aria-hidden="true">{% render 'icon', name: 'gift', size: 36 %}</span>
+                  <img
+                    class="mc-dept-cell__img"
+                    src="{%- case dg_handle_key -%}
+                      {%- when 'beauty-makeup' -%}{{ 'dept-makeup.jpg' | asset_url }}
+                      {%- when 'skincare' -%}{{ 'dept-beauty.jpg' | asset_url }}
+                      {%- when 'haircare' -%}{{ 'dept-haircare.jpg' | asset_url }}
+                      {%- when 'hosiery-innerwear' -%}{{ 'dept-innerwear.jpg' | asset_url }}
+                      {%- when 'toys-kids' -%}{{ 'dept-kids.jpg' | asset_url }}
+                      {%- when 'gift-articles' -%}{{ 'dept-gifts.jpg' | asset_url }}
+                      {%- when 'imitation-jewellery' -%}{{ 'dept-jewellery.jpg' | asset_url }}
+                      {%- when 'accessories-grooming' -%}{{ 'dept-tools.jpg' | asset_url }}
+                      {%- else -%}{{ 'dept-gifts.jpg' | asset_url }}
+                    {%- endcase -%}"
+                    alt=""
+                    loading="lazy"
+                    width="600"
+                    height="800"
+                  >
                 {%- endif -%}
               </span>
-              <span class="mc-dept-card__body">
-                <span class="mc-dept-card__title">{{ dept_title | escape }}</span>
+              <span class="mc-dept-cell__body">
+                <span class="mc-dept-cell__title">{{ dg_title | escape }}</span>
+                <span class="mc-dept-cell__arrow" aria-hidden="true">
+                  <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </span>
+                {%- if block.settings.sub != blank -%}
+                  <span class="mc-dept-cell__sub">{{ block.settings.sub | escape }}</span>
+                {%- endif -%}
                 {%- if block.settings.rule_text != blank -%}
                   <span class="mc-dept-card__rule">{{ block.settings.rule_text | escape }}</span>
                 {%- endif -%}
               </span>
             </a>
-          {%- endif -%}
+          </li>
         {%- endfor -%}
-      </div>
+      </ul>
     </div>
   </section>
 {%- elsif request.design_mode -%}
@@ -61,9 +114,32 @@
   "settings": [
     {
       "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Departments"
+    },
+    {
+      "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Shop by Department"
+      "default": "Shop by department"
+    },
+    {
+      "type": "text",
+      "id": "action_label",
+      "label": "Header action label",
+      "default": "Shop all"
+    },
+    {
+      "type": "url",
+      "id": "action_link",
+      "label": "Header action link"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "HTML anchor id",
+      "default": "departments"
     }
   ],
   "blocks": [
@@ -74,13 +150,25 @@
         {
           "type": "collection",
           "id": "collection",
-          "label": "Collection",
-          "info": "Only picked collections are rendered. The EIGHT approved departments: Beauty & Makeup, Skincare, Haircare, Hosiery & Innerwear, Toys & Kids, Gift Articles, Imitation Jewellery, Accessories & Grooming. No kitchenware/cutlery department exists."
+          "label": "Collection (optional)",
+          "info": "The EIGHT approved departments: Beauty & Makeup, Skincare, Haircare, Hosiery & Innerwear, Toys & Kids, Gift Articles, Imitation Jewellery, Accessories & Grooming. No kitchenware/cutlery department exists."
+        },
+        {
+          "type": "text",
+          "id": "handle",
+          "label": "Collection handle (fallback)",
+          "info": "Used until a collection is picked, e.g. beauty-makeup → /collections/beauty-makeup."
         },
         {
           "type": "text",
           "id": "title",
           "label": "Title override (optional)"
+        },
+        {
+          "type": "text",
+          "id": "sub",
+          "label": "Sub-line (optional)",
+          "info": "e.g. “Lips, eyes, face” under Beauty & Makeup."
         },
         {
           "type": "image_picker",

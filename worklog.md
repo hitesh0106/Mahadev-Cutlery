@@ -116,3 +116,44 @@ Stage Summary:
 - Every brand/department/type link now opens a real in-page collection view showing the categories inside it — the reported "goes back to main page" behaviour is gone across header nav, mega menu, mobile drawer, search, brand cards, department cards, product-type circles and edit chips.
 - Brand hard rules surface in the UI itself (Zoiro men-only, Bodycare no-men's, Sunny/Ghar Soaps gated, L'Oréal Paris ≠ Professionnel) — consistent with the 8-department catalogue and the no-kitchenware restriction.
 - Honest labels preserved everywhere: sample data notices, SAMPLE BRAND vendor, "products appear once the catalogue is imported" notes.
+
+---
+Task ID: 7-a
+Agent: main (Z.ai Code orchestrator; full-stack-developer subagent timed out with zero changes and was taken over)
+Task: Make the Shopify theme "same-to-same" as the approved preview and deliver a complete, upload-ready theme ZIP ("ab muje tune jo banay sem to sem shopify me zip upload karu esa ana chaiye to vesi complete zip bana ke de")
+
+Work Log:
+- Launched full-stack-developer subagent for the mirror upgrade; it exceeded max turns (200) with NO file changes (diff vs backup empty) — takeover by orchestrator.
+- Reference parity implemented directly in shopify-theme/:
+  - layout/theme.liquid: Google Fonts swapped DM Serif Display → Playfair Display (variable) + Inter (variable); --mc-font-heading updated.
+  - assets/base.css: tokens updated (--mc-radius 14px→4px, -sm 10px→2px, --mc-ease → ease-lux cubic-bezier(.16,1,.3,1), font default Playfair); appended "REFERENCE MIRROR BLOCK" (~450 lines): mc-rise/mc-unveil keyframes, .mc-anim-rise/.mc-anim-unveil, eyebrow, section__head(+center, flush, action-link), tone utilities (soft/cream/blush), announcement rotator, editorial hero (display heading, CTAs, unveil figure, floating card), featured-brands carousel + arrows, product-type circles, edit stories, budget cards, brands A–Z (sticky toolbar, letter circles, columns, search), .no-scrollbar; reduced-motion coverage.
+  - sections/announcement-bar.liquid: rewritten — 2 rotating messages + prev/next arrows + 5s autoplay (hover-pause, reduced-motion-safe), ink/warm defaults matching the preview.
+  - sections/hero.liquid: rewritten reference-exact (eyebrow "Mahadev — Ahmedabad", 2-line display heading, sub, Shop Now + Explore Brands, hero-editorial asset fallback, floating Imitation Jewellery card).
+  - NEW sections: featured-brands.liquid (12-block carousel, collection-or-handle links), product-types.liquid (11 circle chips, search-by-default links, asset image map), edit-section.liquid (split story: image/eyebrow/title/text + chip blocks + optional 2 real product cards), budget-cards.liquid (3 gradient cards), brands-az.liquid (30 blocks, live search filter, letter nav, letter-grouped columns, honest empty state).
+  - sections/department-grid.liquid: upgraded — eyebrow head + action link, blocks now support handle fallback (→ /collections/<handle>) + sub-lines + per-handle bundled asset image defaults; collection picker still wins when set.
+  - sections/featured-products.liquid: eyebrow + warm-background options added.
+  - assets/gift-finder.js: empty-value occasion/recipient/budget selections now act as wildcards ("Just because" parity); sections/gift-finder.liquid: added Bhai Dooj + "Just because" occasion buttons (7 total, matching the preview).
+  - locales en.default/hi/gu: added finder.oc_bhai_dooj + finder.oc_just_because (same tree, translated).
+  - templates/index.json: FULL prefill in the exact preview order — announcement → countdown → hero → departments (8 handles+subs) → featured brands (12) → trending → new arrivals (warm) → product types (11) → edit stories ×3 (exact preview copy + chips incl. "Zoiro · Men's Nikar" etc.) → gift finder → budget (3) → offers → recently viewed → brands A–Z (30 alphabetical) → newsletter (17 sections).
+  - Images: copied 14 showcase JPGs into shopify-theme/assets/ (hero, editorial, 8 dept placeholders, gift) as design-parity defaults; merchant images override.
+  - shopify-theme/SPEC.md: §4 tokens rewritten to the reference spec; new §9 "Reference mirror upgrade" documents sections/order/behavior.
+- Subagent fallback note: no worklog entry was written by the subagent (it produced nothing); this entry supersedes it.
+Stage Summary:
+- Theme now mirrors the approved preview: same fonts (Playfair/Inter), same palette/ease/radii, same homepage sections in the same order with the same copy, bundled placeholder imagery, 8-department taxonomy + 30-brand directory with handles matching data/*.csv.
+- Validator PASSED (72 files), catalogue validator PASSED (45 checks).
+
+---
+Task ID: 7-b
+Agent: main (Z.ai Code orchestrator)
+Task: Package the upload-ready ZIP, fix the broken ZIP pipeline, verify downloads end-to-end, browser-verify the site
+
+Work Log:
+- CRITICAL BUG FIXED in src/app/api/theme-zip/route.ts: archiver ZipArchive.append treats a STRING source as literal file content — the previously "verified" ZIP shipped 71 files whose contents were their own path strings (~48 B each; 14 KB total). Files are now passed as readFileSync Buffers; verified base.css=62,715 B, hero-editorial.jpg=197,184 B, uncompressed total 1,986 KB, zip testzip OK.
+- Regenerated artifacts: download/mahadev-theme.zip + public/downloads/mahadev-cutlery-shopify-theme.zip (1,805,445 B, 71 entries, theme-pure roots assets/config/layout/locales/sections/snippets/templates, no SPEC.md, content spot-checks: Playfair in theme.liquid, mc-fbrands/mc-budget__card in base.css, brands-az in index.json, "Bhai Dooj" in locales).
+- Re-verified ALL other download routes with real content: products-csv 2,537 B valid Shopify CSV; products-xlsx 16,005 B valid OOXML (18 entries); catalog-csv ×3 → 200 (31-row brand map, 9-row dept seed, import template). Earlier 400s in testing were tester error (file param must omit .csv).
+- delivery-view.tsx: Theme ZIP card retitled "(upload to Shopify)"; added "Theme ZIP (direct mirror)" card → /downloads/mahadev-cutlery-shopify-theme.zip.
+- Agent-Browser E2E (desktop 1440 + mobile 390): homepage renders with 8 dept cards, 12 brand cards, 11 type circles, 3 budget cards, 30 A–Z links, announcement bar, footer; Diwali ticker verified live-ticking (40:02→39:59, 11 days — getSnapshot fix intact, fresh-load console clean); Lakmé brand card → collection view with 2 department cards + categories + verification badge (brand-nav fix intact); delivery view opens; Theme ZIP download button → fetch 200 + "Downloaded mahadev-theme.zip" toast; static mirror URL 200 (1.8 MB); mobile 390 no horizontal overflow; no page errors.
+- lint clean; dev.log clean apart from benign HMR full-reload notes during the route edit.
+Stage Summary:
+- THE deliverable is ready: upload download/mahadev-theme.zip (or the /downloads/ mirror) via Shopify admin → Online Store → Themes → Add theme → Upload zip. After upload: create the 8 department collections + brand collections from data/*.csv (seed provided), import products with the CSV/XLSX templates, publish. Until collections/products exist the theme shows honest empty states and placeholder imagery — nothing invented.
+- Honest limits unchanged: no store connection/product import/checkout performed (needs owner's Shopify admin); theme-check CLI not run (custom validator only); festival dates owner-verified yearly; email spelling mahadevcutlery@gmail.com to confirm (owner typed "...comi"); WhatsApp orders confirmed manually in chat; wishlist/recently-viewed device-local.

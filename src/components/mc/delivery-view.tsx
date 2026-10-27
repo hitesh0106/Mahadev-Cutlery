@@ -87,10 +87,20 @@ const DOWNLOADS = [
     href: '/api/theme-zip',
     filename: 'mahadev-theme.zip',
     icon: PackageOpen,
-    title: 'Theme ZIP',
+    title: 'Theme ZIP (upload to Shopify)',
     description:
       'The complete Shopify Online Store 2.0 theme: assets, config, layout, locales (EN / हिंदी / ગુજરાતી), sections, snippets and templates. The ZIP contains only theme folders — SPEC.md is excluded.',
     accent: 'bg-[var(--mc-accent-soft)] text-[var(--mc-accent)]',
+  },
+  {
+    key: 'theme-zip-static',
+    href: '/downloads/mahadev-cutlery-shopify-theme.zip',
+    filename: 'mahadev-cutlery-shopify-theme.zip',
+    icon: PackageOpen,
+    title: 'Theme ZIP (direct mirror)',
+    description:
+      'The exact same theme ZIP as a static file (~1.8 MB) — a fixed download link that always works. 71 files: assets (incl. bundled placeholder images), config, layout, locales (EN / हिंदी / ગુજરાતી), sections, snippets, templates.',
+    accent: 'bg-[var(--mc-cream)] text-[var(--mc-ink)]',
   },
   {
     key: 'products-csv',

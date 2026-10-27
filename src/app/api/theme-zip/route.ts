@@ -4,7 +4,7 @@
 // templates/. If any required folder is missing the theme build is incomplete
 // and the route answers 503 { error: "Theme build incomplete" }.
 
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 // archiver v8 is pure ESM with named class exports (no default function).
@@ -75,7 +75,10 @@ export async function GET() {
   });
 
   for (const file of files) {
-    archive.append(file.absolutePath, { name: file.zipPath });
+    // IMPORTANT: ZipArchive.append treats a STRING source as literal file
+    // content (it would zip the path text itself). Files must be passed as
+    // Buffers so real bytes land in the archive.
+    archive.append(readFileSync(file.absolutePath), { name: file.zipPath });
   }
   await archive.finalize();
   await done;

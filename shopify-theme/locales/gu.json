@@ -1,5 +1,11 @@
 {
-  "language": "gu",
+  "language": {
+    "selector_label": "ભાષા",
+    "partial_note": "આખા સ્ટોરનો અનુવાદ Shopify Translate & Adapt થી સક્રિય થાય છે — કેટલીક સામગ્રી અંગ્રેજીમાં દેખાઈ શકે.",
+    "english": "અંગ્રેજી",
+    "hindi": "હિન્દી",
+    "gujarati": "ગુજરાતી"
+  },
   "native_name": "ગુજરાતી",
   "general": {
     "menu": "મેનૂ",
@@ -97,9 +103,11 @@
     "step_progress": "પગલું {{ current }} / {{ total }}",
     "oc_diwali": "દિવાળી",
     "oc_rakhi": "રક્ષાબંધન",
+    "oc_bhai_dooj": "ભાઈ દૂજ",
     "oc_birthday": "જન્મદિન",
     "oc_anniversary": "વર્ષગાંઠ",
     "oc_wedding": "લગ્ન",
+    "oc_just_because": "ખાલી એમ જ",
     "for_her": "સ્ત્રી માટે",
     "for_him": "પુરુષ માટે",
     "for_kids": "બાળકો માટે",
@@ -188,13 +196,6 @@
     "copyright": "© {{ year }} {{ shop_name }}. સર્વ હક્ક અમારી પાસે.",
     "store_hours": "સ્ટોરનો સમય",
     "whatsapp_note": "WhatsApp પર ઓર્ડર કરો"
-  },
-  "language": {
-    "selector_label": "ભાષા",
-    "partial_note": "આખા સ્ટોરનો અનુવાદ Shopify Translate & Adapt થી સક્રિય થાય છે — કેટલીક સામગ્રી અંગ્રેજીમાં દેખાઈ શકે.",
-    "english": "અંગ્રેજી",
-    "hindi": "હિન્દી",
-    "gujarati": "ગુજરાતી"
   },
   "departments": {
     "title": "ડિપાર્ટમેન્ટ પ્રમાણે ખરીદો",

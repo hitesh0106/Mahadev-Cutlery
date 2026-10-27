@@ -1,0 +1,223 @@
+{%- comment -%}
+  Brands A–Z directory (reference-exact homepage section; also usable on the
+  brands page). Sticky search + letter nav + letter-grouped columns.
+  Blocks: brand name + collection handle (fallback) + optional collection
+  picker + optional one-line note. Blocks are pre-filled alphabetically in
+  templates/index.json — keep them alphabetical so the letter grouping works.
+  The list never claims stock: it links to brand collections the merchant
+  creates (documented) — the same handles used by the seed CSV.
+{%- endcomment -%}
+{%- liquid
+  assign az_rendered = 0
+  for block in section.blocks
+    if block.settings.name != blank
+      assign az_rendered = az_rendered | plus: 1
+    endif
+  endfor
+-%}
+{%- if az_rendered > 0 -%}
+  <section class="mc-section mc-az" id="{{ section.settings.anchor_id | default: 'brands-az' }}">
+    <div class="mc-container">
+      <div class="mc-section__head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.heading != blank -%}
+            <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <p class="mc-section__text">{{ section.settings.text | escape }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="mc-az__toolbar">
+        <label class="mc-az__search">
+          <svg class="mc-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="mc-sr-only">{{ 'general.search' | t }}</span>
+          <input
+            type="search"
+            class="mc-az__input"
+            data-mc-az-input
+            placeholder="{{ section.settings.search_placeholder | escape }}"
+            aria-label="{{ 'general.search' | t }}"
+          >
+        </label>
+        <nav class="mc-az__letters" aria-label="{{ 'brands.directory_title' | t }}" data-mc-az-letters>
+          {%- assign az_seen = '' -%}
+          {%- for block in section.blocks -%}
+            {%- assign az_name = block.settings.name -%}
+            {%- if az_name == blank -%}{%- continue -%}{%- endif -%}
+            {%- assign az_letter = az_name | slice: 0 | upcase -%}
+            {%- unless 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' contains az_letter -%}
+              {%- assign az_letter = '#' -%}
+            {%- endunless -%}
+            {%- unless az_seen contains az_letter -%}
+              {%- assign az_seen = az_seen | append: az_letter -%}
+              <a class="mc-az__letter" href="#brands-{{ az_letter }}">{{ az_letter }}</a>
+            {%- endunless -%}
+          {%- endfor -%}
+        </nav>
+      </div>
+
+      <div class="mc-az__cols" data-mc-az-list>
+        {%- assign az_current_letter = '' -%}
+        {%- assign az_open = false -%}
+        {%- for block in section.blocks -%}
+          {%- assign az_name = block.settings.name -%}
+          {%- if az_name == blank -%}{%- continue -%}{%- endif -%}
+          {%- assign az_letter = az_name | slice: 0 | upcase -%}
+          {%- unless 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' contains az_letter -%}
+            {%- assign az_letter = '#' -%}
+          {%- endunless -%}
+          {%- if az_letter != az_current_letter -%}
+            {%- if az_open -%}</ul></div>{%- endif -%}
+            {%- assign az_current_letter = az_letter -%}
+            {%- assign az_open = true -%}
+            <div class="mc-az__group" id="brands-{{ az_letter }}" data-mc-az-group>
+              <h3 class="mc-az__group-letter">{{ az_letter }}</h3>
+              <ul class="mc-az__list">
+          {%- endif -%}
+          {%- liquid
+            if block.settings.collection != blank
+              assign az_href = block.settings.collection.url
+            elsif block.settings.handle != blank
+              assign az_href = '/collections/' | append: block.settings.handle
+            else
+              assign az_href = ''
+            endif
+          -%}
+          <li class="mc-az__item" {{ block.shopify_attributes }}>
+            {%- if az_href != blank -%}
+              <a class="mc-az__brand" href="{{ az_href }}">{{ az_name | escape }}</a>
+            {%- else -%}
+              <span class="mc-az__brand mc-az__brand--static">{{ az_name | escape }}</span>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+        {%- if az_open -%}</ul></div>{%- endif -%}
+      </div>
+
+      <p class="mc-az__empty mc-empty-note" data-mc-az-empty hidden>{{ section.settings.empty_text | escape }}</p>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      'use strict';
+      var sectionEl = document.currentScript.previousElementSibling;
+      if (!sectionEl || sectionEl.dataset.mcAzReady) return;
+      sectionEl.dataset.mcAzReady = '1';
+      var input = sectionEl.querySelector('[data-mc-az-input]');
+      var groups = sectionEl.querySelectorAll('[data-mc-az-group]');
+      var letters = sectionEl.querySelectorAll('.mc-az__letter');
+      var emptyEl = sectionEl.querySelector('[data-mc-az-empty]');
+      if (!input || !groups.length) return;
+      input.addEventListener('input', function () {
+        var q = input.value.trim().toLowerCase();
+        var any = false;
+        groups.forEach(function (group) {
+          var visible = 0;
+          group.querySelectorAll('.mc-az__item').forEach(function (item) {
+            var hit = !q || item.textContent.toLowerCase().indexOf(q) !== -1;
+            item.hidden = !hit;
+            if (hit) visible++;
+          });
+          group.hidden = visible === 0;
+          if (visible) any = true;
+        });
+        letters.forEach(function (letterLink) {
+          var target = sectionEl.querySelector(letterLink.getAttribute('href'));
+          letterLink.hidden = !target || target.hidden;
+        });
+        if (emptyEl) emptyEl.hidden = any;
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Brands A–Z",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Brand directory"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Brands A–Z"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Every brand we stock, one tap away. Brand collections are created from your product vendors — the theme never invents stock."
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search 30 brands"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Empty search text",
+      "default": "No brand matches your search."
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "HTML anchor id",
+      "default": "brands-az"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Brand name",
+          "info": "Keep blocks alphabetical (A→Z) so letter grouping renders correctly."
+        },
+        {
+          "type": "text",
+          "id": "handle",
+          "label": "Collection handle",
+          "info": "e.g. lakme → /collections/lakme (create the collection from the seed CSV)."
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection (optional)",
+          "info": "When picked, the entry links to this collection."
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "One-line note (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brands A–Z",
+      "blocks": [
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}

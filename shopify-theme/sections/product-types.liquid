@@ -1,0 +1,124 @@
+{%- comment -%}
+  Shop by product type — circular image chips (11 in the reference design).
+  Each block: title + optional link + optional image. Default link is a
+  storefront search for the type (works before type collections exist);
+  default image is the bundled placeholder chosen by handle map below.
+{%- endcomment -%}
+{%- liquid
+  assign pt_rendered = 0
+  for block in section.blocks
+    if block.settings.title != blank
+      assign pt_rendered = pt_rendered | plus: 1
+    endif
+  endfor
+-%}
+{%- if pt_rendered > 0 -%}
+  <section class="mc-section mc-section--soft mc-types">
+    <div class="mc-container">
+      <div class="mc-section__head mc-section__head--center">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.heading != blank -%}
+            <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+        </div>
+      </div>
+      <ul class="mc-types__grid">
+        {%- for block in section.blocks -%}
+          {%- assign pt_title = block.settings.title -%}
+          {%- if pt_title == blank -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign pt_handle = pt_title | handleize
+            assign pt_asset = 'dept-beauty.jpg'
+            if pt_handle contains 'shampoo' or pt_handle contains 'conditioner'
+              assign pt_asset = 'dept-haircare.jpg'
+            elsif pt_handle contains 'lip' or pt_handle contains 'makeup'
+              assign pt_asset = 'dept-makeup.jpg'
+            elsif pt_handle contains 'innerwear'
+              assign pt_asset = 'dept-innerwear.jpg'
+            elsif pt_handle contains 'gift'
+              assign pt_asset = 'dept-gifts.jpg'
+            elsif pt_handle contains 'toy'
+              assign pt_asset = 'dept-kids.jpg'
+            elsif pt_handle contains 'cream'
+              assign pt_asset = 'editorial-skincare.jpg'
+            endif
+          -%}
+          <li {{ block.shopify_attributes }}>
+            <a
+              class="mc-type"
+              href="{% if block.settings.link != blank %}{{ block.settings.link }}{% else %}{{ routes.search_url }}?q={{ pt_title | url_encode }}{% endif %}"
+            >
+              <span class="mc-type__media">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 264 | image_tag: loading: 'lazy', widths: '132, 264', class: 'mc-type__img', alt: '' }}
+                {%- else -%}
+                  <img class="mc-type__img" src="{{ pt_asset | asset_url }}" alt="" loading="lazy" width="264" height="264">
+                {%- endif -%}
+              </span>
+              <span class="mc-type__label">{{ pt_title | escape }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product types",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Find it fast"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by product type"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "type",
+      "name": "Product type",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Type title",
+          "info": "e.g. Face Wash, Serum, Shampoo, Innerwear, Gifts, Toys"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)",
+          "info": "Defaults to a storefront search for the type name."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product types",
+      "blocks": [
+        { "type": "type" },
+        { "type": "type" },
+        { "type": "type" },
+        { "type": "type" }
+      ]
+    }
+  ]
+}
+{% endschema %}

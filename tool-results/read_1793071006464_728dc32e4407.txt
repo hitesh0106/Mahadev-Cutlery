@@ -1,0 +1,563 @@
+     1→     1→// ─────────────────────────────────────────────────────────────────────────────
+     2→     2→// OFFICIAL STORE TAXONOMY — MAHADEV CUTLERY & GIFT ARTICLES
+     3→     3→// Single source of truth for the eight approved departments, the 30 supported
+     4→     4→// brands with their classification rules, and the tag conventions.
+     5→     5→//
+     6→     6→// ⚠️ HONESTY RULES:
+     7→     7→// - This is a CLASSIFICATION system, not a product list. A brand appearing here
+     8→     8→//   does NOT mean the store stocks it — brands go live only with at least one
+     9→     9→//   verified stocked product (see verificationStatus).
+    10→    10→// - No kitchenware/cutlery department exists, by explicit decision.
+    11→    11→// - Never invent products, prices, stock, ratings or discounts.
+    12→    12→//
+    13→    13→// Mirrored in: data/brand-department-map.csv, data/department-collection-seed.csv,
+    14→    14→// docs/BRAND_DEPARTMENT_MAP.md, docs/PRODUCT_TAXONOMY.md (validated by
+    15→    15→// scripts/validate-catalog.ts — keep all copies in sync).
+    16→    16→// ─────────────────────────────────────────────────────────────────────────────
+    17→    17→
+    18→    18→import { ALL_BRANDS, BRAND_GROUPS } from './boutique';
+    19→    19→
+    20→    20→export type DepartmentHandle =
+    21→    21→  | 'beauty-makeup'
+    22→    22→  | 'skincare'
+    23→    23→  | 'haircare'
+    24→    24→  | 'hosiery-innerwear'
+    25→    25→  | 'toys-kids'
+    26→    26→  | 'gift-articles'
+    27→    27→  | 'imitation-jewellery'
+    28→    28→  | 'accessories-grooming';
+    29→    29→
+    30→    30→export type Department = {
+    31→    31→  name: string;
+    32→    32→  handle: DepartmentHandle;
+    33→    33→  blurb: string;
+    34→    34→  types: string[];
+    35→    35→  /** Filter recommendations (Shopify Search & Discovery — data-driven only). */
+    36→    36→  filters: string[];
+    37→    37→};
+    38→    38→
+    39→    39→/** The EXACTLY eight approved departments. Never add a ninth without approval. */
+    40→    40→export const DEPARTMENTS_EIGHT: Department[] = [
+    41→    41→  {
+    42→    42→    name: 'Beauty & Makeup',
+    43→    43→    handle: 'beauty-makeup',
+    44→    44→    blurb: 'Lips, eyes, face — cosmetics',
+    45→    45→    types: [
+    46→    46→      'Face makeup', 'Foundation', 'Concealer', 'Compact powder', 'Loose powder',
+    47→    47→      'Primer', 'Blush', 'Highlighter', 'Contour products', 'Makeup setting spray',
+    48→    48→      'Lipstick', 'Lip gloss', 'Lip liner', 'Kajal', 'Eyeliner', 'Mascara',
+    49→    49→      'Eyeshadow', 'Eyebrow products', 'Makeup remover', 'Makeup brushes',
+    50→    50→      'Makeup sponges', 'Cosmetic accessories',
+    51→    51→    ],
+    52→    52→    filters: ['Brand', 'Product type', 'Price', 'Availability', 'Colour (where variant colour exists)'],
+    53→    53→  },
+    54→    54→  {
+    55→    55→    name: 'Skincare',
+    56→    56→    handle: 'skincare',
+    57→    57→    blurb: 'Cleanse, treat, protect',
+    58→    58→    types: [
+    59→    59→      'Face cleanser', 'Face wash', 'Moisturizer', 'Face cream', 'Sunscreen',
+    60→    60→      'Serum', 'Toner', 'Face mask', 'Sheet mask', 'Exfoliating products',
+    61→    61→      'Lip balm', 'Eye cream', 'Body lotion', 'Body cream', 'Hand cream',
+    62→    62→      'Facial-care products',
+    63→    63→    ],
+    64→    64→    filters: ['Brand', 'Product type', 'Price', 'Availability'],
+    65→    65→  },
+    66→    66→  {
+    67→    67→    name: 'Haircare',
+    68→    68→    handle: 'haircare',
+    69→    69→    blurb: 'Everyday & professional care',
+    70→    70→    types: [
+    71→    71→      'Shampoo', 'Conditioner', 'Hair mask', 'Hair serum', 'Hair oil',
+    72→    72→      'Hair styling products', 'Hair colour', 'Hair treatment products',
+    73→    73→      'Hair brushes', 'Combs', 'Hair dryers', 'Hair straighteners',
+    74→    74→      'Hair styling tools', 'Hair accessories',
+    75→    75→    ],
+    76→    76→    filters: ['Brand', 'Product type', 'Price', 'Availability'],
+    77→    77→  },
+    78→    78→  {
+    79→    79→    name: 'Hosiery & Innerwear',
+    80→    80→    handle: 'hosiery-innerwear',
+    81→    81→    blurb: 'Men, women & kids',
+    82→    82→    types: [
+    83→    83→      "Men's underwear/nikar", "Women's underwear/nikar/panties", "Women's innerwear",
+    84→    84→      "Children's innerwear", 'Vests', 'Undergarments', 'Socks', 'Leggings',
+    85→    85→      'Other verified hosiery products',
+    86→    86→    ],
+    87→    87→    filters: ['Brand', 'Customer group', 'Size', 'Price', 'Availability'],
+    88→    88→  },
+    89→    89→  {
+    90→    90→    name: 'Toys & Kids',
+    91→    91→    handle: 'toys-kids',
+    92→    92→    blurb: 'Play & learn',
+    93→    93→    types: [
+    94→    94→      'Toys', 'Dolls', 'Toy vehicles', 'Educational toys', 'Soft toys', 'Games',
+    95→    95→      "Children's accessories", 'Other verified children\'s products',
+    96→    96→    ],
+    97→    97→    filters: ['Brand', 'Product type', 'Price', 'Availability', 'Age range (only when verified age data exists)'],
+    98→    98→  },
+    99→    99→  {
+   100→   100→    name: 'Gift Articles',
+   101→   101→    handle: 'gift-articles',
+   102→   102→    blurb: 'For every occasion',
+   103→   103→    types: [
+   104→   104→      'Gift sets', 'Decorative gifts', 'Birthday gifts', 'Festival gifts',
+   105→   105→      'Wedding gifts', 'Anniversary gifts', 'Greeting cards', 'Gift packaging',
+   106→   106→      'Gift boxes', 'Other verified gift articles',
+   107→   107→    ],
+   108→   108→    filters: ['Product type', 'Price', 'Availability', 'Occasion (tag-based, where tagged)'],
+   109→   109→  },
+   110→   110→  {
+   111→   111→    name: 'Imitation Jewellery',
+   112→   112→    handle: 'imitation-jewellery',
+   113→   113→    blurb: 'Everyday sparkle',
+   114→   114→    types: [
+   115→   115→      'Earrings', 'Necklaces', 'Chains', 'Bangles', 'Bracelets', 'Rings',
+   116→   116→      'Jewellery sets', 'Pendants', 'Other verified imitation jewellery',
+   117→   117→    ],
+   118→   118→    filters: ['Product type', 'Colour (where variant colour exists)', 'Price', 'Availability'],
+   119→   119→  },
+   120→   120→  {
+   121→   121→    name: 'Accessories & Grooming',
+   122→   122→    handle: 'accessories-grooming',
+   123→   123→    blurb: 'Grooming, tools, belts, eyewear, perfume',
+   124→   124→    types: [
+   125→   125→      'Grooming accessories', 'Hair accessories', 'Beauty tools', 'Brushes',
+   126→   126→      'Combs', 'Hair dryers', 'Hair straighteners', 'Selected personal-care accessories',
+   127→   127→      'Belts', 'Goggles', 'Perfume', 'Other verified miscellaneous accessories',
+   128→   128→    ],
+   129→   129→    filters: ['Brand', 'Product type', 'Price', 'Availability'],
+   130→   130→  },
+   131→   131→];
+   132→   132→
+   133→   133→export const DEPARTMENT_NAMES = DEPARTMENTS_EIGHT.map((d) => d.name);
+   134→   134→
+   135→   135→// ── Brand profiles ───────────────────────────────────────────────────────────
+   136→   136→
+   137→   137→export type VerificationStatus =
+   138→   138→  | 'rule-verified' // classification rule confirmed by owner; stock still per-product
+   139→   139→  | 'stock-verification-required' // every product needs owner confirmation before publishing
+   140→   140→  | 'identity-unverified'; // brand identity itself pending — publish nothing yet
+   141→   141→
+   142→   142→export type BrandProfile = {
+   143→   143→  brand: string;
+   144→   144→  /** Approved primary department(s) — actual product decides between them. */
+   145→   145→  primaryDepartments: string[];
+   146→   146→  allowedTypes: string[];
+   147→   147→  allowedAudiences: string[];
+   148→   148→  /** Explicitly forbidden classifications. */
+   149→   149→  prohibited: string[];
+   150→   150→  verification: VerificationStatus;
+   151→   151→  notes: string;
+   152→   152→};
+   153→   153→
+   154→   154→export const BRANDS: BrandProfile[] = [
+   155→   155→  // ── Hosiery & Innerwear ────────────────────────────────────────────────────
+   156→   156→  {
+   157→   157→    brand: 'Jockey',
+   158→   158→    primaryDepartments: ['Hosiery & Innerwear'],
+   159→   159→    allowedTypes: ["Men's underwear", "Men's vests", "Men's innerwear", "Women's innerwear", "Women's underwear", "Women's sleepwear/loungewear (if stocked)", 'Socks', 'Other genuine Jockey apparel/innerwear'],
+   160→   160→    allowedAudiences: ['Men', 'Women'],
+   161→   161→    prohibited: ['Classifying unverified categories', 'Kids lines unless actually stocked'],
+   162→   162→    verification: 'rule-verified',
+   163→   163→    notes: 'Collections only for real stock: Jockey, Jockey Men\'s Innerwear, Jockey Women\'s Innerwear, Jockey Socks.',
+   164→   164→  },
+   165→   165→  {
+   166→   166→    brand: 'Van Heusen',
+   167→   167→    primaryDepartments: ['Hosiery & Innerwear'],
+   168→   168→    allowedTypes: ["Men's underwear", "Men's innerwear", 'Vests', "Women's innerwear (if stocked)", 'Other verified products actually sold'],
+   169→   169→    allowedAudiences: ['Men', 'Women (if stocked)'],
+   170→   170→    prohibited: ['Assuming every product is innerwear — use the actual product type'],
+   171→   171→    verification: 'rule-verified',
+   172→   172→    notes: 'The actual product type decides the department; do not force innerwear.',
+   173→   173→  },
+   174→   174→  {
+   175→   175→    brand: 'Zoiro',
+   176→   176→    primaryDepartments: ['Hosiery & Innerwear'],
+   177→   177→    allowedTypes: ["Men's nikar/underwear", 'Other verified men\'s innerwear items (if stocked and confirmed)'],
+   178→   178→    allowedAudiences: ['Men'],
+   179→   179→    prohibited: ["Women's Zoiro collection", "Girls' Zoiro collection", "Boys' Zoiro collection", 'Unverified Zoiro product types'],
+   180→   180→    verification: 'rule-verified',
+   181→   181→    notes: 'MANDATORY: Zoiro is men\'s nikar/innerwear ONLY in this store.',
+   182→   182→  },
+   183→   183→  {
+   184→   184→    brand: 'Bodycare',
+   185→   185→    primaryDepartments: ['Hosiery & Innerwear'],
+   186→   186→    allowedTypes: ["Women's innerwear", "Girls' innerwear", "Boys' innerwear", "Children's hosiery products", 'Other verified women\'s/children\'s products'],
+   187→   187→    allowedAudiences: ['Women', 'Girls', 'Boys'],
+   188→   188→    prohibited: ["Bodycare Men's", "Men's Bodycare Innerwear", 'Any men\'s category', 'Confusing children\'s products with women\'s products'],
+   189→   189→    verification: 'rule-verified',
+   190→   190→    notes: 'MANDATORY: women + children only. Separate collections only where real products support them.',
+   191→   191→  },
+   192→   192→  {
+   193→   193→    brand: 'Lady Care',
+   194→   194→    primaryDepartments: ['Hosiery & Innerwear'],
+   195→   195→    allowedTypes: ["Women's nikar/panty", "Women's innerwear products (when confirmed)"],
+   196→   196→    allowedAudiences: ['Women'],
+   197→   197→    prohibited: ["Men's products", "Boys' products", "Girls' products (unless merchant explicitly verifies and revises the rule)"],
+   198→   198→    verification: 'rule-verified',
+   199→   199→    notes: 'MANDATORY: women\'s nikar/panty and verified women\'s innerwear only.',
+   200→   200→  },
+   201→   201→  // ── Beauty & Makeup ────────────────────────────────────────────────────────
+   202→   202→  {
+   203→   203→    brand: 'Swiss Beauty',
+   204→   204→    primaryDepartments: ['Beauty & Makeup', 'Accessories & Grooming (tools only)'],
+   205→   205→    allowedTypes: ['Foundation', 'Concealer', 'Compact', 'Blush', 'Highlighter', 'Lipstick', 'Lip gloss', 'Lip liner', 'Kajal', 'Eyeliner', 'Mascara', 'Eyeshadow', 'Primer', 'Makeup setting products', 'Makeup brushes', 'Sponges', 'Other verified cosmetics'],
+   206→   206→    allowedAudiences: ['Women', 'Unisex (tools)'],
+   207→   207→    prohibited: ['Assuming every Swiss Beauty product is available'],
+   208→   208→    verification: 'rule-verified',
+   209→   209→    notes: 'Cosmetics → Beauty & Makeup; suitable tools → Accessories & Grooming.',
+   210→   210→  },
+   211→   211→  {
+   212→   212→    brand: 'Lakmé',
+   213→   213→    primaryDepartments: ['Beauty & Makeup', 'Skincare'],
+   214→   214→    allowedTypes: ['Foundation', 'Concealer', 'Compact', 'Lipstick', 'Lip gloss', 'Kajal', 'Eyeliner', 'Mascara', 'Blush', 'Makeup primer', 'Sunscreen', 'Moisturizer', 'Face wash', 'Other verified skincare/makeup'],
+   215→   215→    allowedAudiences: ['Women', 'Unisex (skincare)'],
+   216→   216→    prohibited: ['Classifying skincare products as makeup merely because they are Lakmé'],
+   217→   217→    verification: 'rule-verified',
+   218→   218→    notes: 'Cosmetics → Beauty & Makeup; skincare → Skincare. Actual product identity decides.',
+   219→   219→  },
+   220→   220→  {
+   221→   221→    brand: 'Maybelline New York',
+   222→   222→    primaryDepartments: ['Beauty & Makeup'],
+   223→   223→    allowedTypes: ['Foundation', 'Concealer', 'Powder', 'Mascara', 'Eyeliner', 'Kajal', 'Lipstick', 'Lip gloss', 'Lip liner', 'Blush', 'Other verified cosmetics'],
+   224→   224→    allowedAudiences: ['Women'],
+   225→   225→    prohibited: ['Importing/publishing non-stocked products'],
+   226→   226→    verification: 'rule-verified',
+   227→   227→    notes: 'Only import and publish actual stocked products.',
+   228→   228→  },
+   229→   229→  {
+   230→   230→    brand: 'Faces Canada',
+   231→   231→    primaryDepartments: ['Beauty & Makeup', 'Accessories & Grooming (tools only)'],
+   232→   232→    allowedTypes: ['Lipstick', 'Lip gloss', 'Lip liner', 'Foundation', 'Concealer', 'Compact', 'Kajal', 'Eyeliner', 'Mascara', 'Nail products', 'Makeup tools', 'Other verified beauty products'],
+   233→   233→    allowedAudiences: ['Women'],
+   234→   234→    prohibited: ['Tools classified as cosmetics'],
+   235→   235→    verification: 'rule-verified',
+   236→   236→    notes: 'Cosmetics → Beauty & Makeup; tools → Accessories & Grooming.',
+   237→   237→  },
+   238→   238→  {
+   239→   239→    brand: 'Colorbar',
+   240→   240→    primaryDepartments: ['Beauty & Makeup'],
+   241→   241→    allowedTypes: ['Lipstick', 'Lip gloss', 'Foundation', 'Concealer', 'Blush', 'Highlighter', 'Kajal', 'Eyeliner', 'Mascara', 'Nail products', 'Makeup tools', 'Other verified cosmetics'],
+   242→   242→    allowedAudiences: ['Women'],
+   243→   243→    prohibited: ['Unverified product types'],
+   244→   244→    verification: 'rule-verified',
+   245→   245→    notes: 'Primary department Beauty & Makeup for cosmetics.',
+   246→   246→  },
+   247→   247→  {
+   248→   248→    brand: 'MARS Cosmetics',
+   249→   249→    primaryDepartments: ['Beauty & Makeup'],
+   250→   250→    allowedTypes: ['Lip products', 'Face makeup', 'Eye makeup', 'Makeup palettes', 'Brushes', 'Sponges', 'Other verified makeup products'],
+   251→   251→    allowedAudiences: ['Women'],
+   252→   252→    prohibited: ['Classifying unverified products'],
+   253→   253→    verification: 'rule-verified',
+   254→   254→    notes: 'Display alias "MARS" acceptable on cards; keep ONE canonical vendor spelling for imports.',
+   255→   255→  },
+   256→   256→  // ── Skincare & personal care ───────────────────────────────────────────────
+   257→   257→  {
+   258→   258→    brand: 'Minimalist',
+   259→   259→    primaryDepartments: ['Skincare'],
+   260→   260→    allowedTypes: ['Face serums', 'Cleansers', 'Moisturizers', 'Sunscreens', 'Toners', 'Other verified skincare products'],
+   261→   261→    allowedAudiences: ['Unisex'],
+   262→   262→    prohibited: ['Inventing active-ingredient concentrations', 'Medical claims', 'Skin-condition suitability claims'],
+   263→   263→    verification: 'rule-verified',
+   264→   264→    notes: 'Use accurate product descriptions only.',
+   265→   265→  },
+   266→   266→  {
+   267→   267→    brand: 'Dot & Key',
+   268→   268→    primaryDepartments: ['Skincare'],
+   269→   269→    allowedTypes: ['Face cleansers', 'Moisturizers', 'Serums', 'Sunscreens', 'Face masks', 'Lip-care products', 'Other verified skincare products'],
+   270→   270→    allowedAudiences: ['Unisex', 'Women'],
+   271→   271→    prohibited: ['Classifying all products as makeup'],
+   272→   272→    verification: 'rule-verified',
+   273→   273→    notes: 'Primary department Skincare.',
+   274→   274→  },
+   275→   275→  {
+   276→   276→    brand: 'Cetaphil',
+   277→   277→    primaryDepartments: ['Skincare'],
+   278→   278→    allowedTypes: ['Cleansers', 'Moisturizers', 'Face-care products', 'Body-care products', 'Sunscreens', 'Other verified personal-care products'],
+   279→   279→    allowedAudiences: ['Unisex'],
+   280→   280→    prohibited: ['Unverified product-specific claims'],
+   281→   281→    verification: 'rule-verified',
+   282→   282→    notes: 'Use only verified product descriptions.',
+   283→   283→  },
+   284→   284→  {
+   285→   285→    brand: 'Sebamed',
+   286→   286→    primaryDepartments: ['Skincare'],
+   287→   287→    allowedTypes: ['Cleansers', 'Moisturizers', 'Face-care products', 'Body-care products', 'Other verified skincare products'],
+   288→   288→    allowedAudiences: ['Unisex'],
+   289→   289→    prohibited: ['Unverified claims'],
+   290→   290→    verification: 'rule-verified',
+   291→   291→    notes: 'Primary department Skincare.',
+   292→   292→  },
+   293→   293→  {
+   294→   294→    brand: "POND'S",
+   295→   295→    primaryDepartments: ['Skincare'],
+   296→   296→    allowedTypes: ['Face wash', 'Face cream', 'Moisturizer', 'Cleansing products', 'Other verified skincare products'],
+   297→   297→    allowedAudiences: ['Unisex', 'Women'],
+   298→   298→    prohibited: ['Classifying products as makeup unless the item is actually cosmetic'],
+   299→   299→    verification: 'rule-verified',
+   300→   300→    notes: 'Primary department Skincare.',
+   301→   301→  },
+   302→   302→  {
+   303→   303→    brand: 'NIVEA',
+   304→   304→    primaryDepartments: ['Skincare', 'Accessories & Grooming (per actual product)'],
+   305→   305→    allowedTypes: ['Body lotion', 'Cream', 'Moisturizer', 'Lip balm', 'Deodorant', 'Body-care products', 'Other verified personal-care products'],
+   306→   306→    allowedAudiences: ['Unisex', 'Men', 'Women'],
+   307→   307→    prohibited: ['Inventing product availability'],
+   308→   308→    verification: 'rule-verified',
+   309→   309→    notes: 'Department depends on the actual product within the approved structure.',
+   310→   310→  },
+   311→   311→  {
+   312→   312→    brand: 'Garnier',
+   313→   313→    primaryDepartments: ['Skincare', 'Haircare'],
+   314→   314→    allowedTypes: ['Face wash', 'Cleansers', 'Moisturizers', 'Sunscreens', 'Haircare', 'Hair colour', 'Other verified skincare/haircare'],
+   315→   315→    allowedAudiences: ['Unisex', 'Women'],
+   316→   316→    prohibited: ['Duplicating products just to place them in two collections'],
+   317→   317→    verification: 'rule-verified',
+   318→   318→    notes: 'Skincare → Skincare; hair products → Haircare. Keep one brand spelling.',
+   319→   319→  },
+   320→   320→  {
+   321→   321→    brand: 'Pilgrim',
+   322→   322→    primaryDepartments: ['Skincare', 'Haircare'],
+   323→   323→    allowedTypes: ['Skincare', 'Face serums', 'Cleansers', 'Moisturizers', 'Haircare', 'Hair serums', 'Other verified beauty products'],
+   324→   324→    allowedAudiences: ['Unisex', 'Women'],
+   325→   325→    prohibited: ['Assuming department without product identity'],
+   326→   326→    verification: 'rule-verified',
+   327→   327→    notes: 'Classify according to actual product identity.',
+   328→   328→  },
+   329→   329→  {
+   330→   330→    brand: 'Plix',
+   331→   331→    primaryDepartments: ['Skincare'],
+   332→   332→    allowedTypes: ['Skincare', 'Face-care products', 'Body-care products', 'Other verified beauty/personal-care products'],
+   333→   333→    allowedAudiences: ['Unisex', 'Women'],
+   334→   334→    prohibited: ['Auto-classifying as skincare when the actual use differs'],
+   335→   335→    verification: 'rule-verified',
+   336→   336→    notes: 'Follow the actual intended use.',
+   337→   337→  },
+   338→   338→  {
+   339→   339→    brand: 'Lotus Herbals',
+   340→   340→    primaryDepartments: ['Skincare'],
+   341→   341→    allowedTypes: ['Skincare', 'Face care', 'Sunscreen', 'Cleansing products', 'Moisturizers', 'Other verified personal-care products', 'Individual cosmetics (classified correctly per product)'],
+   342→   342→    allowedAudiences: ['Unisex', 'Women'],
+   343→   343→    prohibited: ['Automatically classifying the brand as makeup', 'Assigning the whole brand to makeup'],
+   344→   344→    verification: 'rule-verified',
+   345→   345→    notes: 'MANDATORY: never default to makeup. If an actual stocked item is a cosmetic, classify that ONE product correctly.',
+   346→   346→  },
+   347→   347→  // ── L'Oréal (two separate brands) ──────────────────────────────────────────
+   348→   348→  {
+   349→   349→    brand: "L'Oréal Paris",
+   350→   350→    primaryDepartments: ['Haircare', 'Skincare', 'Beauty & Makeup'],
+   351→   351→    allowedTypes: ['Hair shampoo', 'Conditioner', 'Hair serum', 'Hair colour', 'Haircare products', 'Face-care products', 'Skincare products', 'Makeup products', 'Other verified products'],
+   352→   352→    allowedAudiences: ['Unisex', 'Women'],
+   353→   353→    prohibited: ['Merging with L\'Oréal Professionnel (vendor names, collection handles, imports)', 'Dumping every product into one department'],
+   354→   354→    verification: 'rule-verified',
+   355→   355→    notes: 'SEPARATE brand from L\'Oréal Professionnel. Department follows the actual product.',
+   356→   356→  },
+   357→   357→  {
+   358→   358→    brand: "L'Oréal Professionnel",
+   359→   359→    primaryDepartments: ['Haircare'],
+   360→   360→    allowedTypes: ['Professional shampoo', 'Conditioner', 'Hair masks', 'Hair serum', 'Hair treatments', 'Hair styling products', 'Other verified professional haircare products'],
+   361→   361→    allowedAudiences: ['Unisex'],
+   362→   362→    prohibited: ['Makeup or skincare collections (unless real catalogue supports them)', 'Merging with L\'Oréal Paris'],
+   363→   363→    verification: 'rule-verified',
+   364→   364→    notes: 'SEPARATE brand. Professional haircare only.',
+   365→   365→  },
+   366→   366→  // ── Haircare ───────────────────────────────────────────────────────────────
+   367→   367→  {
+   368→   368→    brand: 'Matrix',
+   369→   369→    primaryDepartments: ['Haircare'],
+   370→   370→    allowedTypes: ['Shampoo', 'Conditioner', 'Hair masks', 'Hair serum', 'Hair treatments', 'Hair styling products', 'Hair colour products (if stocked)', 'Other verified haircare'],
+   371→   371→    allowedAudiences: ['Unisex'],
+   372→   372→    prohibited: ['Unverified professional claims'],
+   373→   373→    verification: 'rule-verified',
+   374→   374→    notes: 'Primary department Haircare.',
+   375→   375→  },
+   376→   376→  {
+   377→   377→    brand: 'Wella Professionals',
+   378→   378→    primaryDepartments: ['Haircare'],
+   379→   379→    allowedTypes: ['Shampoo', 'Conditioner', 'Hair masks', 'Hair treatments', 'Hair styling products', 'Hair colour products (if stocked)', 'Other verified professional haircare'],
+   380→   380→    allowedAudiences: ['Unisex'],
+   381→   381→    prohibited: ['Publishing professional product claims without verified information'],
+   382→   382→    verification: 'rule-verified',
+   383→   383→    notes: 'Primary department Haircare.',
+   384→   384→  },
+   385→   385→  // ── Tools & appliances ─────────────────────────────────────────────────────
+   386→   386→  {
+   387→   387→    brand: 'VEGA',
+   388→   388→    primaryDepartments: ['Accessories & Grooming', 'Haircare (related collections where appropriate)'],
+   389→   389→    allowedTypes: ['Hair brushes', 'Combs', 'Hair dryers', 'Hair straighteners', 'Hair styling tools', 'Grooming tools', 'Beauty tools', 'Other verified accessories'],
+   390→   390→    allowedAudiences: ['Unisex', 'Women'],
+   391→   391→    prohibited: ['Assuming a department from the brand alone — use the actual product type'],
+   392→   392→    verification: 'rule-verified',
+   393→   393→    notes: 'Actual product type decides the primary department.',
+   394→   394→  },
+   395→   395→  {
+   396→   396→    brand: 'Philips',
+   397→   397→    primaryDepartments: ['Accessories & Grooming'],
+   398→   398→    allowedTypes: ['Hair dryers', 'Hair straighteners', 'Trimmers', 'Grooming devices', 'Personal-care appliances', 'Other verified products (when stocked)'],
+   399→   399→    allowedAudiences: ['Unisex', 'Men'],
+   400→   400→    prohibited: ['Inventing models', 'Electrical specifications', 'Warranty terms', 'Availability'],
+   401→   401→    verification: 'rule-verified',
+   402→   402→    notes: 'Only when actually stocked; never invent specifications.',
+   403→   403→  },
+   404→   404→  // ── Restricted / pending ───────────────────────────────────────────────────
+   405→   405→  {
+   406→   406→    brand: 'Sunny',
+   407→   407→    primaryDepartments: ['Per actual verified product'],
+   408→   408→    allowedTypes: ['Only confirmed products actually stocked by the owner'],
+   409→   409→    allowedAudiences: ['Per verified product'],
+   410→   410→    prohibited: ['Assuming a product type from the brand name alone', 'Publishing unverified products'],
+   411→   411→    verification: 'stock-verification-required',
+   412→   412→    notes: 'Every Sunny product needs: name, category, customer group, price, image and inventory confirmed before publishing.',
+   413→   413→  },
+   414→   414→  {
+   415→   415→    brand: 'Ghar Soaps',
+   416→   416→    primaryDepartments: ['Per actual verified product'],
+   417→   417→    allowedTypes: ['Only products from the verified catalogue of the confirmed manufacturer'],
+   418→   418→    allowedAudiences: ['Per verified product'],
+   419→   419→    prohibited: ['Assuming brand identity from the name', 'Treating similarly named brands as the same company', 'Inventing products'],
+   420→   420→    verification: 'identity-unverified',
+   421→   421→    notes: 'Verify exact brand identity, product names, packaging, sizes, prices, images, claims and inventory. Keep unpublished until the merchant confirms.',
+   422→   422→  },
+   423→   423→];
+   424→   424→
+   425→   425→/** Canonical vendor spelling list (30 brands incl. O3+ from the store's list). */
+   426→   426→export const ALL_VENDORS: string[] = [...BRANDS.map((b) => b.brand), 'O3+'].sort((a, b) =>
+   427→   427→  a.localeCompare(b),
+   428→   428→);
+   429→   429→
+   430→   430→// ── Tag conventions (PART 4) ─────────────────────────────────────────────────
+   431→   431→
+   432→   432→export const TAG_CONVENTIONS: { prefix: string; example: string; meaning: string }[] = [
+   433→   433→  { prefix: 'department_', example: 'department_skincare', meaning: 'Primary department (one per product)' },
+   434→   434→  { prefix: 'audience_', example: 'audience_women', meaning: 'Verified customer group' },
+   435→   435→  { prefix: 'type_', example: 'type_face_wash', meaning: 'Product type (snake_case of Type)' },
+   436→   436→  { prefix: 'brand_', example: 'brand_jockey', meaning: 'Brand slug' },
+   437→   437→  { prefix: 'gf-oc-', example: 'gf-oc-diwali', meaning: 'Gift Finder occasion' },
+   438→   438→  { prefix: 'gf-for-', example: 'gf-for-her', meaning: 'Gift Finder recipient' },
+   439→   439→  { prefix: 'gf-', example: 'gf-199-499', meaning: 'Gift Finder budget band' },
+   440→   440→];
+   441→   441→
+   442→   442→export const AUDIENCE_TAGS = [
+   443→   443→  'audience_men',
+   444→   444→  'audience_women',
+   445→   445→  'audience_boys',
+   446→   446→  'audience_girls',
+   447→   447→  'audience_unisex',
+   448→   448→];
+   449→   449→
+   450→   450→export function departmentTag(name: string): string {
+   451→   451→  return `department_${name.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '')}`;
+   452→   452→}
+   453→   453→
+   454→   454→// ── Browse resolution (chips, nav links, search hits → collection views) ────
+   455→   455→// Resolves any storefront label to an approved brand / department / product
+   456→   456→// type so no link is dead. Pure data — no invented products, only
+   457→   457→// classification targets that exist in this file or in the department list.
+   458→   458→
+   459→   459→export type ChipTarget = { kind: 'brand' | 'department' | 'type'; name: string };
+   460→   460→
+   461→   461→/** Product-type aliases → their department(s) + title keywords for matching. */
+   462→   462→const TYPE_INDEX: Record<string, { depts: string[]; kw: string[] }> = {
+   463→   463→  'face wash': { depts: ['Skincare'], kw: ['face wash', 'face cleanser', 'cleanser'] },
+   464→   464→  'face cream': { depts: ['Skincare'], kw: ['face cream', 'moisturizer', 'moisturiser'] },
+   465→   465→  moisturizer: { depts: ['Skincare'], kw: ['face cream', 'moisturizer', 'moisturiser'] },
+   466→   466→  moisturisers: { depts: ['Skincare'], kw: ['face cream', 'moisturizer', 'moisturiser'] },
+   467→   467→  sunscreen: { depts: ['Skincare'], kw: ['sunscreen'] },
+   468→   468→  serum: { depts: ['Skincare'], kw: ['serum'] },
+   469→   469→  serums: { depts: ['Skincare'], kw: ['serum'] },
+   470→   470→  shampoo: { depts: ['Haircare'], kw: ['shampoo'] },
+   471→   471→  conditioner: { depts: ['Haircare'], kw: ['conditioner'] },
+   472→   472→  'lip products': { depts: ['Beauty & Makeup', 'Skincare'], kw: ['lip'] },
+   473→   473→  makeup: {
+   474→   474→    depts: ['Beauty & Makeup'],
+   475→   475→    kw: ['lipstick', 'lip gloss', 'mascara', 'kajal', 'eyeliner', 'foundation', 'compact', 'blush', 'makeup', 'eyeshadow', 'highlighter', 'primer', 'concealer', 'contour'],
+   476→   476→  },
+   477→   477→  'makeup products': {
+   478→   478→    depts: ['Beauty & Makeup'],
+   479→   479→    kw: ['lipstick', 'lip gloss', 'mascara', 'kajal', 'eyeliner', 'foundation', 'compact', 'blush', 'makeup', 'eyeshadow', 'highlighter', 'primer', 'concealer', 'contour'],
+   480→   480→  },
+   481→   481→  innerwear: {
+   482→   482→    depts: ['Hosiery & Innerwear'],
+   483→   483→    kw: ['underwear', 'innerwear', 'nikar', 'vest', 'panty', 'brief', 'sock', 'legging'],
+   484→   484→  },
+   485→   485→  gifts: { depts: ['Gift Articles'], kw: ['gift'] },
+   486→   486→  toys: { depts: ['Toys & Kids'], kw: ['toy', 'doll', 'game', 'stacking'] },
+   487→   487→  accessories: {
+   488→   488→    depts: ['Accessories & Grooming'],
+   489→   489→    kw: ['brush', 'comb', 'belt', 'goggle', 'perfume', 'grooming', 'dryer', 'straightener', 'trimmer'],
+   490→   490→  },
+   491→   491→};
+   492→   492→
+   493→   493→const BRAND_LOOKUP = new Set(ALL_BRANDS);
+   494→   494→
+   495→   495→/**
+   496→   496→ * Resolves a storefront label (chip, nav link, search hit) to a browse target.
+   497→   497→ * Order: exact department → exact brand (also "Brand · qualifier" chips) →
+   498→   498→ * product-type alias. Returns null when nothing approved matches (callers then
+   499→   499→ * keep the element non-navigating instead of inventing a destination).
+   500→   500→ */
+   501→   501→export function resolveChipTarget(raw: string): ChipTarget | null {
+   502→   502→  const label = raw.trim();
+   503→   503→  if (!label) return null;
+   504→   504→
+   505→   505→  if (DEPARTMENTS_EIGHT.some((d) => d.name === label)) {
+   506→   506→    return { kind: 'department', name: label };
+   507→   507→  }
+   508→   508→
+   509→   509→  const base = label.split('·')[0].trim();
+   510→   510→  if (BRAND_LOOKUP.has(base)) return { kind: 'brand', name: base };
+   511→   511→  if (BRAND_LOOKUP.has(label)) return { kind: 'brand', name: label };
+   512→   512→
+   513→   513→  const hit = typeEntry(label);
+   514→   514→  if (hit) return { kind: 'type', name: label };
+   515→   515→
+   516→   516→  return null;
+   517→   517→}
+   518→   518→
+   519→   519→/** Type-entry lookup used by the type collection view (exact, then keyword). */
+   520→   520→export function typeEntry(name: string): { depts: string[]; kw: string[] } | null {
+   521→   521→  const l = name.trim().toLowerCase();
+   522→   522→  if (TYPE_INDEX[l]) return TYPE_INDEX[l];
+   523→   523→  for (const entry of Object.values(TYPE_INDEX)) {
+   524→   524→    if (entry.kw.some((k) => l.includes(k) || k.includes(l))) return entry;
+   525→   525→  }
+   526→   526→  return null;
+   527→   527→}
+   528→   528→
+   529→   529→/** Strips "(…)" qualifiers from a brand's primaryDepartments entry. */
+   530→   530→export function baseDepartment(entry: string): string | null {
+   531→   531→  const base = entry.replace(/\s*\(.*\)\s*$/, '').trim();
+   532→   532→  if (base === 'Per actual verified product') return null;
+   533→   533→  return DEPARTMENTS_EIGHT.some((d) => d.name === base) ? base : null;
+   534→   534→}
+   535→   535→
+   536→   536→/** Approved departments for a brand (qualified entries resolved). */
+   537→   537→export function brandDepartments(brand: string): string[] {
+   538→   538→  const profile = BRANDS.find((b) => b.brand === brand);
+   539→   539→  let sources: string[] = [];
+   540→   540→  if (profile) {
+   541→   541→    sources = profile.primaryDepartments;
+   542→   542→  } else {
+   543→   543→    // Brands without a full profile (e.g. O3+) fall back to their group.
+   544→   544→    const group = BRAND_GROUPS.find((g) => (g.brands as readonly string[]).includes(brand))?.group;
+   545→   545→    sources = group ? (GROUP_DEPTS[group] ?? []) : [];
+   546→   546→  }
+   547→   547→  const out: string[] = [];
+   548→   548→  for (const entry of sources) {
+   549→   549→    const dept = baseDepartment(entry);
+   550→   550→    if (dept && !out.includes(dept)) out.push(dept);
+   551→   551→  }
+   552→   552→  return out;
+   553→   553→}
+   554→   554→
+   555→   555→/** Brand group → department fallback (matches lib/boutique BRAND_GROUPS). */
+   556→   556→export const GROUP_DEPTS: Record<string, string[]> = {
+   557→   557→  'Hosiery & Innerwear': ['Hosiery & Innerwear'],
+   558→   558→  Haircare: ['Haircare'],
+   559→   559→  'Beauty & Makeup': ['Beauty & Makeup'],
+   560→   560→  'Skincare & Beauty': ['Skincare', 'Beauty & Makeup'],
+   561→   561→  'Accessories & Grooming': ['Accessories & Grooming'],
+   562→   562→};
+   563→   563→
