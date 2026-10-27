@@ -15,11 +15,25 @@ import { useLang } from '@/lib/i18n';
 const pad = (n: number) => String(n).padStart(2, '0');
 
 // One-second external clock (no setState-in-effect; hydration-safe pattern).
+// The snapshot MUST be cached: useSyncExternalStore calls getSnapshot on every
+// render and compares with Object.is. A fresh Date.now() each call would never
+// compare equal ("The result of getSnapshot should be cached" infinite loop),
+// so the time only advances inside subscribeTick, right before the listener
+// notification — one stable value per tick.
+let nowCache: number | null = null;
+
 function subscribeTick(onChange: () => void) {
-  const id = setInterval(onChange, 1000);
+  const id = setInterval(() => {
+    nowCache = Date.now();
+    onChange();
+  }, 1000);
   return () => clearInterval(id);
 }
-const getNow = () => Date.now();
+
+const getNow = () => {
+  if (nowCache === null) nowCache = Date.now();
+  return nowCache;
+};
 const getServerNow = () => 0;
 
 export function FestivalCountdown() {

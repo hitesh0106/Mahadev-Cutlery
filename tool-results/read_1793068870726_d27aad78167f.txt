@@ -1,0 +1,765 @@
+     1→'use client';
+     2→
+     3→// Preview i18n — EN / हिन्दी / ગુજરાતી interface language for the showcase app.
+     4→// Mirrors the Shopify theme's bundled locale files (en.default.json / hi.json /
+     5→// gu.json): interface strings only. Brand names, product titles, prices and the
+     6→// WhatsApp order message (store-facing) are never translated.
+     7→//
+     8→// Implementation: external store + useSyncExternalStore (same SSR-safe pattern
+     9→// as the wishlist), persisted to localStorage 'mahadev-preview:lang'.
+    10→
+    11→import { useSyncExternalStore } from 'react';
+    12→
+    13→export type Lang = 'en' | 'hi' | 'gu';
+    14→
+    15→export const LANGUAGES: { code: Lang; label: string; short: string; native: boolean }[] = [
+    16→  { code: 'en', label: 'English', short: 'EN', native: true },
+    17→  { code: 'hi', label: 'हिन्दी', short: 'हिं', native: true },
+    18→  { code: 'gu', label: 'ગુજરાતી', short: 'ગુ', native: true },
+    19→];
+    20→
+    21→const LANG_KEY = 'mahadev-preview:lang';
+    22→const LANG_EVENT = 'mahadev-preview:lang-changed';
+    23→
+    24→type Listener = () => void;
+    25→const listeners = new Set<Listener>();
+    26→let langCache: Lang | null = null;
+    27→
+    28→function readLang(): Lang {
+    29→  try {
+    30→    const stored = localStorage.getItem(LANG_KEY);
+    31→    return stored === 'hi' || stored === 'gu' ? stored : 'en';
+    32→  } catch {
+    33→    return 'en';
+    34→  }
+    35→}
+    36→
+    37→function getLangSnapshot(): Lang {
+    38→  if (langCache === null) langCache = readLang();
+    39→  return langCache;
+    40→}
+    41→
+    42→function getServerLang(): Lang {
+    43→  return 'en';
+    44→}
+    45→
+    46→function subscribeLang(listener: Listener) {
+    47→  listeners.add(listener);
+    48→  const onChanged = () => listener();
+    49→  window.addEventListener(LANG_EVENT, onChanged);
+    50→  window.addEventListener('storage', onChanged);
+    51→  return () => {
+    52→    listeners.delete(listener);
+    53→    window.removeEventListener(LANG_EVENT, onChanged);
+    54→    window.removeEventListener('storage', onChanged);
+    55→  };
+    56→}
+    57→
+    58→export function setLang(next: Lang) {
+    59→  langCache = next;
+    60→  try {
+    61→    localStorage.setItem(LANG_KEY, next);
+    62→  } catch {
+    63→    // Storage unavailable — language stays for this session only.
+    64→  }
+    65→  listeners.forEach((listener) => listener());
+    66→  window.dispatchEvent(new Event(LANG_EVENT));
+    67→  document.documentElement.lang = next === 'en' ? 'en' : next;
+    68→}
+    69→
+    70→/** Keep <html lang> in sync (called by the language switcher). */
+    71→export function syncDocumentLang() {
+    72→  document.documentElement.lang = getLangSnapshot() === 'en' ? 'en' : getLangSnapshot();
+    73→}
+    74→
+    75→// ── Dictionaries ─────────────────────────────────────────────────────────────
+    76→// Key = the exact English source string. Missing keys fall back to English.
+    77→
+    78→const HI: Record<string, string> = {
+    79→  // Preview banner
+    80→  'Visual preview with sample data. The Shopify theme shows your real products, prices and brands.':
+    81→    'नमूना डेटा के साथ विज़ुअल प्रीव्यू। Shopify थीम आपके असली प्रोडक्ट, क़ीमत और ब्रांड दिखाती है।',
+    82→  'Download theme & guides': 'थीम और गाइड डाउनलोड करें',
+    83→
+    84→  // Announcement bar
+    85→  'Beauty, innerwear, gifts & more — curated in Ahmedabad':
+    86→    'ब्यूटी, इनरवियर, गिफ्ट और बहुत कुछ — अहमदाबाद में चुना हुआ',
+    87→  'Explore original products from brands you trust':
+    88→    'अपने भरोसेमंद ब्रांड्स के असली प्रोडक्ट देखें',
+    89→  'Previous announcement': 'पिछला ऐलान',
+    90→  'Next announcement': 'अगला ऐलान',
+    91→
+    92→  // Header / nav
+    93→  'Shop All': 'सब खरीदें',
+    94→  'Beauty & Makeup': 'ब्यूटी व मेकअप',
+    95→  'Toys & Kids': 'खिलौने व बच्चे',
+    96→  'Accessories & Grooming': 'एक्सेसरीज़ व ग्रूमिंग',
+    97→  'Tools, grooming & more': 'टूल्स, ग्रूमिंग व अन्य',
+    98→  Earrings: 'इयररिंग्स',
+    99→  'Beauty & Skincare': 'ब्यूटी व स्किनकेयर',
+   100→  Haircare: 'हेयरकेयर',
+   101→  Makeup: 'मेकअप',
+   102→  'Hosiery & Innerwear': 'होज़ियरी व इनरवियर',
+   103→  'Kids & Toys': 'बच्चों व खिलौने',
+   104→  'Gifts & Jewellery': 'गिफ्ट व ज्वेलरी',
+   105→  'Beauty Tools': 'ब्यूटी टूल्स',
+   106→  Brands: 'ब्रांड्स',
+   107→  Offers: 'ऑफ़र',
+   108→  'Shop by Department': 'विभाग से खरीदें',
+   109→  'Shop by Brand': 'ब्रांड से खरीदें',
+   110→  'Shop by Product Type': 'प्रोडक्ट टाइप से खरीदें',
+   111→  'Gift Articles': 'गिफ्ट आर्टिकल्स',
+   112→  'Imitation Jewellery': 'इमिटेशन ज्वेलरी',
+   113→  'Beauty Tools & Grooming': 'ब्यूटी टूल्स व ग्रूमिंग',
+   114→  'Accessories & More': 'एक्सेसरीज़ व अन्य',
+   115→  'Face Wash': 'फेस वॉश',
+   116→  Moisturizer: 'मॉइस्चराइज़र',
+   117→  Serum: 'सीरम',
+   118→  Shampoo: 'शैम्पू',
+   119→  Conditioner: 'कंडीशनर',
+   120→  'Lip Products': 'लिप प्रोडक्ट्स',
+   121→  'Makeup Products': 'मेकअप प्रोडक्ट्स',
+   122→  Innerwear: 'इनरवियर',
+   123→  Toys: 'खिलौने',
+   124→  Gifts: 'गिफ्ट',
+   125→  'Show Shop All menu': 'सब खरीदें मेनू दिखाएँ',
+   126→  Search: 'खोजें',
+   127→  Wishlist: 'विशलिस्ट',
+   128→  'Bag, {count} items': 'बैग, {count} वस्तुएँ',
+   129→  'Open menu': 'मेनू खोलें',
+   130→  'Close menu': 'मेनू बंद करें',
+   131→  Menu: 'मेनू',
+   132→  'Search the store': 'स्टोर में खोजें',
+   133→  'Search products, brands, categories…': 'प्रोडक्ट, ब्रांड, श्रेणियाँ खोजें…',
+   134→  Clear: 'साफ़ करें',
+   135→  'Close search': 'खोज बंद करें',
+   136→  Products: 'प्रोडक्ट्स',
+   137→  'No brand match': 'कोई ब्रांड नहीं मिला',
+   138→  'No products found for “{query}”. Try a brand name like “Lakmé” or a type like “shampoo”.':
+   139→    '“{query}” के लिए कोई प्रोडक्ट नहीं मिला। “Lakmé” जैसा ब्रांड या “शैम्पू” जैसा टाइप आज़माएँ।',
+   140→  'Popular searches': 'लोकप्रिय खोजें',
+   141→  'Face wash': 'फेस वॉश',
+   142→  Lipstick: 'लिपस्टिक',
+   143→  Brief: 'ब्रीफ',
+   144→  Gift: 'गिफ्ट',
+   145→  Bangle: 'चूड़ी',
+   146→  Main: 'मुख्य',
+   147→  'Featured brands, scroll horizontally': 'चुनिंदा ब्रांड्स, आड़े स्क्रॉल करें',
+   148→  'The Edit': 'एडिट',
+   149→  'Everyday skincare essentials': 'रोज़मर्रा के स्किनकेयर ज़रूरी सामान',
+   150→
+   151→  // Hero
+   152→  'Mahadev — Ahmedabad': 'महादेव — अहमदाबाद',
+   153→  'Beauty, care & gifting,': 'ब्यूटी, देखभाल और गिफ्टिंग,',
+   154→  'beautifully curated.': 'ख़ूबसूरती से चुना हुआ।',
+   155→  'Skincare, makeup, haircare, innerwear, toys and thoughtful gifts from the brands you know, all in one considered store.':
+   156→    'आपके जाने-माने ब्रांड्स के स्किनकेयर, मेकअप, हेयरकेयर, इनरवियर, खिलौने और सोच-समझकर चुने गिफ्ट — सब एक ही स्टोर में।',
+   157→  'Shop Now': 'अभी खरीदें',
+   158→  'Explore Brands': 'ब्रांड्स देखें',
+   159→  'Imitation jewellery': 'इमिटेशन ज्वेलरी',
+   160→  'Curated beauty, gifts and jewellery arranged on cream linen':
+   161→    'क्रीम लिनन पर सजी ब्यूटी, गिफ्ट और ज्वेलरी',
+   162→
+   163→  // Departments
+   164→  Departments: 'विभाग',
+   165→  'Shop by department': 'विभाग से खरीदें',
+   166→  'Shop all': 'सब देखें',
+   167→  'Find it fast': 'जल्दी खोजें',
+   168→  'Face Cream': 'फेस क्रीम',
+   169→  'Makeup & Cosmetics': 'मेकअप व कॉस्मेटिक्स',
+   170→  'Lips, eyes, face': 'होंठ, आँखें, चेहरा',
+   171→  Skincare: 'स्किनकेयर',
+   172→  'Cleanse, treat, protect': 'सफ़ाई, देखभाल, सुरक्षा',
+   173→  'Everyday & professional': 'रोज़मर्रा व प्रोफेशनल',
+   174→  'Men, women & kids': 'पुरुष, महिला व बच्चे',
+   175→  'Play & learn': 'खेलें व सीखें',
+   176→  'For every occasion': 'हर अवसर के लिए',
+   177→  'Everyday sparkle': 'रोज़ की चमक',
+   178→  'Brushes, combs, trimmers': 'ब्रश, कंघी, ट्रिमर',
+   179→
+   180→  // Featured brands
+   181→  'Brands we stock': 'हमारे ब्रांड्स',
+   182→  'Featured brands': 'चुनिंदा ब्रांड्स',
+   183→  'All brands A–Z': 'सभी ब्रांड्स A–Z',
+   184→  Shop: 'खरीदें',
+   185→  "Men's nikar / underwear only": 'केवल पुरुषों की निक्कर/अंडरवियर',
+   186→  'Kids (boys, girls) & women only': 'केवल बच्चों (लड़के, लड़कियाँ) व महिलाओं के लिए',
+   187→  "Women's nikar / panty only": 'केवल महिलाओं की निक्कर/पैंटी',
+   188→  'Skincare, face & haircare — never makeup': 'स्किनकेयर, फेस व हेयरकेयर — कभी मेकअप नहीं',
+   189→
+   190→  // Product rows
+   191→  'Trending now': 'अभी ट्रेंडिंग',
+   192→  'Trending products': 'ट्रेंडिंग प्रोडक्ट्स',
+   193→  'Just in': 'अभी-अभी आया',
+   194→  'New arrivals': 'नए प्रोडक्ट्स',
+   195→  'View all': 'सभी देखें',
+   196→  'Genuine savings': 'सच्ची बचत',
+   197→
+   198→  // Product card
+   199→  'Sold out': 'बिक चुका',
+   200→  '{n}% off': '{n}% छूट',
+   201→  'Quick add': 'झटपट जोड़ें',
+   202→  Add: 'जोड़ें',
+   203→  'Save {title} to wishlist': '{title} विशलिस्ट में सहेजें',
+   204→  'Decrease quantity': 'मात्रा घटाएँ',
+   205→  'Increase quantity': 'मात्रा बढ़ाएँ',
+   206→
+   207→  // Product page preview
+   208→  'Product page preview': 'प्रोडक्ट पेज प्रीव्यू',
+   209→  'Inclusive of all taxes. Shipping calculated at checkout.':
+   210→    'सभी कर शामिल। शिपिंग की गणना चेकआउट पर।',
+   211→  'Size:': 'साइज़:',
+   212→  'In stock': 'स्टॉक में',
+   213→  'Add to bag': 'बैग में डालें',
+   214→  'Order on WhatsApp': 'WhatsApp पर ऑर्डर करें',
+   215→  '(opens WhatsApp in a new window)': '(नई विंडो में WhatsApp खुलता है)',
+   216→  'WhatsApp orders are confirmed only after we reply with availability and the final price. Nothing is charged until you confirm with the store.':
+   217→    'WhatsApp ऑर्डर तभी पक्का होता है जब हम उपलब्धता और अंतिम क़ीमत बता दें। स्टोर से पुष्टि होने तक कुछ भी चार्ज नहीं होता।',
+   218→  'Message the shopper sends': 'ग्राहक जो संदेश भेजता है',
+   219→  "Preview: the store's number is set in Theme settings → WhatsApp ordering. This preview opens a chat with {number}.":
+   220→    'प्रीव्यू: स्टोर का नंबर थीम सेटिंग्स → WhatsApp ऑर्डरिंग में सेट होता है। यह प्रीव्यू {number} से चैट खोलता है।',
+   221→
+   222→  // Gift wrap
+   223→  'Add gift wrapping': 'गिफ्ट रैपिंग जोड़ें',
+   224→  'Gift wrapping is offered free by the store.': 'गिफ्ट रैपिंग स्टोर की ओर से मुफ़्त है।',
+   225→  'Gift wrapping is added as the product “{title}” at {price}.':
+   226→    'गिफ्ट रैपिंग “{title}” प्रोडक्ट के रूप में {price} पर जुड़ती है।',
+   227→  'Gift message (optional)': 'गिफ्ट संदेश (वैकल्पिक)',
+   228→  'Max {count} characters': 'अधिकतम {count} अक्षर',
+   229→  '{count} characters left': '{count} अक्षर बाकी',
+   230→  'Gift wrap': 'गिफ्ट रैपिंग',
+   231→  'Gift message': 'गिफ्ट संदेश',
+   232→  Yes: 'हाँ',
+   233→  'Wrapping fee': 'रैपिंग शुल्क',
+   234→
+   235→  // Cart
+   236→  'Your bag': 'आपका बैग',
+   237→  'Shopping bag': 'शॉपिंग बैग',
+   238→  'Close bag': 'बैग बंद करें',
+   239→  'Your bag is empty': 'आपका बैग खाली है',
+   240→  'Discover skincare, makeup, innerwear and thoughtful gifts.':
+   241→    'स्किनकेयर, मेकअप, इनरवियर और सोच-समझकर चुने गिफ्ट देखें।',
+   242→  Remove: 'हटाएँ',
+   243→  Subtotal: 'उप-योग',
+   244→  'Taxes and shipping are calculated at checkout.': 'कर और शिपिंग चेकआउट पर गणना होती है।',
+   245→  Checkout: 'चेकआउट',
+   246→  'Preview only. On Shopify this button opens native checkout.':
+   247→    'केवल प्रीव्यू। Shopify पर यह बटन नेटिव चेकआउट खोलता है।',
+   248→  "In the real theme this opens Shopify's native checkout":
+   249→    'असली थीम में यह Shopify का नेटिव चेकआउट खोलता है',
+   250→
+   251→  // Gift finder
+   252→  'Festive gift finder': 'त्योहारी गिफ्ट फ़ाइंडर',
+   253→  'Find the perfect gift in three taps': 'तीन टैप में एकदम सही गिफ्ट खोजें',
+   254→  "Tell us the occasion, who it's for and your budget. We'll suggest in-stock gifts from our shelves.":
+   255→    'अवसर, गिफ्ट किसके लिए है और आपका बजट बताएँ। हम स्टॉक में से उपलब्ध गिफ्ट सुझाएँगे।',
+   256→  Occasion: 'अवसर',
+   257→  'For whom': 'किसके लिए',
+   258→  Budget: 'बजट',
+   259→  "What's the occasion?": 'अवसर क्या है?',
+   260→  'Who is it for?': 'यह किसके लिए है?',
+   261→  "What's your budget?": 'आपका बजट क्या है?',
+   262→  Diwali: 'दिवाली',
+   263→  'Lights & sweets': 'रोशनी व मिठाई',
+   264→  'Raksha Bandhan': 'रक्षा बंधन',
+   265→  'For siblings': 'भाई-बहन के लिए',
+   266→  'Bhai Dooj': 'भाई दूज',
+   267→  Birthday: 'जन्मदिन',
+   268→  'Any age': 'हर उम्र',
+   269→  'Wedding & anniversary': 'शादी व सालगिरह',
+   270→  'Shagun & return gifts': 'शगुन व रिटर्न गिफ्ट',
+   271→  'Just because': 'बस ऐसे ही',
+   272→  'Any occasion': 'कोई भी अवसर',
+   273→  'For her': 'महिला के लिए',
+   274→  'Mother, sister, friend': 'माँ, बहन, दोस्त',
+   275→  'For him': 'पुरुष के लिए',
+   276→  'Father, brother, friend': 'पिता, भाई, दोस्त',
+   277→  'For kids': 'बच्चों के लिए',
+   278→  'Little ones': 'छोटे बच्चों के लिए',
+   279→  'For the family': 'परिवार के लिए',
+   280→  'Home & hampers': 'घर व हैम्पर',
+   281→  Anyone: 'कोई भी',
+   282→  'Surprise me': 'सरप्राइज़ दें',
+   283→  'Under ₹300': '₹300 तक',
+   284→  '₹1,500 & above': '₹1,500 और ऊपर',
+   285→  'Any budget': 'कोई भी बजट',
+   286→  'Your gift ideas': 'आपके गिफ्ट आइडिया',
+   287→  '1 idea': '1 विकल्प',
+   288→  '{count} ideas': '{count} विकल्प',
+   289→  'Start again': 'फिर से शुरू करें',
+   290→  'No matching gifts right now': 'अभी कोई मेल खाता गिफ्ट नहीं',
+   291→  "Nothing in stock matches these choices at the moment. Try another budget or recipient, or ask us. We'll gladly help in store or on WhatsApp.":
+   292→    'इस समय इन पसंदों पर स्टॉक में कुछ नहीं है। दूसरा बजट या पाने वाला आज़माएँ, या हमसे पूछें। हम स्टोर या WhatsApp पर मदद करेंगे।',
+   293→  'Change my choices': 'पसंद बदलें',
+   294→  'Browse all products': 'सभी प्रोडक्ट देखें',
+   295→  'Show gift ideas': 'गिफ्ट आइडिया दिखाएँ',
+   296→  Next: 'आगे',
+   297→  Back: 'पीछे',
+   298→  'Suggestions come from products currently in stock. Prices are shown as listed in the store.':
+   299→    'सुझाव अभी स्टॉक में मौजूद प्रोडक्ट्स से हैं। क़ीमतें स्टोर में सूचीबद्ध अनुसार दिखती हैं।',
+   300→  'Sample data in this preview. The theme uses your real catalogue.':
+   301→    'इस प्रीव्यू में नमूना डेटा। थीम आपकी असली कैटलॉग उपयोग करती है।',
+   302→  'Live products from {store}': '{store} के लाइव प्रोडक्ट',
+   303→  'Nothing is tagged for {occasion} yet, so these are {recipient} ideas in your budget.':
+   304→    '{occasion} के लिए अभी कुछ टैग नहीं है, इसलिए आपके बजट में ये {recipient} विकल्प हैं।',
+   305→  'No exact match for {recipient}, so these are {occasion} ideas in your budget.':
+   306→    '{recipient} के लिए सटीक मैच नहीं, इसलिए आपके बजट में ये {occasion} विकल्प हैं।',
+   307→  'this occasion': 'इस अवसर',
+   308→  'this recipient': 'इस पाने वाले',
+   309→  general: 'सामान्य',
+   310→
+   311→  // Recently viewed + wishlist
+   312→  'Pick up where you left off': 'जहाँ छोड़ा वहीं से',
+   313→  'Recently viewed': 'हाल में देखे गए',
+   314→  'Saved on this device': 'इस डिवाइस पर सहेजा गया',
+   315→  "Hover over a few products. In the live theme this list is kept in the shopper's browser only.":
+   316→    'कुछ प्रोडक्ट पर कर्सर ले जाएँ। लाइव थीम में यह सूची केवल ग्राहक के ब्राउज़र में रहती है।',
+   317→  "Tap the heart on any product to save it here. It doesn't sync across devices.":
+   318→    'किसी भी प्रोडक्ट पर दिल दबाकर यहाँ सहेजें। यह डिवाइस के बीच सिंक नहीं होता।',
+   319→
+   320→  // Brands A–Z
+   321→  'Brand directory': 'ब्रांड डायरेक्टरी',
+   322→  'Brands A–Z': 'ब्रांड्स A–Z',
+   323→  'In the live theme this list builds itself from your product vendors, so each brand appears once and only if it has products.':
+   324→    'लाइव थीम में यह सूची आपके प्रोडक्ट वेंडर से स्वतः बनती है, इसलिए हर ब्रांड एक बार और तभी दिखता है जब उसके प्रोडक्ट हों।',
+   325→  'Search {count} brands': '{count} ब्रांड खोजें',
+   326→  'No brand matches your search.': 'आपकी खोज से कोई ब्रांड नहीं मिला।',
+   327→  'Search brands': 'ब्रांड खोजें',
+   328→  'Brands by letter': 'अक्षर से ब्रांड',
+   329→
+   330→  // Budget section
+   331→  'Gifting made easy': 'गिफ्टिंग आसान',
+   332→  'Shop by budget': 'बजट से खरीदें',
+   333→  'In the live theme each card links to a price-based collection you create once real prices are entered.':
+   334→    'लाइव थीम में हर कार्ड असली क़ीमतें भरने के बाद बनाए गए क़ीमत-आधारित कलेक्शन से जुड़ता है।',
+   335→  Under: 'अंडर',
+   336→  'Treat yourself': 'ख़ुद के लिए',
+   337→  'Premium Picks': 'प्रीमियम पिक्स',
+   338→
+   339→  // Edit stories
+   340→  'The Beauty & Skincare Edit': 'ब्यूटी व स्किनकेयर एडिट',
+   341→  'Gentle routines for every skin': 'हर त्वचा के लिए कोमल देखभाल',
+   342→  'Cleansers, serums, moisturisers and sunscreens chosen from the brands on our shelves.':
+   343→    'हमारी अलमारी के ब्रांड्स में से चुने क्लेंज़र, सीरम, मॉइस्चराइज़र व सनस्क्रीन।',
+   344→  Serums: 'सीरम',
+   345→  Sunscreen: 'सनस्क्रीन',
+   346→  Moisturisers: 'मॉइस्चराइज़र',
+   347→  'Comfort, in every size': 'हर साइज़ में आराम',
+   348→  'Everyday innerwear and hosiery for men, women and kids from Jockey, Van Heusen, Zoiro, Sunny, Bodycare and Lady Care.':
+   349→    'Jockey, Van Heusen, Zoiro, Sunny, Bodycare और Lady Care की पुरुषों, महिलाओं और बच्चों के लिए रोज़मर्रा की इनरवियर व होज़ियरी।',
+   350→  "Zoiro · Men's Nikar": 'Zoiro · पुरुष निक्कर',
+   351→  'Bodycare · Women': 'Bodycare · महिलाएँ',
+   352→  'Bodycare · Kids Boys': 'Bodycare · बच्चे (लड़के)',
+   353→  'Bodycare · Kids Girls': 'Bodycare · बच्चे (लड़कियाँ)',
+   354→  'Lady Care · Women': 'Lady Care · महिलाएँ',
+   355→  'Gifts, Toys & Jewellery': 'गिफ्ट, खिलौने व ज्वेलरी',
+   356→  'Little joys, thoughtfully wrapped': 'छोटी-छोटी ख़ुशियाँ, प्यार से लिपटी',
+   357→  'Gift articles, toys for little ones and imitation jewellery for every celebration.':
+   358→    'हर जश्न के लिए गिफ्ट आर्टिकल्स, बच्चों के खिलौने और इमिटेशन ज्वेलरी।',
+   359→  'Gift articles': 'गिफ्ट आर्टिकल्स',
+   360→  Accessories: 'एक्सेसरीज़',
+   361→
+   362→  // Newsletter
+   363→  Newsletter: 'न्यूज़लेटर',
+   364→  'Be the first to know': 'सबसे पहले जानें',
+   365→  'New arrivals and store updates. Unsubscribe any time.':
+   366→    'नए प्रोडक्ट और स्टोर अपडेट। कभी भी अनसब्सक्राइब करें।',
+   367→  'Your email address': 'आपका ईमेल पता',
+   368→  Subscribe: 'सब्सक्राइब करें',
+   369→  'Email address': 'ईमेल पता',
+   370→  'Preview only. On Shopify, {email} would be saved as a customer with email marketing consent.':
+   371→    'केवल प्रीव्यू। Shopify पर {email} ईमेल मार्केटिंग सहमति के साथ ग्राहक के रूप में सहेजा जाता।',
+   372→
+   373→  // Footer
+   374→  'A multi-brand store for beauty, skincare, haircare, innerwear, kids\' toys, gifts and imitation jewellery.':
+   375→    'ब्यूटी, स्किनकेयर, हेयरकेयर, इनरवियर, बच्चों के खिलौने, गिफ्ट और इमिटेशन ज्वेलरी का मल्टी-ब्रांड स्टोर।',
+   376→  'Customer care': 'ग्राहक सेवा',
+   377→  'Visit us': 'हमसे मिलें',
+   378→  'Shop all': 'सब खरीदें',
+   379→  Contact: 'संपर्क',
+   380→  'Shipping policy': 'शिपिंग नीति',
+   381→  'Refund policy': 'रिफंड नीति',
+   382→  'Privacy policy': 'गोपनीयता नीति',
+   383→  'Terms of service': 'सेवा की शर्तें',
+   384→  'View on Google Maps': 'Google Maps पर देखें',
+   385→  'All rights reserved.': 'सर्वाधिकार सुरक्षित।',
+   386→  'Policies are listed automatically from Shopify Admin.':
+   387→    'नीतियाँ Shopify Admin से स्वतः जुड़ती हैं।',
+   388→
+   389→  // Language switcher
+   390→  Language: 'भाषा',
+   391→  'Change language': 'भाषा बदलें',
+   392→  'Interface language for this preview. Full storefront translation is configured in Shopify.':
+   393→    'इस प्रीव्यू की इंटरफ़ेस भाषा। पूरा स्टोरफ्रंट अनुवाद Shopify में कॉन्फ़िगर होता है।',
+   394→
+   395→  // Festival countdown
+   396→  Festival: 'त्योहार',
+   397→  'Ends in': 'शेष समय',
+   398→  Days: 'दिन',
+   399→  Hours: 'घंटे',
+   400→  Minutes: 'मिनट',
+   401→  Seconds: 'सेकंड',
+   402→  'Find a Gift': 'गिफ्ट खोजें',
+   403→  'This festival period has ended. Stay tuned for the next one!':
+   404→    'त्योहार का समय समाप्त। अगले त्योहार की जल्दी ख़बर!',
+   405→};
+   406→
+   407→const GU: Record<string, string> = {
+   408→  // Preview banner
+   409→  'Visual preview with sample data. The Shopify theme shows your real products, prices and brands.':
+   410→    'નમૂના ડેટા સાથે વિઝ્યુઅલ પ્રીવ્યૂ. Shopify થીમ તમારા વાસ્તવિક પ્રોડક્ટ, કિંમત અને બ્રાન્ડ બતાવે છે.',
+   411→  'Download theme & guides': 'થીમ અને ગાઇડ ડાઉનલોડ કરો',
+   412→
+   413→  // Announcement bar
+   414→  'Beauty, innerwear, gifts & more — curated in Ahmedabad':
+   415→    'બ્યૂટી, ઇનરવેર, ગિફ્ટ અને ઘણું બધું — અમદાવાદમાં પસંદ કરેલું',
+   416→  'Explore original products from brands you trust':
+   417→    'તમારા ભરોસાપાત્ર બ્રાન્ડના અસલી પ્રોડક્ટ જુઓ',
+   418→  'Previous announcement': 'પાછલી જાહેરાત',
+   419→  'Next announcement': 'આગલી જાહેરાત',
+   420→
+   421→  // Header / nav
+   422→  'Shop All': 'બધું ખરીદો',
+   423→  'Beauty & Makeup': 'બ્યૂટી અને મેકઅપ',
+   424→  'Toys & Kids': 'રમકડાં અને બાળકો',
+   425→  'Accessories & Grooming': 'એક્સેસરી અને ગ્રૂમિંગ',
+   426→  'Tools, grooming & more': 'ટૂલ્સ, ગ્રૂમિંગ અને વધુ',
+   427→  Earrings: 'ઇયરરિંગ્સ',
+   428→  'Beauty & Skincare': 'બ્યૂટી અને સ્કિનકેર',
+   429→  Haircare: 'હેરકેર',
+   430→  Makeup: 'મેકઅપ',
+   431→  'Hosiery & Innerwear': 'હોઝિયરી અને ઇનરવેર',
+   432→  'Kids & Toys': 'બાળકો અને રમકડાં',
+   433→  'Gifts & Jewellery': 'ગિફ્ટ અને જ્વેલરી',
+   434→  'Beauty Tools': 'બ્યૂટી ટૂલ્સ',
+   435→  Brands: 'બ્રાન્ડ',
+   436→  Offers: 'ઓફર',
+   437→  'Shop by Department': 'વિભાગ પ્રમાણે ખરીદો',
+   438→  'Shop by Brand': 'બ્રાન્ડ પ્રમાણે ખરીદો',
+   439→  'Shop by Product Type': 'પ્રોડક્ટ ટાઇપ પ્રમાણે ખરીદો',
+   440→  'Gift Articles': 'ગિફ્ટ આર્ટિકલ',
+   441→  'Imitation Jewellery': 'ઇમિટેશન જ્વેલરી',
+   442→  'Beauty Tools & Grooming': 'બ્યૂટી ટૂલ્સ અને ગ્રૂમિંગ',
+   443→  'Accessories & More': 'એક્સેસરી અને વધુ',
+   444→  'Face Wash': 'ફેસ વોશ',
+   445→  Moisturizer: 'મોઇશ્ચરાઇઝર',
+   446→  Serum: 'સીરમ',
+   447→  Shampoo: 'શેમ્પૂ',
+   448→  Conditioner: 'કન્ડીશનર',
+   449→  'Lip Products': 'લિપ પ્રોડક્ટ',
+   450→  'Makeup Products': 'મેકઅપ પ્રોડક્ટ',
+   451→  Innerwear: 'ઇનરવેર',
+   452→  Toys: 'રમકડાં',
+   453→  Gifts: 'ગિફ્ટ',
+   454→  'Show Shop All menu': 'બધું ખરીદો મેનૂ બતાવો',
+   455→  Search: 'શોધો',
+   456→  Wishlist: 'વિશલિસ્ટ',
+   457→  'Bag, {count} items': 'બેગ, {count} વસ્તુ',
+   458→  'Open menu': 'મેનૂ ખોલો',
+   459→  'Close menu': 'મેનૂ બંધ કરો',
+   460→  Menu: 'મેનૂ',
+   461→  'Search the store': 'સ્ટોરમાં શોધો',
+   462→  'Search products, brands, categories…': 'પ્રોડક્ટ, બ્રાન્ડ, શ્રેણી શોધો…',
+   463→  Clear: 'સાફ કરો',
+   464→  'Close search': 'શોધ બંધ કરો',
+   465→  Products: 'પ્રોડક્ટ',
+   466→  'No brand match': 'કોઈ બ્રાન્ડ મળ્યું નથી',
+   467→  'No products found for “{query}”. Try a brand name like “Lakmé” or a type like “shampoo”.':
+   468→    '“{query}” માટે કોઈ પ્રોડક્ટ મળ્યું નથી. “Lakmé” જેવું બ્રાન્ડ અથવા “શેમ્પૂ” જેવો ટાઇપ અઝમાવો.',
+   469→  'Popular searches': 'લોકપ્રિય શોધ',
+   470→  'Face wash': 'ફેસ વોશ',
+   471→  Lipstick: 'લિપસ્ટિક',
+   472→  Brief: 'બ્રીફ',
+   473→  Gift: 'ગિફ્ટ',
+   474→  Bangle: 'ચૂડી',
+   475→  Main: 'મુખ્ય',
+   476→  'Featured brands, scroll horizontally': 'પસંદ કરેલા બ્રાન્ડ, આડા સ્ક્રોલ કરો',
+   477→  'The Edit': 'એડિટ',
+   478→  'Everyday skincare essentials': 'રોજિંદા સ્કિનકેર જરૂરિયાત',
+   479→
+   480→  // Hero
+   481→  'Mahadev — Ahmedabad': 'મહાદેવ — અમદાવાદ',
+   482→  'Beauty, care & gifting,': 'બ્યૂટી, સંભાળ અને ગિફ્ટિંગ,',
+   483→  'beautifully curated.': 'સુંદર રીતે પસંદ કરેલું.',
+   484→  'Skincare, makeup, haircare, innerwear, toys and thoughtful gifts from the brands you know, all in one considered store.':
+   485→    'તમારા જાણીતા બ્રાન્ડના સ્કિનકેર, મેકઅપ, હેરકેર, ઇનરવેર, રમકડાં અને વિચારસરણીય ગિફ્ટ — બધું એક જ સ્ટોરમાં.',
+   486→  'Shop Now': 'હવે ખરીદો',
+   487→  'Explore Brands': 'બ્રાન્ડ જુઓ',
+   488→  'Imitation jewellery': 'ઇમિટેશન જ્વેલરી',
+   489→  'Curated beauty, gifts and jewellery arranged on cream linen':
+   490→    'ક્રીમ લિનન પર સજાવેલી બ્યૂટી, ગિફ્ટ અને જ્વેલરી',
+   491→
+   492→  // Departments
+   493→  Departments: 'વિભાગ',
+   494→  'Shop by department': 'વિભાગ પ્રમાણે ખરીદો',
+   495→  'Shop all': 'બધું જુઓ',
+   496→  'Find it fast': 'ઝટપટ શોધો',
+   497→  'Face Cream': 'ફેસ ક્રીમ',
+   498→  'Makeup & Cosmetics': 'મેકઅપ અને કોસ્મેટિક્સ',
+   499→  'Lips, eyes, face': 'હોઠ, આંખ, ચહેરો',
+   500→  Skincare: 'સ્કિનકેર',
+   501→  'Cleanse, treat, protect': 'સફાઈ, સંભાળ, સુરક્ષા',
+   502→  'Everyday & professional': 'રોજિંદું અને પ્રોફેશનલ',
+   503→  'Men, women & kids': 'પુરુષ, સ્ત્રી અને બાળકો',
+   504→  'Play & learn': 'રમો અને શીખો',
+   505→  'For every occasion': 'દરેક પ્રસંગ માટે',
+   506→  'Everyday sparkle': 'રોજની ચમક',
+   507→  'Brushes, combs, trimmers': 'બ્રશ, કાંગ, ટ્રિમર',
+   508→
+   509→  // Featured brands
+   510→  'Brands we stock': 'અમારા બ્રાન્ડ',
+   511→  'Featured brands': 'પસંદ કરેલા બ્રાન્ડ',
+   512→  'All brands A–Z': 'બધા બ્રાન્ડ A–Z',
+   513→  Shop: 'ખરીદો',
+   514→  "Men's nikar / underwear only": 'ફક્ત પુરુષોની નિક્કર/અંડરવેર',
+   515→  'Kids (boys, girls) & women only': 'ફક્ત બાળકો (છોકરા, છોકરીઓ) અને સ્ત્રીઓ માટે',
+   516→  "Women's nikar / panty only": 'ફક્ત સ્ત્રીઓની નિક્કર/પેન્ટી',
+   517→  'Skincare, face & haircare — never makeup': 'સ્કિનકેર, ફેસ અને હેરકેર — ક્યારેય મેકઅપ નહીં',
+   518→
+   519→  // Product rows
+   520→  'Trending now': 'હમણાં ટ્રેન્ડિંગ',
+   521→  'Trending products': 'ટ્રેન્ડિંગ પ્રોડક્ટ',
+   522→  'Just in': 'હમણાં આવ્યું',
+   523→  'New arrivals': 'નવા પ્રોડક્ટ',
+   524→  'View all': 'બધું જુઓ',
+   525→  'Genuine savings': 'સાચી બચત',
+   526→
+   527→  // Product card
+   528→  'Sold out': 'વિકાઈ ગયું',
+   529→  '{n}% off': '{n}% છૂટ',
+   530→  'Quick add': 'ઝટપટ ઉમેરો',
+   531→  Add: 'ઉમેરો',
+   532→  'Save {title} to wishlist': '{title} વિશલિસ્ટમાં સાચવો',
+   533→  'Decrease quantity': 'જથ્થો ઘટાડો',
+   534→  'Increase quantity': 'જથ્થો વધારો',
+   535→
+   536→  // Product page preview
+   537→  'Product page preview': 'પ્રોડક્ટ પેજ પ્રીવ્યૂ',
+   538→  'Inclusive of all taxes. Shipping calculated at checkout.':
+   539→    'બધા કર સામેલ. શિપિંગની ગણતરી ચેકઆઉટ પર.',
+   540→  'Size:': 'સાઇઝ:',
+   541→  'In stock': 'સ્ટોકમાં',
+   542→  'Add to bag': 'બેગમાં ઉમેરો',
+   543→  'Order on WhatsApp': 'WhatsApp પર ઓર્ડર કરો',
+   544→  '(opens WhatsApp in a new window)': '(નવી વિન્ડોમાં WhatsApp ખૂલે છે)',
+   545→  'WhatsApp orders are confirmed only after we reply with availability and the final price. Nothing is charged until you confirm with the store.':
+   546→    'WhatsApp ઓર્ડર ત્યારે જ પક્કો થાય છે જ્યારે અમે ઉપલબ્ધતા અને અંતિમ કિંમત જણાવીએ. સ્ટોરની પુષ્ટિ થાય ત્યાં સુધી કંઈ ચાર્જ થતું નથી.',
+   547→  'Message the shopper sends': 'ગ્રાહક જે સંદેશ મોકલે છે',
+   548→  "Preview: the store's number is set in Theme settings → WhatsApp ordering. This preview opens a chat with {number}.":
+   549→    'પ્રીવ્યૂ: સ્ટોરનો નંબર થીમ સેટિંગ્સ → WhatsApp ઓર્ડરિંગમાં સેટ થાય છે. આ પ્રીવ્યૂ {number} સાથે ચેટ ખોલે છે.',
+   550→
+   551→  // Gift wrap
+   552→  'Add gift wrapping': 'ગિફ્ટ રેપિંગ ઉમેરો',
+   553→  'Gift wrapping is offered free by the store.': 'ગિફ્ટ રેપિંગ સ્ટોર તરફથી મફત છે.',
+   554→  'Gift wrapping is added as the product “{title}” at {price}.':
+   555→    'ગિફ્ટ રેપિંગ “{title}” પ્રોડક્ટ તરીકે {price} પર ઉમેરાય છે.',
+   556→  'Gift message (optional)': 'ગિફ્ટ સંદેશ (વૈકલ્પિક)',
+   557→  'Max {count} characters': 'મહત્તમ {count} અક્ષર',
+   558→  '{count} characters left': '{count} અક્ષર બાકી',
+   559→  'Gift wrap': 'ગિફ્ટ રેપિંગ',
+   560→  'Gift message': 'ગિફ્ટ સંદેશ',
+   561→  Yes: 'હા',
+   562→  'Wrapping fee': 'રેપિંગ ફી',
+   563→
+   564→  // Cart
+   565→  'Your bag': 'તમારી બેગ',
+   566→  'Shopping bag': 'શોપિંગ બેગ',
+   567→  'Close bag': 'બેગ બંધ કરો',
+   568→  'Your bag is empty': 'તમારી બેગ ખાલી છે',
+   569→  'Discover skincare, makeup, innerwear and thoughtful gifts.':
+   570→    'સ્કિનકેર, મેકઅપ, ઇનરવેર અને વિચારસરણીય ગિફ્ટ જુઓ.',
+   571→  Remove: 'દૂર કરો',
+   572→  Subtotal: 'ઉપકુલ',
+   573→  'Taxes and shipping are calculated at checkout.': 'કર અને શિપિંગ ચેકઆઉટ પર ગણવામાં આવે છે.',
+   574→  Checkout: 'ચેકઆઉટ',
+   575→  'Preview only. On Shopify this button opens native checkout.':
+   576→    'ફક્ત પ્રીવ્યૂ. Shopify પર આ બટન નેટિવ ચેકઆઉટ ખોલે છે.',
+   577→  "In the real theme this opens Shopify's native checkout":
+   578→    'અસલી થીમમાં આ Shopifyનું નેટિવ ચેકઆઉટ ખોલે છે',
+   579→
+   580→  // Gift finder
+   581→  'Festive gift finder': 'તહેવારી ગિફ્ટ ફાઇન્ડર',
+   582→  'Find the perfect gift in three taps': 'ત્રણ ટેપમાં એકદમ યોગ્ય ગિફ્ટ શોધો',
+   583→  "Tell us the occasion, who it's for and your budget. We'll suggest in-stock gifts from our shelves.":
+   584→    'પ્રસંગ, ગિફ્ટ કોના માટે છે અને તમારું બજેટ જણાવો. અમે સ્ટોકમાંથી ઉપલબ્ધ ગિફ્ટ સૂચવીશું.',
+   585→  Occasion: 'પ્રસંગ',
+   586→  'For whom': 'કોના માટે',
+   587→  Budget: 'બજેટ',
+   588→  "What's the occasion?": 'પ્રસંગ શું છે?',
+   589→  'Who is it for?': 'આ કોના માટે છે?',
+   590→  "What's your budget?": 'તમારું બજેટ શું છે?',
+   591→  Diwali: 'દિવાળી',
+   592→  'Lights & sweets': 'રોશની અને મીઠાઈ',
+   593→  'Raksha Bandhan': 'રક્ષા બંધન',
+   594→  'For siblings': 'ભાઈ-બહેન માટે',
+   595→  'Bhai Dooj': 'ભાઈ બીજ',
+   596→  Birthday: 'જન્મદિવસ',
+   597→  'Any age': 'કોઈપણ ઉંમર',
+   598→  'Wedding & anniversary': 'લગ્ન અને વર્ષગાંઠ',
+   599→  'Shagun & return gifts': 'શગણ અને રિટર્ન ગિફ્ટ',
+   600→  'Just because': 'બસ એમ ને એમ',
+   601→  'Any occasion': 'કોઈપણ પ્રસંગ',
+   602→  'For her': 'સ્ત્રી માટે',
+   603→  'Mother, sister, friend': 'માતા, બહેન, મિત્ર',
+   604→  'For him': 'પુરુષ માટે',
+   605→  'Father, brother, friend': 'પિતા, ભાઈ, મિત્ર',
+   606→  'For kids': 'બાળકો માટે',
+   607→  'Little ones': 'નાના બાળકો',
+   608→  'For the family': 'પરિવાર માટે',
+   609→  'Home & hampers': 'ઘર અને હેમ્પર',
+   610→  Anyone: 'કોઈપણ',
+   611→  'Surprise me': 'સરપ્રાઇઝ આપો',
+   612→  'Under ₹300': '₹300 સુધી',
+   613→  '₹1,500 & above': '₹1,500 અને વધુ',
+   614→  'Any budget': 'કોઈપણ બજેટ',
+   615→  'Your gift ideas': 'તમારા ગિફ્ટ આઇડિયા',
+   616→  '1 idea': '1 વિકલ્પ',
+   617→  '{count} ideas': '{count} વિકલ્પ',
+   618→  'Start again': 'ફરી શરૂ કરો',
+   619→  'No matching gifts right now': 'હમણાં કોઈ યોગ્ય ગિફ્ટ નથી',
+   620→  "Nothing in stock matches these choices at the moment. Try another budget or recipient, or ask us. We'll gladly help in store or on WhatsApp.":
+   621→    'આ ક્ષણે આ પસંદગીઓ પર સ્ટોકમાં કંઈ નથી. બીજું બજેટ કે પામનાર અઝમાવો, અથવા અમને પૂછો. અમે સ્ટોર કે WhatsApp પર મદદ કરીશું.',
+   622→  'Change my choices': 'પસંદગી બદલો',
+   623→  'Browse all products': 'બધા પ્રોડક્ટ જુઓ',
+   624→  'Show gift ideas': 'ગિફ્ટ આઇડિયા બતાવો',
+   625→  Next: 'આગળ',
+   626→  Back: 'પાછળ',
+   627→  'Suggestions come from products currently in stock. Prices are shown as listed in the store.':
+   628→    'સૂચનો હમણાં સ્ટોકમાં રહેલા પ્રોડક્ટમાંથી છે. કિંમતો સ્ટોરમાં સૂચિબદ્ધ મુજબ બતાવવામાં આવે છે.',
+   629→  'Sample data in this preview. The theme uses your real catalogue.':
+   630→    'આ પ્રીવ્યૂમાં નમૂના ડેટા. થીમ તમારું વાસ્તવિક કેટેલોગ વાપરે છે.',
+   631→  'Live products from {store}': '{store} ના લાઇવ પ્રોડક્ટ',
+   632→  'Nothing is tagged for {occasion} yet, so these are {recipient} ideas in your budget.':
+   633→    '{occasion} માટે હજી કંઈ ટૅગ નથી, એટલે તમારા બજેટમાં આ {recipient} વિકલ્પ છે.',
+   634→  'No exact match for {recipient}, so these are {occasion} ideas in your budget.':
+   635→    '{recipient} માટે સચોટ મેચ નથી, એટલે તમારા બજેટમાં આ {occasion} વિકલ્પ છે.',
+   636→  'this occasion': 'આ પ્રસંગ',
+   637→  'this recipient': 'આ પામનાર',
+   638→  general: 'સામાન્ય',
+   639→
+   640→  // Recently viewed + wishlist
+   641→  'Pick up where you left off': 'જ્યાં છોડ્યું ત્યાંથી',
+   642→  'Recently viewed': 'તાજેતરમાં જોયેલા',
+   643→  'Saved on this device': 'આ ડિવાઇસ પર સાચવેલા',
+   644→  "Hover over a few products. In the live theme this list is kept in the shopper's browser only.":
+   645→    'કેટલાક પ્રોડક્ટ પર કર્સર લઈ જાઓ. લાઇવ થીમમાં આ યાદી ફક્ત ગ્રાહકના બ્રાઉઝરમાં રહે છે.',
+   646→  "Tap the heart on any product to save it here. It doesn't sync across devices.":
+   647→    'કોઈપણ પ્રોડક્ટ પર હૃદય દબાવીને અહીં સાચવો. તે ડિવાઇસ વચ્ચે સિંક થતું નથી.',
+   648→
+   649→  // Brands A–Z
+   650→  'Brand directory': 'બ્રાન્ડ ડિરેક્ટરી',
+   651→  'Brands A–Z': 'બ્રાન્ડ A–Z',
+   652→  'In the live theme this list builds itself from your product vendors, so each brand appears once and only if it has products.':
+   653→    'લાઇવ થીમમાં આ યાદી તમારા પ્રોડક્ટ વેન્ડરમાંથી આપોઆપ બને છે, એટલે દરેક બ્રાન્ડ એક જ વાર અને ત્યારે જ દેખાય છે જ્યારે તેના પ્રોડક્ટ હોય.',
+   654→  'Search {count} brands': '{count} બ્રાન્ડ શોધો',
+   655→  'No brand matches your search.': 'તમારી શોધ સાથે કોઈ બ્રાન્ડ મળ્યું નથી.',
+   656→  'Search brands': 'બ્રાન્ડ શોધો',
+   657→  'Brands by letter': 'અક્ષર પ્રમાણે બ્રાન્ડ',
+   658→
+   659→  // Budget section
+   660→  'Gifting made easy': 'ગિફ્ટિંગ સરળ',
+   661→  'Shop by budget': 'બજેટ પ્રમાણે ખરીદો',
+   662→  'In the live theme each card links to a price-based collection you create once real prices are entered.':
+   663→    'લાઇવ થીમમાં દરેક કાર્ડ વાસ્તવિક કિંમતો નાખ્યા પછી બનાવેલા કિંમત-આધારિત કલેક્શન સાથે જોડાય છે.',
+   664→  Under: 'અંડર',
+   665→  'Treat yourself': 'પોતાના માટે',
+   666→  'Premium Picks': 'પ્રીમિયમ પિક્સ',
+   667→
+   668→  // Edit stories
+   669→  'The Beauty & Skincare Edit': 'બ્યૂટી અને સ્કિનકેર એડિટ',
+   670→  'Gentle routines for every skin': 'દરેક ત્વચા માટે કોમળ સંભાળ',
+   671→  'Cleansers, serums, moisturisers and sunscreens chosen from the brands on our shelves.':
+   672→    'અમારી અલમારીના બ્રાન્ડમાંથી પસંદ કરેલા ક્લેન્ઝર, સીરમ, મોઇશ્ચરાઇઝર અને સનસ્ક્રીન.',
+   673→  Serums: 'સીરમ',
+   674→  Sunscreen: 'સનસ્ક્રીન',
+   675→  Moisturisers: 'મોઇશ્ચરાઇઝર',
+   676→  'Comfort, in every size': 'દરેક સાઇઝમાં આરામ',
+   677→  'Everyday innerwear and hosiery for men, women and kids from Jockey, Van Heusen, Zoiro, Sunny, Bodycare and Lady Care.':
+   678→    'Jockey, Van Heusen, Zoiro, Sunny, Bodycare અને Lady Care ના પુરુષો, સ્ત્રીઓ અને બાળકો માટે રોજિંદા ઇનરવેર અને હોઝિયરી.',
+   679→  "Zoiro · Men's Nikar": 'Zoiro · પુરુષ નિક્કર',
+   680→  'Bodycare · Women': 'Bodycare · સ્ત્રીઓ',
+   681→  'Bodycare · Kids Boys': 'Bodycare · બાળકો (છોકરા)',
+   682→  'Bodycare · Kids Girls': 'Bodycare · બાળકો (છોકરીઓ)',
+   683→  'Lady Care · Women': 'Lady Care · સ્ત્રીઓ',
+   684→  'Gifts, Toys & Jewellery': 'ગિફ્ટ, રમકડાં અને જ્વેલરી',
+   685→  'Little joys, thoughtfully wrapped': 'નાની-નાની ખુશીઓ, પ્રેમથી લિપટેલી',
+   686→  'Gift articles, toys for little ones and imitation jewellery for every celebration.':
+   687→    'દરેક ઉજવણી માટે ગિફ્ટ આર્ટિકલ, બાળકોના રમકડાં અને ઇમિટેશન જ્વેલરી.',
+   688→  'Gift articles': 'ગિફ્ટ આર્ટિકલ',
+   689→  Accessories: 'એક્સેસરી',
+   690→
+   691→  // Newsletter
+   692→  Newsletter: 'ન્યૂઝલેટર',
+   693→  'Be the first to know': 'સૌથી પહેલા જાણો',
+   694→  'New arrivals and store updates. Unsubscribe any time.':
+   695→    'નવા પ્રોડક્ટ અને સ્ટોર અપડેટ. ગમે ત્યારે અનસબ્સ્ક્રાઇબ કરો.',
+   696→  'Your email address': 'તમારું ઈમેલ સરનામું',
+   697→  Subscribe: 'સબ્સ્ક્રાઇબ કરો',
+   698→  'Email address': 'ઈમેલ સરનામું',
+   699→  'Preview only. On Shopify, {email} would be saved as a customer with email marketing consent.':
+   700→    'ફક્ત પ્રીવ્યૂ. Shopify પર {email} ઈમેલ માર્કેટિંગ સંમતિ સાથે ગ્રાહક તરીકે સાચવાતું.',
+   701→
+   702→  // Footer
+   703→  'A multi-brand store for beauty, skincare, haircare, innerwear, kids\' toys, gifts and imitation jewellery.':
+   704→    'બ્યૂટી, સ્કિનકેર, હેરકેર, ઇનરવેર, બાળકોના રમકડાં, ગિફ્ટ અને ઇમિટેશન જ્વેલરીનું મલ્ટી-બ્રાન્ડ સ્ટોર.',
+   705→  'Customer care': 'ગ્રાહક સેવા',
+   706→  'Visit us': 'અમને મળો',
+   707→  'Shop all': 'બધું ખરીદો',
+   708→  Contact: 'સંપર્ક',
+   709→  'Shipping policy': 'શિપિંગ નીતિ',
+   710→  'Refund policy': 'રીફંડ નીતિ',
+   711→  'Privacy policy': 'ગોપનીયતા નીતિ',
+   712→  'Terms of service': 'સેવાની શરતો',
+   713→  'View on Google Maps': 'Google Maps પર જુઓ',
+   714→  'All rights reserved.': 'સર્વ હક અમારી પાસે.',
+   715→  'Policies are listed automatically from Shopify Admin.':
+   716→    'નીતિઓ Shopify Admin માંથી આપોઆપ જોડાય છે.',
+   717→
+   718→  // Language switcher
+   719→  Language: 'ભાષા',
+   720→  'Change language': 'ભાષા બદલો',
+   721→  'Interface language for this preview. Full storefront translation is configured in Shopify.':
+   722→    'આ પ્રીવ્યૂની ઇન્ટરફેસ ભાષા. સંપૂર્ણ સ્ટોરફ્રન્ટ અનુવાદ Shopifyમાં ગોઠવાય છે.',
+   723→
+   724→  // Festival countdown
+   725→  Festival: 'તહેવાર',
+   726→  'Ends in': 'બાકી સમય',
+   727→  Days: 'દિવસ',
+   728→  Hours: 'કલાક',
+   729→  Minutes: 'મિનિટ',
+   730→  Seconds: 'સેકન્ડ',
+   731→  'Find a Gift': 'ગિફ્ટ શોધો',
+   732→  'This festival period has ended. Stay tuned for the next one!':
+   733→    'તહેવારનો સમય પૂરો થયો. આગલી ઉજવણી માટે જોતા રહો!',
+   734→};
+   735→
+   736→const DICTS: Record<Exclude<Lang, 'en'>, Record<string, string>> = { hi: HI, gu: GU };
+   737→
+   738→// ── Public helpers ───────────────────────────────────────────────────────────
+   739→
+   740→export function translate(lang: Lang, text: string): string {
+   741→  if (lang === 'en') return text;
+   742→  return DICTS[lang][text] ?? text;
+   743→}
+   744→
+   745→export function translateFormat(
+   746→  lang: Lang,
+   747→  pattern: string,
+   748→  vars: Record<string, string | number>,
+   749→): string {
+   750→  const translated = translate(lang, pattern);
+   751→  return translated.replace(/\{(\w+)\}/g, (match, key: string) =>
+   752→    key in vars ? String(vars[key]) : match,
+   753→  );
+   754→}
+   755→
+   756→export function useLang() {
+   757→  const lang = useSyncExternalStore(subscribeLang, getLangSnapshot, getServerLang);
+   758→  return {
+   759→    lang,
+   760→    t: (text: string) => translate(lang, text),
+   761→    tf: (pattern: string, vars: Record<string, string | number>) =>
+   762→      translateFormat(lang, pattern, vars),
+   763→  };
+   764→}
+   765→

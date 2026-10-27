@@ -15,6 +15,8 @@
 // scripts/validate-catalog.ts — keep all copies in sync).
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { ALL_BRANDS, BRAND_GROUPS } from './boutique';
+
 export type DepartmentHandle =
   | 'beauty-makeup'
   | 'skincare'
@@ -448,3 +450,113 @@ export const AUDIENCE_TAGS = [
 export function departmentTag(name: string): string {
   return `department_${name.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '')}`;
 }
+
+// ── Browse resolution (chips, nav links, search hits → collection views) ────
+// Resolves any storefront label to an approved brand / department / product
+// type so no link is dead. Pure data — no invented products, only
+// classification targets that exist in this file or in the department list.
+
+export type ChipTarget = { kind: 'brand' | 'department' | 'type'; name: string };
+
+/** Product-type aliases → their department(s) + title keywords for matching. */
+const TYPE_INDEX: Record<string, { depts: string[]; kw: string[] }> = {
+  'face wash': { depts: ['Skincare'], kw: ['face wash', 'face cleanser', 'cleanser'] },
+  'face cream': { depts: ['Skincare'], kw: ['face cream', 'moisturizer', 'moisturiser'] },
+  moisturizer: { depts: ['Skincare'], kw: ['face cream', 'moisturizer', 'moisturiser'] },
+  moisturisers: { depts: ['Skincare'], kw: ['face cream', 'moisturizer', 'moisturiser'] },
+  sunscreen: { depts: ['Skincare'], kw: ['sunscreen'] },
+  serum: { depts: ['Skincare'], kw: ['serum'] },
+  serums: { depts: ['Skincare'], kw: ['serum'] },
+  shampoo: { depts: ['Haircare'], kw: ['shampoo'] },
+  conditioner: { depts: ['Haircare'], kw: ['conditioner'] },
+  'lip products': { depts: ['Beauty & Makeup', 'Skincare'], kw: ['lip'] },
+  makeup: {
+    depts: ['Beauty & Makeup'],
+    kw: ['lipstick', 'lip gloss', 'mascara', 'kajal', 'eyeliner', 'foundation', 'compact', 'blush', 'makeup', 'eyeshadow', 'highlighter', 'primer', 'concealer', 'contour'],
+  },
+  'makeup products': {
+    depts: ['Beauty & Makeup'],
+    kw: ['lipstick', 'lip gloss', 'mascara', 'kajal', 'eyeliner', 'foundation', 'compact', 'blush', 'makeup', 'eyeshadow', 'highlighter', 'primer', 'concealer', 'contour'],
+  },
+  innerwear: {
+    depts: ['Hosiery & Innerwear'],
+    kw: ['underwear', 'innerwear', 'nikar', 'vest', 'panty', 'brief', 'sock', 'legging'],
+  },
+  gifts: { depts: ['Gift Articles'], kw: ['gift'] },
+  toys: { depts: ['Toys & Kids'], kw: ['toy', 'doll', 'game', 'stacking'] },
+  accessories: {
+    depts: ['Accessories & Grooming'],
+    kw: ['brush', 'comb', 'belt', 'goggle', 'perfume', 'grooming', 'dryer', 'straightener', 'trimmer'],
+  },
+};
+
+const BRAND_LOOKUP = new Set(ALL_BRANDS);
+
+/**
+ * Resolves a storefront label (chip, nav link, search hit) to a browse target.
+ * Order: exact department → exact brand (also "Brand · qualifier" chips) →
+ * product-type alias. Returns null when nothing approved matches (callers then
+ * keep the element non-navigating instead of inventing a destination).
+ */
+export function resolveChipTarget(raw: string): ChipTarget | null {
+  const label = raw.trim();
+  if (!label) return null;
+
+  if (DEPARTMENTS_EIGHT.some((d) => d.name === label)) {
+    return { kind: 'department', name: label };
+  }
+
+  const base = label.split('·')[0].trim();
+  if (BRAND_LOOKUP.has(base)) return { kind: 'brand', name: base };
+  if (BRAND_LOOKUP.has(label)) return { kind: 'brand', name: label };
+
+  const hit = typeEntry(label);
+  if (hit) return { kind: 'type', name: label };
+
+  return null;
+}
+
+/** Type-entry lookup used by the type collection view (exact, then keyword). */
+export function typeEntry(name: string): { depts: string[]; kw: string[] } | null {
+  const l = name.trim().toLowerCase();
+  if (TYPE_INDEX[l]) return TYPE_INDEX[l];
+  for (const entry of Object.values(TYPE_INDEX)) {
+    if (entry.kw.some((k) => l.includes(k) || k.includes(l))) return entry;
+  }
+  return null;
+}
+
+/** Strips "(…)" qualifiers from a brand's primaryDepartments entry. */
+export function baseDepartment(entry: string): string | null {
+  const base = entry.replace(/\s*\(.*\)\s*$/, '').trim();
+  if (base === 'Per actual verified product') return null;
+  return DEPARTMENTS_EIGHT.some((d) => d.name === base) ? base : null;
+}
+
+/** Approved departments for a brand (qualified entries resolved). */
+export function brandDepartments(brand: string): string[] {
+  const profile = BRANDS.find((b) => b.brand === brand);
+  let sources: string[] = [];
+  if (profile) {
+    sources = profile.primaryDepartments;
+  } else {
+    // Brands without a full profile (e.g. O3+) fall back to their group.
+    const group = BRAND_GROUPS.find((g) => (g.brands as readonly string[]).includes(brand))?.group;
+    sources = group ? (GROUP_DEPTS[group] ?? []) : [];
+  }
+  const out: string[] = [];
+  for (const entry of sources) {
+    const dept = baseDepartment(entry);
+    if (dept && !out.includes(dept)) out.push(dept);
+  }
+  return out;
+}
+
+/** Brand group → department fallback (matches lib/boutique BRAND_GROUPS). */
+export const GROUP_DEPTS: Record<string, string[]> = {
+  'Hosiery & Innerwear': ['Hosiery & Innerwear'],
+  Haircare: ['Haircare'],
+  'Beauty & Makeup': ['Beauty & Makeup'],
+  'Skincare & Beauty': ['Skincare', 'Beauty & Makeup'],
+  'Accessories & Grooming': ['Accessories & Grooming'],
+};

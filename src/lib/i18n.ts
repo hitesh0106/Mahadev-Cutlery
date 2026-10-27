@@ -402,6 +402,39 @@ const HI: Record<string, string> = {
   'Find a Gift': 'गिफ्ट खोजें',
   'This festival period has ended. Stay tuned for the next one!':
     'त्योहार का समय समाप्त। अगले त्योहार की जल्दी ख़बर!',
+
+  // Collection views (brand / department / product type)
+  Breadcrumb: 'ब्रेडक्रंब',
+  Home: 'होम',
+  Brand: 'ब्रांड',
+  Department: 'विभाग',
+  'Product type': 'प्रोडक्ट टाइप',
+  'Departments for this brand': 'इस ब्रांड के विभाग',
+  'Categories in this brand': 'इस ब्रांड की श्रेणियाँ',
+  'Customer groups': 'ग्राहक समूह',
+  'Classification rules': 'वर्गीकरण नियम',
+  'This brand stays unpublished until the merchant verifies the exact products.':
+    'मर्चेंट द्वारा सटीक प्रोडक्ट जाँचे जाने तक यह ब्रांड अप्रकाशित रहता है।',
+  'Real {brand} products appear here once the catalogue is imported into Shopify. Until then this page lists the approved classification only.':
+    '{brand} के असली प्रोडक्ट Shopify में कैटलॉग आयात होने पर यहाँ दिखेंगे। तब तक यह पेज केवल स्वीकृत वर्गीकरण दिखाता है।',
+  'Categories in this department': 'इस विभाग की श्रेणियाँ',
+  'Brands in this department': 'इस विभाग के ब्रांड',
+  'Sample products': 'नमूना प्रोडक्ट',
+  'No sample products here yet. In the live theme this grid lists real products from your Shopify catalogue.':
+    'यहाँ अभी कोई नमूना प्रोडक्ट नहीं। लाइव थीम में यहाँ आपकी Shopify कैटलॉग के असली प्रोडक्ट आते हैं।',
+  'Where you find it': 'कहाँ मिलता है',
+  'Brands carrying this type': 'यह टाइप रखने वाले ब्रांड',
+  'Classification confirmed · stock is verified product by product':
+    'वर्गीकरण पुष्ट · स्टॉक हर प्रोडक्ट पर जाँचा जाता है',
+  'Every product needs owner verification before publishing':
+    'प्रकाशित करने से पहले हर प्रोडक्ट की मालिक की पुष्टि ज़रूरी',
+  'Brand identity pending verification — nothing published yet':
+    'ब्रांड पहचान का सत्यापन लंबित — अभी कुछ प्रकाशित नहीं',
+  Men: 'पुरुष',
+  Women: 'महिलाएँ',
+  Unisex: 'यूनिसेक्स',
+  Girls: 'लड़कियाँ',
+  Boys: 'लड़के',
 };
 
 const GU: Record<string, string> = {
@@ -731,6 +764,39 @@ const GU: Record<string, string> = {
   'Find a Gift': 'ગિફ્ટ શોધો',
   'This festival period has ended. Stay tuned for the next one!':
     'તહેવારનો સમય પૂરો થયો. આગલી ઉજવણી માટે જોતા રહો!',
+
+  // Collection views (brand / department / product type)
+  Breadcrumb: 'બ્રેડક્રમ્બ',
+  Home: 'હોમ',
+  Brand: 'બ્રાન્ડ',
+  Department: 'વિભાગ',
+  'Product type': 'પ્રોડક્ટ ટાઇપ',
+  'Departments for this brand': 'આ બ્રાન્ડના વિભાગ',
+  'Categories in this brand': 'આ બ્રાન્ડની શ્રેણીઓ',
+  'Customer groups': 'ગ્રાહક જૂથો',
+  'Classification rules': 'વર્ગીકરણ નિયમો',
+  'This brand stays unpublished until the merchant verifies the exact products.':
+    'વેપારી ચોક્કસ પ્રોડક્ટ ચકાસે ત્યાં સુધી આ બ્રાન્ડ પ્રકાશિત થતું નથી.',
+  'Real {brand} products appear here once the catalogue is imported into Shopify. Until then this page lists the approved classification only.':
+    '{brand} ના વાસ્તવિક પ્રોડક્ટ Shopifyમાં કેટેલોગ આયાત થાય ત્યારે અહીં દેખાશે. ત્યાં સુધી આ પેજ ફક્ત મંજૂર વર્ગીકરણ બતાવે છે.',
+  'Categories in this department': 'આ વિભાગની શ્રેણીઓ',
+  'Brands in this department': 'આ વિભાગના બ્રાન્ડ',
+  'Sample products': 'નમૂના પ્રોડક્ટ',
+  'No sample products here yet. In the live theme this grid lists real products from your Shopify catalogue.':
+    'અહીં હજી કોઈ નમૂના પ્રોડક્ટ નથી. લાઇવ થીમમાં અહીં તમારા Shopify કેટેલોગના વાસ્તવિક પ્રોડક્ટ આવે છે.',
+  'Where you find it': 'ક્યાં મળે છે',
+  'Brands carrying this type': 'આ ટાઇપ ધરાવતા બ્રાન્ડ',
+  'Classification confirmed · stock is verified product by product':
+    'વર્ગીકરણ પુષ્ટિ · સ્ટોક દરેક પ્રોડક્ટ પર ચકાસાય છે',
+  'Every product needs owner verification before publishing':
+    'પ્રકાશિત કરતાં પહેલાં દરેક પ્રોડક્ટની માલિકની પુષ્ટિ જરૂરી',
+  'Brand identity pending verification — nothing published yet':
+    'બ્રાન્ડ ઓળખની ચકાસણી બાકી — હજી કંઈ પ્રકાશિત નથી',
+  Men: 'પુરુષો',
+  Women: 'સ્ત્રીઓ',
+  Unisex: 'યુનિસેક્સ',
+  Girls: 'છોકરીઓ',
+  Boys: 'છોકરા',
 };
 
 const DICTS: Record<Exclude<Lang, 'en'>, Record<string, string>> = { hi: HI, gu: GU };

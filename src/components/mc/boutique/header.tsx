@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import {
   ALL_BRANDS,
+  DEPARTMENTS,
   img,
   inr,
   MENU_GROUPS,
@@ -23,6 +24,8 @@ import {
   PRODUCTS,
   type BoutiqueProduct,
 } from '@/lib/boutique';
+import { resolveChipTarget } from '@/lib/taxonomy';
+import { closeBrowse, openBrowse, useBrowse, type BrowseTarget } from '@/lib/browse-store';
 import { useBoutique } from '@/lib/boutique-store';
 import { useLang } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -50,6 +53,17 @@ const MENU_GROUP_TARGETS: Record<string, string> = {
   'Shop by Product Type': '#product-types',
 };
 
+/** The eight approved department names — these nav links open department views. */
+const DEPT_TITLES = new Set(DEPARTMENTS.map((d) => d.title as string));
+
+/** After closing a collection view, delayed scroll to the re-mounted section. */
+function goToAnchor(hash: string) {
+  closeBrowse();
+  window.setTimeout(() => {
+    document.querySelector(hash)?.scrollIntoView({ behavior: 'auto' });
+  }, 80);
+}
+
 // ── Search overlay ───────────────────────────────────────────────────────────
 
 const POPULAR_SEARCHES = ['Face wash', 'Shampoo', 'Lipstick', 'Brief', 'Gift', 'Bangle'];
@@ -58,7 +72,6 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
   const { t, tf } = useLang();
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 80);
   }, [open]);
@@ -141,9 +154,18 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                 <p className="eyebrow mb-3">{t('Brands')}</p>
                 {brandHits.length ? (
                   brandHits.map((brand) => (
-                    <p key={brand} className="py-1 text-[15px]">
+                    <button
+                      key={brand}
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        openBrowse({ kind: 'brand', name: brand });
+                      }}
+                      data-testid={`search-brand-${brand.toLowerCase().replace(/[^a-z]+/g, '-')}`}
+                      className="block py-1 text-left text-[15px] underline-offset-4 transition-colors hover:text-gold hover:underline"
+                    >
                       {brand}
-                    </p>
+                    </button>
                   ))
                 ) : (
                   <p className="text-sm text-ink-2">{t('No brand match')}</p>
@@ -209,12 +231,46 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
 
 export function Header() {
   const { count, setCartOpen, wishlist } = useBoutique();
+  const { browse } = useBrowse();
   const { t, tf } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const closeTimer = useRef<number | undefined>(undefined);
+
+  /** Desktop/mobile nav click: departments open views, anchors return home. */
+  const onNavClick = (event: { preventDefault: () => void }, label: string) => {
+    if (DEPT_TITLES.has(label)) {
+      event.preventDefault();
+      setOpenMenu(null);
+      setDrawerOpen(false);
+      openBrowse({ kind: 'department', name: label });
+      return;
+    }
+    if (browse) {
+      event.preventDefault();
+      setOpenMenu(null);
+      setDrawerOpen(false);
+      goToAnchor(NAV_TARGETS[label] ?? '#top');
+    }
+  };
+
+  /** Mega-menu / drawer group links → collection views. */
+  const onGroupLink = (link: string, heading: string) => {
+    setOpenMenu(null);
+    setDrawerOpen(false);
+    if (heading === 'Shop by Brand') {
+      openBrowse({ kind: 'brand', name: link });
+      return;
+    }
+    if (heading === 'Shop by Department') {
+      openBrowse({ kind: 'department', name: link });
+      return;
+    }
+    const target = resolveChipTarget(link);
+    if (target) openBrowse(target as BrowseTarget);
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -277,6 +333,7 @@ export function Header() {
                     <a
                       href={NAV_TARGETS[label] ?? '#top'}
                       data-testid={`nav-link-${label.toLowerCase().replace(/[^a-z]+/g, '-')}`}
+                      onClick={(event) => onNavClick(event, label)}
                       className="group relative inline-block px-[4px] py-[26px] text-[12.5px] font-medium whitespace-nowrap 2xl:px-[6px]"
                     >
                       {t(label)}
@@ -389,7 +446,11 @@ export function Header() {
                       <li key={link}>
                         <a
                           href={MENU_GROUP_TARGETS[group.heading] ?? '#top'}
-                          className="inline-block py-1 text-sm text-ink-2 transition-[color,transform] duration-300 hover:translate-x-[3px] hover:text-ink"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            onGroupLink(link, group.heading);
+                          }}
+                          className="inline-block cursor-pointer py-1 text-sm text-ink-2 transition-[color,transform] duration-300 hover:translate-x-[3px] hover:text-ink"
                         >
                           {t(link)}
                         </a>
@@ -401,6 +462,15 @@ export function Header() {
             </div>
             <a
               href="#skincare-edit"
+              onClick={(event) => {
+                if (browse) {
+                  event.preventDefault();
+                  setOpenMenu(null);
+                  goToAnchor('#skincare-edit');
+                } else {
+                  setOpenMenu(null);
+                }
+              }}
               className="group grid gap-3.5"
               data-testid="mega-menu-promo"
             >
@@ -478,8 +548,14 @@ export function Header() {
                             </summary>
                             <ul className="pb-2 pl-3">
                               {group.links.map((link) => (
-                                <li key={link} className="py-1.5 text-sm text-ink-2">
-                                  {t(link)}
+                                <li key={link} className="py-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => onGroupLink(link, group.heading)}
+                                    className="text-sm text-ink-2 transition-colors hover:text-ink"
+                                  >
+                                    {t(link)}
+                                  </button>
                                 </li>
                               ))}
                             </ul>
@@ -491,7 +567,7 @@ export function Header() {
                     <a
                       href={NAV_TARGETS[label] ?? '#top'}
                       className="flex min-h-[52px] items-center font-serif text-xl"
-                      onClick={() => setDrawerOpen(false)}
+                      onClick={(event) => onNavClick(event, label)}
                     >
                       {t(label)}
                     </a>

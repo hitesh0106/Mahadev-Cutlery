@@ -24,6 +24,10 @@ export type BoutiqueProduct = {
   variants?: string[];
   tags: string[];
   audience?: string;
+  /** SAMPLE-ONLY department classification (department handle) used by the
+   * collection views. Real catalogue classification always comes from the
+   * Shopify product data, never from this field. */
+  dept?: string;
 };
 
 /** Image helper — reference served /preview/<name>.jpg; we serve /images/. */
@@ -143,7 +147,7 @@ export const BRAND_NOTES: Record<string, string> = {
   'Lotus Herbals': 'Skincare, face & haircare — never makeup',
 };
 
-const BRAND_GROUPS = [
+export const BRAND_GROUPS = [
   {
     group: 'Hosiery & Innerwear',
     brands: ['Jockey', 'Van Heusen', 'Zoiro', 'Sunny', 'Bodycare', 'Lady Care'],
@@ -243,6 +247,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     image2: img('editorial-skincare'),
     tags: ['occasion-birthday', 'recipient-her'],
     audience: 'Unisex',
+    dept: 'skincare',
   }),
   seed({
     id: 'p2',
@@ -253,6 +258,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     image2: img('dept-tools'),
     tags: ['occasion-diwali', 'occasion-raksha-bandhan', 'recipient-her', 'gift-idea'],
     audience: 'Women',
+    dept: 'beauty-makeup',
   }),
   seed({
     id: 'p3',
@@ -263,6 +269,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     variants: ['200 ml', '400 ml'],
     tags: ['occasion-diwali', 'recipient-family', 'gift-idea'],
     audience: 'Unisex',
+    dept: 'haircare',
   }),
   seed({
     id: 'p4',
@@ -272,6 +279,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     image2: img('dept-gifts'),
     tags: ['occasion-raksha-bandhan', 'occasion-wedding', 'recipient-her', 'festive'],
     audience: 'Women',
+    dept: 'imitation-jewellery',
   }),
   seed({
     id: 'p5',
@@ -282,6 +290,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     variants: ['S', 'M', 'L', 'XL'],
     tags: ['recipient-him'],
     audience: 'Men',
+    dept: 'hosiery-innerwear',
   }),
   seed({
     id: 'p6',
@@ -292,6 +301,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     image2: img('dept-gifts'),
     tags: ['occasion-birthday', 'recipient-kids'],
     audience: 'Kids – Unisex',
+    dept: 'toys-kids',
   }),
   seed({
     id: 'p7',
@@ -301,6 +311,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     image: img('dept-gifts'),
     image2: img('dept-jewellery'),
     tags: ['occasion-diwali', 'occasion-wedding', 'recipient-family', 'gift-idea', 'festive'],
+    dept: 'gift-articles',
   }),
   seed({
     id: 'p8',
@@ -309,6 +320,7 @@ export const PRODUCTS: BoutiqueProduct[] = [
     image: img('dept-tools'),
     image2: img('dept-haircare'),
     tags: ['recipient-anyone'],
+    dept: 'accessories-grooming',
   }),
 ];
 

@@ -6,6 +6,7 @@
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { ALL_BRANDS } from '@/lib/boutique';
+import { openBrowse } from '@/lib/browse-store';
 import { useLang } from '@/lib/i18n';
 import { CONTAINER, SECTION_PAD, SectionHead } from './primitives';
 
@@ -91,7 +92,12 @@ export function BrandsAZ() {
                   {group.items.map((brand) => (
                     <li key={brand}>
                       <a
-                        href="#top"
+                        href={`#brand-${brand.toLowerCase().replace(/[^a-z]+/g, '-')}`}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          openBrowse({ kind: 'brand', name: brand });
+                        }}
+                        data-testid={`brand-link-${brand.toLowerCase().replace(/[^a-z]+/g, '-')}`}
                         className="inline-block py-1 text-[15px] transition-[color,transform] duration-300 hover:translate-x-[3px] hover:text-gold"
                       >
                         {brand}

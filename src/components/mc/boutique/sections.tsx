@@ -14,6 +14,8 @@ import {
   PRODUCT_TYPES,
   type BoutiqueProduct,
 } from '@/lib/boutique';
+import { resolveChipTarget } from '@/lib/taxonomy';
+import { openBrowse, type BrowseTarget } from '@/lib/browse-store';
 import { cn } from '@/lib/utils';
 import { useLang } from '@/lib/i18n';
 import { ProductCard } from './product-card';
@@ -112,7 +114,15 @@ export function Departments() {
         <ul className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-5">
           {DEPARTMENTS.map((dept, i) => (
             <Reveal key={dept.title} as="li" i={i} className={cn(i < 2 && 'lg:col-span-2')}>
-              <a href="#top" className="group flex flex-col gap-3.5" data-testid={`department-card-${i}`}>
+              <a
+                href={`#department-${dept.title.toLowerCase().replace(/[^a-z]+/g, '-')}`}
+                onClick={(event) => {
+                  event.preventDefault();
+                  openBrowse({ kind: 'department', name: dept.title });
+                }}
+                className="group flex flex-col gap-3.5"
+                data-testid={`department-card-${i}`}
+              >
                 <span
                   className={cn(
                     'relative block aspect-[3/4] overflow-hidden rounded-sm bg-cream after:absolute after:inset-0 after:rounded-sm after:border after:border-transparent after:transition-colors after:duration-300 group-hover:after:border-ink/10',
@@ -169,7 +179,11 @@ export function FeaturedBrands() {
         {FEATURED_BRANDS.map((brand, i) => (
           <a
             key={`${brand}-${i}`}
-            href="#brands-az"
+            href={`#brand-${brand.toLowerCase().replace(/[^a-z]+/g, '-')}`}
+            onClick={(event) => {
+              event.preventDefault();
+              openBrowse({ kind: 'brand', name: brand });
+            }}
             className="group grid min-h-[180px] snap-start content-between gap-4 rounded-sm border border-line bg-paper px-6 pt-6 pb-5 transition-[border-color,box-shadow,transform] duration-300 ease-[var(--ease-lux)] hover:-translate-y-[3px] hover:border-ink hover:shadow-[0_4px_14px_rgba(32,32,30,.05)]"
             data-testid={`brand-card-${i}`}
           >
@@ -203,7 +217,11 @@ export function ProductTypes() {
           {PRODUCT_TYPES.map((type, i) => (
             <Reveal key={type.title} as="li" i={i}>
               <a
-                href="#top"
+                href={`#type-${type.title.toLowerCase().replace(/[^a-z]+/g, '-')}`}
+                onClick={(event) => {
+                  event.preventDefault();
+                  openBrowse({ kind: 'type', name: type.title });
+                }}
                 className="group grid justify-items-center gap-2.5 text-center"
                 data-testid={`product-type-${i}`}
               >
@@ -267,16 +285,34 @@ export function EditSection({
             <p className="mt-4 max-w-[46ch] text-ink-2">{t(text)}</p>
           </Reveal>
           <Reveal className="flex flex-wrap gap-2">
-            {chips.map((chip, i) => (
-              <a
-                key={`${chip}-${i}`}
-                href="#top"
-                data-testid={`${id}-chip-${i}`}
-                className="rounded-full border border-line bg-paper/70 px-[18px] py-2.5 text-sm transition-colors hover:border-ink"
-              >
-                {t(chip)}
-              </a>
-            ))}
+            {chips.map((chip, i) => {
+              const target = resolveChipTarget(chip);
+              if (!target) {
+                return (
+                  <span
+                    key={`${chip}-${i}`}
+                    data-testid={`${id}-chip-${i}`}
+                    className="rounded-full border border-line bg-paper/70 px-[18px] py-2.5 text-sm text-ink-2"
+                  >
+                    {t(chip)}
+                  </span>
+                );
+              }
+              return (
+                <a
+                  key={`${chip}-${i}`}
+                  href={`#${target.kind}-${target.name.toLowerCase().replace(/[^a-z]+/g, '-')}`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    openBrowse(target as BrowseTarget);
+                  }}
+                  data-testid={`${id}-chip-${i}`}
+                  className="rounded-full border border-line bg-paper/70 px-[18px] py-2.5 text-sm transition-colors hover:border-ink"
+                >
+                  {t(chip)}
+                </a>
+              );
+            })}
           </Reveal>
           <ul className="grid grid-cols-2 gap-3 sm:gap-5">
             {products.map((p, i) => (
