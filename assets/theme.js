@@ -646,6 +646,31 @@
   }
 
   /* ── Boot ─────────────────────────────────────────────────────────────── */
+  function initCarousels(root) {
+    var scope = root || document;
+    var sections = scope.querySelectorAll('.mc-featured-products');
+    sections.forEach(function (sec) {
+      var track = sec.querySelector('[data-carousel-track]');
+      var prevBtn = sec.querySelector('[data-carousel-prev]');
+      var nextBtn = sec.querySelector('[data-carousel-next]');
+      if (!track || !prevBtn || !nextBtn) return;
+      if (prevBtn.dataset.bound) return;
+      prevBtn.dataset.bound = 'true';
+
+      prevBtn.addEventListener('click', function () {
+        var card = track.firstElementChild;
+        var step = card ? card.offsetWidth + 24 : 300;
+        track.scrollBy({ left: -step, behavior: 'smooth' });
+      });
+
+      nextBtn.addEventListener('click', function () {
+        var card = track.firstElementChild;
+        var step = card ? card.offsetWidth + 24 : 300;
+        track.scrollBy({ left: step, behavior: 'smooth' });
+      });
+    });
+  }
+
   function init() {
     initDrawers();
     initMenus();
@@ -654,6 +679,7 @@
     initProductPage();
     initFilters();
     initCartPage();
+    initCarousels();
     MC.refreshCart();
   }
 
@@ -664,6 +690,7 @@
     initMenus();
     initReveals();
     bindQty(section);
+    initCarousels(section);
     if (section.querySelector('[data-mc-product-page]')) {
       initProductPage();
     }

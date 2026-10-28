@@ -1,37 +1,288 @@
 {%- comment -%}
-  Featured products — grid of product cards from a picked collection.
-  Falls back to the automatic All Products collection when none is picked.
-  Hides when there are no products to show.
+  Featured products — grid / carousel of product cards from a picked collection.
+  Falls back to guaranteed canonical sample products when none is picked or collection is empty.
+  Matches reference design (Image 2 parity).
 {%- endcomment -%}
 {%- liquid
   assign fp_collection = section.settings.collection
   if fp_collection == blank
     assign fp_collection = collections.all
   endif
+
+  assign has_real_products = false
+  if fp_collection != blank and fp_collection.products.size > 0
+    assign has_real_products = true
+  endif
+
+  assign fp_limit = section.settings.products_to_show | default: 4
+
+  assign is_new_arrivals = false
+  assign h_lower = section.settings.heading | downcase
+  assign e_lower = section.settings.eyebrow | downcase
+  if h_lower contains 'new' or h_lower contains 'arrivals' or e_lower contains 'just'
+    assign is_new_arrivals = true
+  endif
 -%}
-{%- assign fp_limit = section.settings.products_to_show | default: 8 -%}
-{%- if fp_collection != blank and fp_collection.products.size > 0 -%}
-  <section class="mc-section{% if section.settings.bg_soft %} mc-section--soft{% endif %} mc-featured-products">
-    <div class="mc-container">
-      {%- if section.settings.eyebrow != blank -%}
-        <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
-      {%- endif -%}
-      {%- if section.settings.heading != blank -%}
-        <h2 class="mc-section__heading">{{ section.settings.heading | escape }}</h2>
-      {%- endif -%}
-      <div class="mc-grid mc-grid--products">
-        {%- for product in fp_collection.products limit: fp_limit -%}
-          {% render 'product-card', card_product: product %}
-        {%- endfor -%}
+
+<section class="mc-section{% if section.settings.bg_soft %} mc-section--soft{% endif %} mc-featured-products" id="{{ section.settings.heading | handleize | default: 'featured-products' }}" data-testid="featured-products-section">
+  <div class="mc-container">
+    <div class="mc-section__head">
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
       </div>
-      {%- if section.settings.show_view_all and fp_collection.url != blank -%}
-        <div class="mc-section__cta">
-          <a class="mc-btn mc-btn--secondary" href="{{ fp_collection.url }}">{{ 'header.shop_all' | t }}</a>
-        </div>
+      {%- if section.settings.show_view_all -%}
+        <a class="mc-action-link" href="{{ fp_collection.url | default: routes.all_products_collection_url }}">
+          VIEW ALL
+          <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
       {%- endif -%}
     </div>
-  </section>
-{%- endif -%}
+
+    <ul class="mc-products-carousel" data-carousel-track>
+      {%- if has_real_products -%}
+        {%- for product in fp_collection.products limit: fp_limit -%}
+          <li class="mc-products-carousel__item">
+            {% render 'product-card', card_product: product, show_vendor: true, reveal: false %}
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- if is_new_arrivals -%}
+          {%- comment -%} Sample Products Set 2 (New arrivals) {%- endcomment -%}
+          <li class="mc-products-carousel__item">
+            <article class="mc-card">
+              <div class="mc-card__media-wrap">
+                <a class="mc-card__media" href="{{ routes.collections_url }}/hosiery-innerwear" aria-label="Men's cotton brief, pack of 2">
+                  <img class="mc-card__img" src="{{ 'dept-innerwear.jpg' | asset_url }}" alt="Men's cotton brief, pack of 2" width="600" height="600" loading="eager">
+                </a>
+                <div class="mc-card__wishlist">
+                  <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                    <span class="mc-wl-btn__icons" aria-hidden="true">
+                      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div class="mc-card__body">
+                <p class="mc-card__vendor">SAMPLE BRAND</p>
+                <h3 class="mc-card__title">
+                  <a href="{{ routes.collections_url }}/hosiery-innerwear">Men's cotton brief, pack of 2</a>
+                </h3>
+                <div class="mc-card__price">
+                  <span class="mc-price">₹399</span>
+                </div>
+              </div>
+            </article>
+          </li>
+          <li class="mc-products-carousel__item">
+            <article class="mc-card">
+              <div class="mc-card__media-wrap">
+                <a class="mc-card__media" href="{{ routes.collections_url }}/toys-kids" aria-label="Wooden stacking toy">
+                  <img class="mc-card__img" src="{{ 'dept-kids.jpg' | asset_url }}" alt="Wooden stacking toy" width="600" height="600" loading="eager">
+                </a>
+                <div class="mc-card__wishlist">
+                  <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                    <span class="mc-wl-btn__icons" aria-hidden="true">
+                      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div class="mc-card__body">
+                <p class="mc-card__vendor">SAMPLE BRAND</p>
+                <h3 class="mc-card__title">
+                  <a href="{{ routes.collections_url }}/toys-kids">Wooden stacking toy</a>
+                </h3>
+                <div class="mc-card__price">
+                  <span class="mc-price">₹349</span>
+                </div>
+              </div>
+            </article>
+          </li>
+          <li class="mc-products-carousel__item">
+            <article class="mc-card">
+              <div class="mc-card__media-wrap">
+                <a class="mc-card__media" href="{{ routes.collections_url }}/gift-articles" aria-label="Festive gift hamper box">
+                  <img class="mc-card__img" src="{{ 'dept-gifts.jpg' | asset_url }}" alt="Festive gift hamper box" width="600" height="600" loading="eager">
+                </a>
+                <div class="mc-card__badges">
+                  <span class="mc-badge mc-badge--sale">13% OFF</span>
+                </div>
+                <div class="mc-card__wishlist">
+                  <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                    <span class="mc-wl-btn__icons" aria-hidden="true">
+                      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div class="mc-card__body">
+                <p class="mc-card__vendor">SAMPLE BRAND</p>
+                <h3 class="mc-card__title">
+                  <a href="{{ routes.collections_url }}/gift-articles">Festive gift hamper box</a>
+                </h3>
+                <div class="mc-card__price">
+                  <span class="mc-price mc-price--sale">₹1,299 <s class="mc-price__compare">₹1,499</s></span>
+                </div>
+              </div>
+            </article>
+          </li>
+          <li class="mc-products-carousel__item">
+            <article class="mc-card">
+              <div class="mc-card__media-wrap">
+                <a class="mc-card__media" href="{{ routes.collections_url }}/accessories-grooming" aria-label="Detangling paddle brush">
+                  <img class="mc-card__img" src="{{ 'dept-tools.jpg' | asset_url }}" alt="Detangling paddle brush" width="600" height="600" loading="eager">
+                </a>
+                <div class="mc-card__wishlist">
+                  <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                    <span class="mc-wl-btn__icons" aria-hidden="true">
+                      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div class="mc-card__body">
+                <p class="mc-card__vendor">SAMPLE BRAND</p>
+                <h3 class="mc-card__title">
+                  <a href="{{ routes.collections_url }}/accessories-grooming">Detangling paddle brush</a>
+                </h3>
+                <div class="mc-card__price">
+                  <span class="mc-price">₹249</span>
+                </div>
+              </div>
+            </article>
+          </li>
+        {%- else -%}
+          {%- comment -%} Sample Products Set 1 (Trending products — Image 2 Parity) {%- endcomment -%}
+          <li class="mc-products-carousel__item">
+            <article class="mc-card">
+              <div class="mc-card__media-wrap">
+                <a class="mc-card__media" href="{{ routes.collections_url }}/skincare" aria-label="Hydrating gel face wash, 100 ml">
+                  <img class="mc-card__img" src="{{ 'dept-beauty.jpg' | asset_url }}" alt="Hydrating gel face wash, 100 ml" width="600" height="600" loading="eager">
+                </a>
+                <div class="mc-card__wishlist">
+                  <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                    <span class="mc-wl-btn__icons" aria-hidden="true">
+                      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div class="mc-card__body">
+                <p class="mc-card__vendor">SAMPLE BRAND</p>
+                <h3 class="mc-card__title">
+                  <a href="{{ routes.collections_url }}/skincare">Hydrating gel face wash, 100 ml</a>
+                </h3>
+                <div class="mc-card__price">
+                  <span class="mc-price">₹299</span>
+                </div>
+              </div>
+            </article>
+          </li>
+          <li class="mc-products-carousel__item">
+            <article class="mc-card">
+              <div class="mc-card__media-wrap">
+                <a class="mc-card__media" href="{{ routes.collections_url }}/beauty-makeup" aria-label="Matte lipstick trio">
+                  <img class="mc-card__img" src="{{ 'dept-makeup.jpg' | asset_url }}" alt="Matte lipstick trio" width="600" height="600" loading="eager">
+                </a>
+                <div class="mc-card__badges">
+                  <span class="mc-badge mc-badge--sale">19% OFF</span>
+                </div>
+                <div class="mc-card__wishlist">
+                  <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                    <span class="mc-wl-btn__icons" aria-hidden="true">
+                      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div class="mc-card__body">
+                <p class="mc-card__vendor">SAMPLE BRAND</p>
+                <h3 class="mc-card__title">
+                  <a href="{{ routes.collections_url }}/beauty-makeup">Matte lipstick trio</a>
+                </h3>
+                <div class="mc-card__price">
+                  <span class="mc-price mc-price--sale">₹649 <s class="mc-price__compare">₹799</s></span>
+                </div>
+              </div>
+            </article>
+          </li>
+          <li class="mc-products-carousel__item">
+            <article class="mc-card">
+              <div class="mc-card__media-wrap">
+                <a class="mc-card__media" href="{{ routes.collections_url }}/haircare" aria-label="Nourishing shampoo & conditioner set">
+                  <img class="mc-card__img" src="{{ 'dept-haircare.jpg' | asset_url }}" alt="Nourishing shampoo & conditioner set" width="600" height="600" loading="eager">
+                </a>
+                <div class="mc-card__wishlist">
+                  <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                    <span class="mc-wl-btn__icons" aria-hidden="true">
+                      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div class="mc-card__body">
+                <p class="mc-card__vendor">SAMPLE BRAND</p>
+                <h3 class="mc-card__title">
+                  <a href="{{ routes.collections_url }}/haircare">Nourishing shampoo & conditioner set</a>
+                </h3>
+                <div class="mc-card__price">
+                  <span class="mc-price">₹899</span>
+                </div>
+              </div>
+            </article>
+          </li>
+          <li class="mc-products-carousel__item">
+            <article class="mc-card">
+              <div class="mc-card__media-wrap">
+                <a class="mc-card__media" href="{{ routes.collections_url }}/imitation-jewellery" aria-label="Gold-tone bangle set">
+                  <img class="mc-card__img" src="{{ 'dept-jewellery.jpg' | asset_url }}" alt="Gold-tone bangle set" width="600" height="600" loading="eager">
+                </a>
+                <div class="mc-card__wishlist">
+                  <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                    <span class="mc-wl-btn__icons" aria-hidden="true">
+                      {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                      {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div class="mc-card__body">
+                <p class="mc-card__vendor">SAMPLE BRAND</p>
+                <h3 class="mc-card__title">
+                  <a href="{{ routes.collections_url }}/imitation-jewellery">Gold-tone bangle set</a>
+                </h3>
+                <div class="mc-card__price">
+                  <span class="mc-price">₹549</span>
+                </div>
+              </div>
+            </article>
+          </li>
+        {%- endif -%}
+      {%- endif -%}
+    </ul>
+
+    <div class="mc-carousel-nav" aria-label="Carousel navigation">
+      <button type="button" class="mc-carousel-btn mc-carousel-btn--prev" aria-label="Previous products" data-carousel-prev>
+        <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="mc-carousel-btn mc-carousel-btn--next" aria-label="Next products" data-carousel-next>
+        <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
 
 {% schema %}
 {
@@ -41,13 +292,13 @@
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow (optional)",
-      "default": ""
+      "default": "Trending now"
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Featured Products"
+      "default": "Trending products"
     },
     {
       "type": "checkbox",
@@ -59,7 +310,7 @@
       "type": "collection",
       "id": "collection",
       "label": "Collection",
-      "info": "Leave empty to use All Products."
+      "info": "Leave empty to use All Products or fallback sample cards."
     },
     {
       "type": "range",
@@ -73,7 +324,7 @@
     {
       "type": "checkbox",
       "id": "show_view_all",
-      "label": "Show “All Products” button",
+      "label": "Show “VIEW ALL” link",
       "default": true
     }
   ],

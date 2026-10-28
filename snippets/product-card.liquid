@@ -3,7 +3,7 @@
   Accepts:
   - card_product: {Object} Product (required)
   - show_vendor: {Boolean} (optional) overrides settings.show_vendor
-  - reveal: {Boolean} (optional) adds .mc-reveal animation class, default true
+  - reveal: {Boolean} (optional) adds .mc-reveal animation class, default false
 {%- endcomment -%}
 {%- if card_product != blank -%}
 {%- liquid
@@ -13,34 +13,42 @@
   endif
   assign pc_reveal = reveal
   if pc_reveal == nil
-    assign pc_reveal = true
+    assign pc_reveal = false
   endif
 -%}
 <article class="mc-card{% if pc_reveal %} mc-reveal{% endif %}">
-  <a class="mc-card__media" href="{{ card_product.url }}" aria-label="{{ card_product.title | escape }}">
-    {%- if card_product.featured_image -%}
-      <img
-        class="mc-card__img"
-        src="{{ card_product.featured_image | image_url: width: 600 }}"
-        srcset="{{ card_product.featured_image | image_url: width: 300 }} 300w, {{ card_product.featured_image | image_url: width: 600 }} 600w, {{ card_product.featured_image | image_url: width: 900 }} 900w"
-        sizes="(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw"
-        alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
-        width="600"
-        height="750"
-        loading="lazy"
-      >
-    {%- else -%}
-      <span class="mc-card__placeholder" aria-hidden="true">{% render 'icon', name: 'gift', size: 40 %}</span>
-    {%- endif -%}
-    <span class="mc-card__badges">
-      {%- if card_product.tags contains 'sample' -%}
+  <div class="mc-card__media-wrap">
+    <a class="mc-card__media" href="{{ card_product.url }}" aria-label="{{ card_product.title | escape }}">
+      {%- if card_product.featured_image -%}
+        <img
+          class="mc-card__img"
+          src="{{ card_product.featured_image | image_url: width: 600 }}"
+          srcset="{{ card_product.featured_image | image_url: width: 300 }} 300w, {{ card_product.featured_image | image_url: width: 600 }} 600w, {{ card_product.featured_image | image_url: width: 900 }} 900w"
+          sizes="(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw"
+          alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
+          width="600"
+          height="600"
+          loading="lazy"
+        >
+      {%- else -%}
+        <span class="mc-card__placeholder" aria-hidden="true">{% render 'icon', name: 'gift', size: 40 %}</span>
+      {%- endif -%}
+    </a>
+    <div class="mc-card__badges">
+      {%- if card_product.compare_at_price > card_product.price -%}
+        {%- assign pc_discount = card_product.compare_at_price | minus: card_product.price | times: 100.0 | divided_by: card_product.compare_at_price | round -%}
+        <span class="mc-badge mc-badge--sale">{{ pc_discount }}% OFF</span>
+      {%- elsif card_product.tags contains 'sample' -%}
         <span class="mc-badge mc-badge--sample">{{ 'products.sample_note' | t }}</span>
       {%- endif -%}
       {%- unless card_product.available -%}
         <span class="mc-badge mc-badge--soldout">{{ 'cart.sold_out' | t }}</span>
       {%- endunless -%}
-    </span>
-  </a>
+    </div>
+    <div class="mc-card__wishlist">
+      {% render 'wishlist-button', product: card_product %}
+    </div>
+  </div>
   <div class="mc-card__body">
     {%- if pc_show_vendor and card_product.vendor != blank -%}
       <p class="mc-card__vendor">{{ card_product.vendor }}</p>
@@ -49,9 +57,6 @@
       <a href="{{ card_product.url }}">{{ card_product.title | escape }}</a>
     </h3>
     {% render 'price', product: card_product, class: 'mc-card__price' %}
-  </div>
-  <div class="mc-card__actions">
-    {% render 'wishlist-button', product: card_product %}
   </div>
 </article>
 {%- endif -%}
