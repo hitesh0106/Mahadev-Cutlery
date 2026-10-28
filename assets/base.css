@@ -1114,6 +1114,9 @@ label.mc-label {
 .mc-dept-cell {
   list-style: none;
   min-width: 0;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
 }
 .mc-dept-cell__link {
   display: flex;
@@ -1227,40 +1230,44 @@ label.mc-label {
   }
 }
 
-/* Desktop (>= 990px): 3 wide cards on top, 5 portrait cards on bottom */
+/* Desktop (>= 990px): Reference Layout (Row 1: 2 wide + 1 portrait, Row 2: 5 portrait) */
 @media (min-width: 990px) {
   .mc-departments {
     padding-block: clamp(56px, 6.5vw, 88px);
   }
   .mc-departments__grid {
-    grid-template-columns: repeat(15, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 32px 24px;
   }
-  /* Row 1: Top 3 cards span 5 columns each (3 * 5 = 15) */
+  /* Row 1: Card 1 & 2 span 2 columns (wide), Card 3 spans 1 column (portrait, above Card 8) */
   .mc-dept-cell:nth-child(1),
-  .mc-dept-cell:nth-child(2),
-  .mc-dept-cell:nth-child(3) {
-    grid-column: span 5;
+  .mc-dept-cell:nth-child(2) {
+    grid-column: span 2;
   }
   .mc-dept-cell:nth-child(1) .mc-dept-cell__media,
-  .mc-dept-cell:nth-child(2) .mc-dept-cell__media,
-  .mc-dept-cell:nth-child(3) .mc-dept-cell__media {
-    aspect-ratio: 4 / 2.85;
+  .mc-dept-cell:nth-child(2) .mc-dept-cell__media {
+    aspect-ratio: 16 / 10;
   }
-  /* Row 2: Bottom 5 cards span 3 columns each (5 * 3 = 15) */
+  .mc-dept-cell:nth-child(3) {
+    grid-column: span 1;
+  }
+  .mc-dept-cell:nth-child(3) .mc-dept-cell__media {
+    aspect-ratio: 4 / 5.2;
+  }
+  /* Row 2: Bottom 5 cards span 1 column each */
   .mc-dept-cell:nth-child(4),
   .mc-dept-cell:nth-child(5),
   .mc-dept-cell:nth-child(6),
   .mc-dept-cell:nth-child(7),
   .mc-dept-cell:nth-child(8) {
-    grid-column: span 3;
+    grid-column: span 1;
   }
   .mc-dept-cell:nth-child(4) .mc-dept-cell__media,
   .mc-dept-cell:nth-child(5) .mc-dept-cell__media,
   .mc-dept-cell:nth-child(6) .mc-dept-cell__media,
   .mc-dept-cell:nth-child(7) .mc-dept-cell__media,
   .mc-dept-cell:nth-child(8) .mc-dept-cell__media {
-    aspect-ratio: 4 / 4.4;
+    aspect-ratio: 4 / 5.2;
   }
   .mc-dept-cell__body {
     margin-top: 14px;

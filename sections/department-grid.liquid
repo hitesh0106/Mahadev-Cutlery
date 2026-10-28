@@ -26,30 +26,80 @@
     </div>
 
     <ul class="mc-departments__grid">
-      {%- if section.blocks.size > 0 -%}
+      {%- if section.blocks.size >= 8 -%}
         {%- for block in section.blocks -%}
           {%- liquid
+            case forloop.index
+              when 1
+                assign slot_handle = 'beauty-makeup'
+                assign slot_title = 'Makeup & Cosmetics'
+                assign slot_sub = 'Lips, eyes, face'
+                assign slot_img = 'dept-makeup.jpg'
+              when 2
+                assign slot_handle = 'skincare'
+                assign slot_title = 'Skincare'
+                assign slot_sub = 'Cleanse, treat, protect'
+                assign slot_img = 'dept-beauty.jpg'
+              when 3
+                assign slot_handle = 'haircare'
+                assign slot_title = 'Haircare'
+                assign slot_sub = 'Everyday & professional'
+                assign slot_img = 'dept-haircare.jpg'
+              when 4
+                assign slot_handle = 'hosiery-innerwear'
+                assign slot_title = 'Hosiery & Innerwear'
+                assign slot_sub = 'Men, women & kids'
+                assign slot_img = 'dept-innerwear.jpg'
+              when 5
+                assign slot_handle = 'toys-kids'
+                assign slot_title = 'Kids & Toys'
+                assign slot_sub = 'Play & learn'
+                assign slot_img = 'dept-kids.jpg'
+              when 6
+                assign slot_handle = 'gift-articles'
+                assign slot_title = 'Gift Articles'
+                assign slot_sub = 'For every occasion'
+                assign slot_img = 'dept-gifts.jpg'
+              when 7
+                assign slot_handle = 'imitation-jewellery'
+                assign slot_title = 'Imitation Jewellery'
+                assign slot_sub = 'Everyday sparkle'
+                assign slot_img = 'dept-jewellery.jpg'
+              when 8
+                assign slot_handle = 'accessories-grooming'
+                assign slot_title = 'Beauty Tools & Grooming'
+                assign slot_sub = 'Brushes, combs, trimmers'
+                assign slot_img = 'dept-tools.jpg'
+              else
+                assign slot_handle = 'beauty-makeup'
+                assign slot_title = 'Makeup & Cosmetics'
+                assign slot_sub = 'Lips, eyes, face'
+                assign slot_img = 'dept-makeup.jpg'
+            endcase
+
             assign dg_collection = block.settings.collection
             assign dg_handle = block.settings.handle
-            if dg_collection == blank and dg_handle == blank
-              continue
-            endif
             if dg_collection != blank
               assign dg_href = dg_collection.url
               assign dg_handle_key = dg_collection.handle
-            else
+            elsif dg_handle != blank
               assign dg_handle_key = dg_handle
-              assign dg_href = '/collections/' | append: dg_handle
+              assign dg_href = routes.collections_url | append: '/' | append: dg_handle
+            else
+              assign dg_handle_key = slot_handle
+              assign dg_href = routes.collections_url | append: '/' | append: slot_handle
             endif
-            assign dg_title = block.settings.title | default: dg_collection.title | default: dg_handle
+
+            assign dg_title = block.settings.title | default: dg_collection.title | default: slot_title
+            assign dg_sub = block.settings.sub | default: slot_sub
             assign dg_alt = dg_title
           -%}
-          <li class="mc-dept-cell mc-reveal" {{ block.shopify_attributes }}>
+          <li class="mc-dept-cell" {{ block.shopify_attributes }}>
             <a class="mc-dept-cell__link" href="{{ dg_href }}">
               <span class="mc-dept-cell__media">
                 {%- if block.settings.image != blank -%}
                   {{ block.settings.image | image_url: width: 900 | image_tag:
-                    loading: 'lazy',
+                    loading: 'eager',
                     sizes: '(min-width: 990px) 33vw, (min-width: 640px) 25vw, 50vw',
                     widths: '300, 600, 900',
                     class: 'mc-dept-cell__img',
@@ -75,14 +125,14 @@
                       when 'accessories-grooming'
                         assign fallback_asset = 'dept-tools.jpg'
                       else
-                        assign fallback_asset = 'dept-gifts.jpg'
+                        assign fallback_asset = slot_img
                     endcase
                   -%}
                   <img
                     class="mc-dept-cell__img"
                     src="{{ fallback_asset | asset_url }}"
                     alt="{{ dg_alt | escape }}"
-                    loading="lazy"
+                    loading="eager"
                     width="600"
                     height="800"
                   >
@@ -91,8 +141,8 @@
               <span class="mc-dept-cell__body">
                 <span class="mc-dept-cell__info">
                   <span class="mc-dept-cell__title">{{ dg_title | escape }}</span>
-                  {%- if block.settings.sub != blank -%}
-                    <span class="mc-dept-cell__sub">{{ block.settings.sub | escape }}</span>
+                  {%- if dg_sub != blank -%}
+                    <span class="mc-dept-cell__sub">{{ dg_sub | escape }}</span>
                   {%- endif -%}
                 </span>
                 <span class="mc-dept-cell__arrow" aria-hidden="true">
@@ -104,10 +154,10 @@
         {%- endfor -%}
       {%- else -%}
         {%- comment -%} Guaranteed fallback canonical 8 departments {%- endcomment -%}
-        <li class="mc-dept-cell mc-reveal">
+        <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/beauty-makeup">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-makeup.jpg' | asset_url }}" alt="Makeup & Cosmetics" loading="lazy" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-makeup.jpg' | asset_url }}" alt="Makeup & Cosmetics" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
@@ -120,10 +170,10 @@
             </span>
           </a>
         </li>
-        <li class="mc-dept-cell mc-reveal">
+        <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/skincare">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-beauty.jpg' | asset_url }}" alt="Skincare" loading="lazy" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-beauty.jpg' | asset_url }}" alt="Skincare" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
@@ -136,10 +186,10 @@
             </span>
           </a>
         </li>
-        <li class="mc-dept-cell mc-reveal">
+        <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/haircare">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-haircare.jpg' | asset_url }}" alt="Haircare" loading="lazy" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-haircare.jpg' | asset_url }}" alt="Haircare" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
@@ -152,10 +202,10 @@
             </span>
           </a>
         </li>
-        <li class="mc-dept-cell mc-reveal">
+        <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/hosiery-innerwear">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-innerwear.jpg' | asset_url }}" alt="Hosiery & Innerwear" loading="lazy" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-innerwear.jpg' | asset_url }}" alt="Hosiery & Innerwear" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
@@ -168,10 +218,10 @@
             </span>
           </a>
         </li>
-        <li class="mc-dept-cell mc-reveal">
+        <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/toys-kids">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-kids.jpg' | asset_url }}" alt="Kids & Toys" loading="lazy" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-kids.jpg' | asset_url }}" alt="Kids & Toys" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
@@ -184,10 +234,10 @@
             </span>
           </a>
         </li>
-        <li class="mc-dept-cell mc-reveal">
+        <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/gift-articles">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-gifts.jpg' | asset_url }}" alt="Gift Articles" loading="lazy" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-gifts.jpg' | asset_url }}" alt="Gift Articles" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
@@ -200,10 +250,10 @@
             </span>
           </a>
         </li>
-        <li class="mc-dept-cell mc-reveal">
+        <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/imitation-jewellery">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-jewellery.jpg' | asset_url }}" alt="Imitation Jewellery" loading="lazy" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-jewellery.jpg' | asset_url }}" alt="Imitation Jewellery" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
@@ -216,10 +266,10 @@
             </span>
           </a>
         </li>
-        <li class="mc-dept-cell mc-reveal">
+        <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/accessories-grooming">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-tools.jpg' | asset_url }}" alt="Beauty Tools & Grooming" loading="lazy" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-tools.jpg' | asset_url }}" alt="Beauty Tools & Grooming" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
