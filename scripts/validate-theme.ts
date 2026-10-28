@@ -28,11 +28,17 @@ const allFiles = THEME_FOLDERS.flatMap((f) => {
   return fs.existsSync(p) ? walk(p) : [];
 });
 
+// Helper for parsing JSON that may contain Shopify auto-generated /* ... */ comments
+function safeJsonParse(raw: string): any {
+  const clean = raw.replace(/\/\*[\s\S]*?\*\//g, '').trim();
+  return JSON.parse(clean);
+}
+
 // ── 1. JSON validity ─────────────────────────────────────────────────────
 const jsonFiles = allFiles.filter((f) => f.endsWith('.json'));
 for (const file of jsonFiles) {
   try {
-    JSON.parse(fs.readFileSync(file, 'utf8'));
+    safeJsonParse(fs.readFileSync(file, 'utf8'));
   } catch (e: any) {
     errors.push(`JSON invalid: ${path.relative(ROOT, file)} — ${e.message}`);
   }
@@ -45,7 +51,7 @@ for (const file of liquidFiles) {
   const schemaMatch = src.match(/{%\s*schema\s*%}([\s\S]*?){%\s*endschema\s*%}/);
   if (!schemaMatch) continue;
   try {
-    const schema = JSON.parse(schemaMatch[1]);
+    const schema = safeJsonParse(schemaMatch[1]);
     if (schema.name === undefined) warnings.push(`Schema missing "name": ${path.relative(ROOT, file)}`);
   } catch (e: any) {
     errors.push(`Schema JSON invalid: ${path.relative(ROOT, file)} — ${e.message}`);
@@ -53,9 +59,9 @@ for (const file of liquidFiles) {
 }
 
 // ── 3. Locale keys used via | t exist in en.default.json ─────────────────
-const en = JSON.parse(fs.readFileSync(path.join(ROOT, 'locales/en.default.json'), 'utf8'));
-const hi = JSON.parse(fs.readFileSync(path.join(ROOT, 'locales/hi.json'), 'utf8'));
-const gu = JSON.parse(fs.readFileSync(path.join(ROOT, 'locales/gu.json'), 'utf8'));
+const en = safeJsonParse(fs.readFileSync(path.join(ROOT, 'locales/en.default.json'), 'utf8'));
+const hi = safeJsonParse(fs.readFileSync(path.join(ROOT, 'locales/hi.json'), 'utf8'));
+const gu = safeJsonParse(fs.readFileSync(path.join(ROOT, 'locales/gu.json'), 'utf8'));
 
 function hasKey(tree: any, key: string): boolean {
   return key.split('.').every((part) => {
@@ -121,7 +127,7 @@ const sectionTypes = new Set(
 const templatesDir = path.join(ROOT, 'templates');
 for (const file of fs.readdirSync(templatesDir)) {
   if (!file.endsWith('.json')) continue;
-  const tpl = JSON.parse(fs.readFileSync(path.join(templatesDir, file), 'utf8'));
+  const tpl = safeJsonParse(fs.readFileSync(path.join(templatesDir, file), 'utf8'));
   for (const [id, sec] of Object.entries<any>(tpl.sections || {})) {
     if (!sectionTypes.has(sec.type)) {
       errors.push(`Template ${file}: section "${id}" references missing section type "${sec.type}"`);

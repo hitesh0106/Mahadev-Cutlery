@@ -120,51 +120,13 @@
         "anchor_id": "gifts-edit"
       }
     },
-    "finder": {
-      "type": "gift-finder",
-      "settings": {
-        "title": "Gift Finder",
-        "subtitle": "Answer three quick questions and we'll suggest gifts from our shelves.",
-        "collection": ""
-      }
-    },
-    "budget": {
-      "type": "budget-cards",
-      "settings": {
-        "eyebrow": "Gifting made easy",
-        "heading": "Shop by budget",
-        "text": "In the live theme each card links to a price-based collection you create once real prices are entered."
-      }
-    },
-    "offers": {
-      "type": "featured-products",
-      "settings": {
-        "eyebrow": "Offers",
-        "heading": "Genuine savings",
-        "collection": "",
-        "products_to_show": 8
-      }
-    },
-    "recently-viewed": {
-      "type": "recently-viewed",
-      "settings": {}
-    },
-    "brands-az": {
-      "type": "brands-az",
-      "settings": {
-        "eyebrow": "Brand directory",
-        "heading": "Brands A–Z",
-        "text": "Every brand we stock, one tap away. Brand collections are created from your product vendors — the theme never invents stock.",
-        "search_placeholder": "Search 30 brands",
-        "empty_text": "No brand matches your search.",
-        "anchor_id": "brands-az"
-      }
-    },
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "heading": "Stay in the loop",
-        "subtitle": "Occasional updates about new arrivals and festival picks."
+        "eyebrow": "NEWSLETTER",
+        "heading": "Be the first to know",
+        "subtitle": "New arrivals and store updates. Unsubscribe any time.",
+        "button_label": "SUBSCRIBE"
       }
     }
   },
@@ -179,11 +141,6 @@
     "edit-skincare",
     "edit-innerwear",
     "edit-gifts",
-    "finder",
-    "budget",
-    "offers",
-    "recently-viewed",
-    "brands-az",
     "newsletter"
   ]
 }
