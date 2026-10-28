@@ -50,9 +50,61 @@
     <nav class="mc-nav" aria-label="{{ 'general.menu' | t }}">
       <ul class="mc-nav__list">
         {%- if hh_main != blank and hh_main.links.size > 0 -%}
-          {%- for link in hh_main.links -%}
-            <li class="mc-nav__item"><a class="mc-nav__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
-          {%- endfor -%}
+          {%- if hh_main.links.size > 6 -%}
+            {%- for link in hh_main.links limit: 5 -%}
+              {%- if link.links.size > 0 -%}
+                <li class="mc-nav__item mc-nav__item--dropdown">
+                  <a class="mc-nav__link" href="{{ link.url }}">
+                    {{ link.title | escape }}
+                    {% render 'icon', name: 'chevron', size: 11, class: 'mc-nav__chevron' %}
+                  </a>
+                  <ul class="mc-dropdown">
+                    {%- for child in link.links -%}
+                      <li><a class="mc-dropdown__link" href="{{ child.url }}">{{ child.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                </li>
+              {%- else -%}
+                <li class="mc-nav__item"><a class="mc-nav__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+              {%- endif -%}
+            {%- endfor -%}
+
+            <li class="mc-nav__item mc-nav__item--dropdown" data-mc-mega>
+              <button
+                type="button"
+                class="mc-nav__link mc-nav__toggle"
+                data-mc-menu-toggle
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                {{ 'header.departments' | t | default: 'More' }}
+                {% render 'icon', name: 'chevron', size: 11, class: 'mc-nav__chevron' %}
+              </button>
+              <ul class="mc-dropdown mc-dropdown--wide">
+                {%- for link in hh_main.links offset: 5 -%}
+                  <li><a class="mc-dropdown__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </li>
+          {%- else -%}
+            {%- for link in hh_main.links -%}
+              {%- if link.links.size > 0 -%}
+                <li class="mc-nav__item mc-nav__item--dropdown">
+                  <a class="mc-nav__link" href="{{ link.url }}">
+                    {{ link.title | escape }}
+                    {% render 'icon', name: 'chevron', size: 11, class: 'mc-nav__chevron' %}
+                  </a>
+                  <ul class="mc-dropdown">
+                    {%- for child in link.links -%}
+                      <li><a class="mc-dropdown__link" href="{{ child.url }}">{{ child.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                </li>
+              {%- else -%}
+                <li class="mc-nav__item"><a class="mc-nav__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
         {%- else -%}
           <li class="mc-nav__item"><a class="mc-nav__link" href="{{ routes.root_url }}">{{ 'header.home' | t }}</a></li>
           <li class="mc-nav__item"><a class="mc-nav__link" href="{{ routes.all_products_collection_url }}">{{ 'header.shop_all' | t }}</a></li>
