@@ -1,113 +1,135 @@
 {%- comment -%}
-  Site footer (static section rendered from layout/theme.liquid).
-  - Brand block with logo text + honest tagline
-  - Shop column (main-menu links)
-  - Contact column: ONLY the store fields that are actually filled (never renders
-    empty fields and never invents data). Address, phones, email, Instagram, Maps.
-  - Support column (footer-menu) + policy links (rendered only if the policy pages exist)
-  - Language selector + copyright with the current year
+  Site footer — matches Image 4 reference design:
+  - 5-column layout on desktop:
+    1. Brand info with ◇ MAHADEV + CUTLERY & GIFT ARTICLES + store description + Instagram circle icon
+    2. SHOP (Shop all, New arrivals, Offers, Brands A–Z)
+    3. DEPARTMENTS (Skincare, Makeup, Haircare, Hosiery & Innerwear, Kids & Toys, Gift Articles)
+    4. CUSTOMER CARE (Contact, Shipping policy, Refund policy, Privacy policy, Terms of service)
+    5. VISIT US (Address with map-pin icon + View on Google Maps, phone numbers with phone icon, email with mail icon)
+  - Bottom bar with copyright and Shopify Admin note
 {%- endcomment -%}
-{%- assign ft_main = linklists['main-menu'] -%}
-{%- assign ft_footer = linklists['footer-menu'] -%}
-{%- assign ft_logo = settings.logo_text -%}
-{%- if ft_logo == blank -%}{%- assign ft_logo = shop.name -%}{%- endif -%}
+
+{%- assign ft_logo = settings.logo_text | default: 'MAHADEV' -%}
+{%- assign ft_sub = settings.logo_subline | default: 'CUTLERY & GIFT ARTICLES' -%}
+{%- assign ft_instagram = settings.instagram_url | default: 'https://www.instagram.com/mahadev_cutlery/' -%}
+{%- assign ft_maps = settings.maps_url | default: 'https://maps.app.goo.gl/P3AkDsq9bySkxAVbA' -%}
+{%- assign ft_phone_1 = settings.phone_1 | default: '9898648776' -%}
+{%- assign ft_phone_2 = settings.phone_2 | default: '9998268636' -%}
+{%- assign ft_email = settings.email | default: 'mahadevcutlery@gmail.com' -%}
+{%- assign ft_year = 'now' | date: '%Y' -%}
 
 <footer class="mc-footer" role="contentinfo">
   <div class="mc-container mc-footer__inner">
     <div class="mc-footer__grid">
+      <!-- Col 1: Brand -->
       <div class="mc-footer__brand">
-        <p class="mc-footer__logo">
-          <span class="mc-logo__text">{{ ft_logo | escape }}</span>
-          {%- if settings.logo_subline != blank -%}
-            <span class="mc-logo__subline">{{ settings.logo_subline | escape }}</span>
-          {%- endif -%}
+        <div class="mc-footer__brand-head">
+          <span class="mc-footer__brand-diamond" aria-hidden="true">&#9671;</span>
+          <span class="mc-footer__brand-title">{{ ft_logo | escape }}</span>
+        </div>
+        <p class="mc-footer__brand-subtitle">{{ ft_sub | escape }}</p>
+        <p class="mc-footer__brand-text">
+          A multi-brand store for beauty, skincare, haircare, innerwear, kids' toys, gifts and imitation jewellery.
         </p>
-        <p class="mc-footer__tagline">{{ shop.name | escape }} &mdash; {{ 'footer.whatsapp_note' | t }}</p>
-        <div class="mc-footer__social">
-          {%- if settings.instagram_url != blank -%}
-            <a class="mc-icon-btn" href="{{ settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
-              {% render 'icon', name: 'instagram' %}
+        {%- if ft_instagram != blank -%}
+          <div class="mc-footer__social-list">
+            <a class="mc-footer__social-btn" href="{{ ft_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
+              {% render 'icon', name: 'instagram', size: 16 %}
             </a>
-          {%- endif -%}
-          {%- if settings.social_link != blank -%}
-            <a class="mc-icon-btn" href="{{ settings.social_link }}" target="_blank" rel="noopener" aria-label="{{ 'footer.follow' | t }}">
-              {% render 'icon', name: 'arrow' %}
-            </a>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Col 2: SHOP -->
+      <nav class="mc-footer__col" aria-label="Shop">
+        <h3 class="mc-footer__heading">SHOP</h3>
+        <ul class="mc-footer__links">
+          <li><a href="{{ routes.all_products_collection_url }}">Shop all</a></li>
+          <li><a href="{{ routes.all_products_collection_url }}?sort_by=created-descending">New arrivals</a></li>
+          <li><a href="{{ routes.all_products_collection_url }}">Offers</a></li>
+          <li><a href="{{ routes.all_products_collection_url }}">Brands A&ndash;Z</a></li>
+        </ul>
+      </nav>
+
+      <!-- Col 3: DEPARTMENTS -->
+      <nav class="mc-footer__col" aria-label="Departments">
+        <h3 class="mc-footer__heading">DEPARTMENTS</h3>
+        <ul class="mc-footer__links">
+          <li><a href="{{ routes.collections_url }}/skincare">Skincare</a></li>
+          <li><a href="{{ routes.collections_url }}/beauty-makeup">Makeup</a></li>
+          <li><a href="{{ routes.collections_url }}/haircare">Haircare</a></li>
+          <li><a href="{{ routes.collections_url }}/hosiery-innerwear">Hosiery &amp; Innerwear</a></li>
+          <li><a href="{{ routes.collections_url }}/toys-kids">Kids &amp; Toys</a></li>
+          <li><a href="{{ routes.collections_url }}/gift-articles">Gift Articles</a></li>
+        </ul>
+      </nav>
+
+      <!-- Col 4: CUSTOMER CARE -->
+      <nav class="mc-footer__col" aria-label="Customer Care">
+        <h3 class="mc-footer__heading">CUSTOMER CARE</h3>
+        <ul class="mc-footer__links">
+          <li><a href="{{ routes.root_url }}pages/contact">Contact</a></li>
+          <li><a href="{{ shop.shipping_policy.url | default: '/policies/shipping-policy' }}">Shipping policy</a></li>
+          <li><a href="{{ shop.refund_policy.url | default: '/policies/refund-policy' }}">Refund policy</a></li>
+          <li><a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">Privacy policy</a></li>
+          <li><a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}">Terms of service</a></li>
+        </ul>
+      </nav>
+
+      <!-- Col 5: VISIT US -->
+      <div class="mc-footer__col mc-footer__col--visit">
+        <h3 class="mc-footer__heading">VISIT US</h3>
+        <div class="mc-footer__contact-items">
+          <div class="mc-footer__contact-item">
+            <span class="mc-footer__contact-icon">
+              {% render 'icon', name: 'map-pin', size: 16 %}
+            </span>
+            <div class="mc-footer__contact-content">
+              <address class="mc-footer__address">
+                A-15, Shivalik Bungalows, Vastral Road, Opposite Ratanpura Gam, Vastral, Ahmedabad, Gujarat 382418, India
+              </address>
+              {%- if ft_maps != blank -%}
+                <a class="mc-footer__maps-link" href="{{ ft_maps }}" target="_blank" rel="noopener">View on Google Maps</a>
+              {%- endif -%}
+            </div>
+          </div>
+
+          <div class="mc-footer__contact-item">
+            <span class="mc-footer__contact-icon">
+              {% render 'icon', name: 'phone', size: 15 %}
+            </span>
+            <div class="mc-footer__contact-content">
+              {%- if ft_phone_1 != blank -%}
+                <a class="mc-footer__link" href="tel:{{ ft_phone_1 | strip }}">{{ ft_phone_1 | escape }}</a>
+              {%- endif -%}
+              {%- if ft_phone_2 != blank -%}
+                {%- if ft_phone_1 != blank %}, {% endif -%}
+                <a class="mc-footer__link" href="tel:{{ ft_phone_2 | strip }}">{{ ft_phone_2 | escape }}</a>
+              {%- endif -%}
+            </div>
+          </div>
+
+          {%- if ft_email != blank -%}
+            <div class="mc-footer__contact-item">
+              <span class="mc-footer__contact-icon">
+                {% render 'icon', name: 'mail', size: 15 %}
+              </span>
+              <div class="mc-footer__contact-content">
+                <a class="mc-footer__link" href="mailto:{{ ft_email | strip }}">{{ ft_email | escape }}</a>
+              </div>
+            </div>
           {%- endif -%}
         </div>
       </div>
-
-      {%- if ft_main != blank and ft_main.links.size > 0 -%}
-        <nav class="mc-footer__col" aria-label="{{ 'footer.shop' | t }}">
-          <h2 class="mc-footer__heading">{{ 'footer.shop' | t }}</h2>
-          <ul class="mc-footer__list">
-            {%- for link in ft_main.links limit: 8 -%}
-              <li><a class="mc-footer__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
-            {%- endfor -%}
-          </ul>
-        </nav>
-      {%- endif -%}
-
-      <div class="mc-footer__col">
-        <h2 class="mc-footer__heading">{{ 'footer.contact' | t }}</h2>
-        {%- if settings.address_lines != blank -%}
-          <address class="mc-footer__address">
-            {%- assign ft_lines = settings.address_lines | newline_to_br | split: '<br />' -%}
-            {%- for line in ft_lines -%}
-              {%- assign ft_line = line | strip -%}
-              {%- if ft_line != blank -%}
-                <span class="mc-footer__address-line">{{ ft_line | escape }}</span>
-              {%- endif -%}
-            {%- endfor -%}
-            {%- if settings.maps_url != blank -%}
-              <a class="mc-footer__link mc-footer__maps" href="{{ settings.maps_url }}" target="_blank" rel="noopener">Find us on Google Maps</a>
-            {%- endif -%}
-          </address>
-        {%- endif -%}
-        {%- if settings.phone_1 != blank -%}
-          <a class="mc-footer__link" href="tel:{{ settings.phone_1 | strip }}">{{ settings.phone_1 | escape }}</a>
-        {%- endif -%}
-        {%- if settings.phone_2 != blank -%}
-          <a class="mc-footer__link" href="tel:{{ settings.phone_2 | strip }}">{{ settings.phone_2 | escape }}</a>
-        {%- endif -%}
-        {%- if settings.email != blank -%}
-          <a class="mc-footer__link" href="mailto:{{ settings.email | strip }}">{{ settings.email | escape }}</a>
-        {%- endif -%}
-        {%- if settings.store_hours != blank -%}
-          <p class="mc-footer__hours"><span class="mc-footer__hours-label">{{ 'footer.store_hours' | t }}:</span> {{ settings.store_hours | escape }}</p>
-        {%- endif -%}
-      </div>
-
-      {%- if ft_footer != blank and ft_footer.links.size > 0 -%}
-        <nav class="mc-footer__col" aria-label="{{ 'footer.support' | t }}">
-          <h2 class="mc-footer__heading">{{ 'footer.support' | t }}</h2>
-          <ul class="mc-footer__list">
-            {%- for link in ft_footer.links limit: 8 -%}
-              <li><a class="mc-footer__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
-            {%- endfor -%}
-          </ul>
-          <ul class="mc-footer__list mc-footer__policies">
-            {%- if shop.privacy_policy != blank -%}
-              <li><a class="mc-footer__link" href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title | escape }}</a></li>
-            {%- endif -%}
-            {%- if shop.refund_policy != blank -%}
-              <li><a class="mc-footer__link" href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title | escape }}</a></li>
-            {%- endif -%}
-            {%- if shop.shipping_policy != blank -%}
-              <li><a class="mc-footer__link" href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title | escape }}</a></li>
-            {%- endif -%}
-            {%- if shop.terms_of_service != blank -%}
-              <li><a class="mc-footer__link" href="{{ shop.terms_of_service.url }}">{{ shop.terms_of_service.title | escape }}</a></li>
-            {%- endif -%}
-          </ul>
-        </nav>
-      {%- endif -%}
     </div>
 
-    {%- assign ft_year = 'now' | date: '%Y' -%}
+    <!-- Bottom Bar -->
     <div class="mc-footer__bottom">
-      <p class="mc-footer__copyright">{{ 'footer.copyright' | t: year: ft_year, shop_name: shop.name }}</p>
-      {% render 'language-selector' %}
+      <p class="mc-footer__copyright">&copy; {{ ft_year }} {{ ft_logo | escape }} &amp; {{ ft_sub | escape }}. All rights reserved.</p>
+      <div class="mc-footer__bottom-right">
+        <p class="mc-footer__admin-notice">Policies are listed automatically from Shopify Admin.</p>
+        {% render 'language-selector' %}
+      </div>
     </div>
   </div>
 </footer>
@@ -118,7 +140,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Contact details come from Theme settings → Store information. Empty fields are never rendered. Menus come from Navigation (main-menu and footer-menu). Policy links appear only after you set policies in Settings → Policies."
+      "content": "Footer styling and layout matching Image 4. Contact details and links are dynamically loaded with fallbacks."
     }
   ]
 }

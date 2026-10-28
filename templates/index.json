@@ -181,91 +181,13 @@
       },
       "block_order": ["c1", "c2", "c3", "c4"]
     },
-    "finder": {
-      "type": "gift-finder",
-      "settings": {
-        "subtitle": "Answer three quick questions and we'll suggest gifts from our shelves."
-      }
-    },
-    "budget": {
-      "type": "budget-cards",
-      "settings": {
-        "eyebrow": "Gifting made easy",
-        "heading": "Shop by budget",
-        "text": "In the live theme each card links to a price-based collection you create once real prices are entered."
-      },
-      "blocks": {
-        "bc1": { "type": "card", "settings": { "small": "Under", "big": "₹199", "link": "/collections/under-199" } },
-        "bc2": { "type": "card", "settings": { "small": "Under", "big": "₹499", "link": "/collections/under-499" } },
-        "bc3": { "type": "card", "settings": { "small": "Treat yourself", "big": "Premium Picks", "link": "/collections/premium-picks" } }
-      },
-      "block_order": ["bc1", "bc2", "bc3"]
-    },
-    "offers": {
-      "type": "featured-products",
-      "settings": {
-        "eyebrow": "Offers",
-        "heading": "Genuine savings",
-        "products_to_show": 8,
-        "show_view_all": true
-      }
-    },
-    "recently-viewed": {
-      "type": "recently-viewed"
-    },
-    "brands-az": {
-      "type": "brands-az",
-      "settings": {
-        "eyebrow": "Brand directory",
-        "heading": "Brands A–Z",
-        "text": "Every brand we stock, one tap away. Brand collections are created from your product vendors — the theme never invents stock.",
-        "search_placeholder": "Search 30 brands",
-        "empty_text": "No brand matches your search.",
-        "anchor_id": "brands-az"
-      },
-      "blocks": {
-        "z1": { "type": "brand", "settings": { "name": "Bodycare", "handle": "bodycare" } },
-        "z2": { "type": "brand", "settings": { "name": "Cetaphil", "handle": "cetaphil" } },
-        "z3": { "type": "brand", "settings": { "name": "Colorbar", "handle": "colorbar" } },
-        "z4": { "type": "brand", "settings": { "name": "Dot & Key", "handle": "dot-key" } },
-        "z5": { "type": "brand", "settings": { "name": "Faces Canada", "handle": "faces-canada" } },
-        "z6": { "type": "brand", "settings": { "name": "Garnier", "handle": "garnier" } },
-        "z7": { "type": "brand", "settings": { "name": "Ghar Soaps", "handle": "ghar-soaps" } },
-        "z8": { "type": "brand", "settings": { "name": "Jockey", "handle": "jockey" } },
-        "z9": { "type": "brand", "settings": { "name": "Lady Care", "handle": "lady-care" } },
-        "z10": { "type": "brand", "settings": { "name": "Lakmé", "handle": "lakme" } },
-        "z11": { "type": "brand", "settings": { "name": "L'Oréal Paris", "handle": "loreal-paris" } },
-        "z12": { "type": "brand", "settings": { "name": "L'Oréal Professionnel", "handle": "loreal-professionnel" } },
-        "z13": { "type": "brand", "settings": { "name": "Lotus Herbals", "handle": "lotus-herbals" } },
-        "z14": { "type": "brand", "settings": { "name": "MARS Cosmetics", "handle": "mars-cosmetics" } },
-        "z15": { "type": "brand", "settings": { "name": "Matrix", "handle": "matrix" } },
-        "z16": { "type": "brand", "settings": { "name": "Maybelline New York", "handle": "maybelline-new-york" } },
-        "z17": { "type": "brand", "settings": { "name": "Minimalist", "handle": "minimalist" } },
-        "z18": { "type": "brand", "settings": { "name": "NIVEA", "handle": "nivea" } },
-        "z19": { "type": "brand", "settings": { "name": "O3+", "handle": "o3-plus" } },
-        "z20": { "type": "brand", "settings": { "name": "Philips", "handle": "philips" } },
-        "z21": { "type": "brand", "settings": { "name": "Pilgrim", "handle": "pilgrim" } },
-        "z22": { "type": "brand", "settings": { "name": "Plix", "handle": "plix" } },
-        "z23": { "type": "brand", "settings": { "name": "POND'S", "handle": "ponds" } },
-        "z24": { "type": "brand", "settings": { "name": "Sebamed", "handle": "sebamed" } },
-        "z25": { "type": "brand", "settings": { "name": "Sunny", "handle": "sunny" } },
-        "z26": { "type": "brand", "settings": { "name": "Swiss Beauty", "handle": "swiss-beauty" } },
-        "z27": { "type": "brand", "settings": { "name": "Van Heusen", "handle": "van-heusen" } },
-        "z28": { "type": "brand", "settings": { "name": "VEGA", "handle": "vega" } },
-        "z29": { "type": "brand", "settings": { "name": "Wella Professionals", "handle": "wella-professionals" } },
-        "z30": { "type": "brand", "settings": { "name": "Zoiro", "handle": "zoiro" } }
-      },
-      "block_order": [
-        "z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "z9", "z10",
-        "z11", "z12", "z13", "z14", "z15", "z16", "z17", "z18", "z19", "z20",
-        "z21", "z22", "z23", "z24", "z25", "z26", "z27", "z28", "z29", "z30"
-      ]
-    },
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "heading": "Stay in the loop",
-        "subtitle": "Occasional updates about new arrivals and festival picks."
+        "eyebrow": "Newsletter",
+        "heading": "Be the first to know",
+        "subtitle": "New arrivals and store updates. Unsubscribe any time.",
+        "button_label": "Subscribe"
       }
     }
   },
@@ -281,11 +203,6 @@
     "edit-skincare",
     "edit-innerwear",
     "edit-gifts",
-    "finder",
-    "budget",
-    "offers",
-    "recently-viewed",
-    "brands-az",
     "newsletter"
   ]
 }
