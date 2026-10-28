@@ -37,7 +37,10 @@
           loading="eager"
         >
       {%- else -%}
-        <span class="mc-logo__text">{{ hh_logo_text | escape }}</span>
+        <span class="mc-logo__text">
+          <span class="mc-logo__diamond" aria-hidden="true">◇</span>
+          {{ hh_logo_text | escape }}
+        </span>
         {%- if settings.logo_subline != blank -%}
           <span class="mc-logo__subline">{{ settings.logo_subline | escape }}</span>
         {%- endif -%}
@@ -123,15 +126,13 @@
         </button>
       {%- endif -%}
 
+      <a class="mc-icon-btn mc-header__account" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url | default: '/account/login' }}{%- endif -%}" aria-label="{{ 'header.account' | t }}">
+        {% render 'icon', name: 'user' %}
+      </a>
+
       {%- if settings.enable_wishlist != false -%}
         <a class="mc-icon-btn" href="{{ section.settings.wishlist_url | default: '/pages/wishlist' }}" aria-label="{{ 'header.wishlist' | t }}">
           {% render 'icon', name: 'heart' %}
-        </a>
-      {%- endif -%}
-
-      {%- if shop.customer_accounts_enabled -%}
-        <a class="mc-icon-btn mc-header__account" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" aria-label="{{ 'header.account' | t }}">
-          {% render 'icon', name: 'user' %}
         </a>
       {%- endif -%}
 

@@ -26,9 +26,12 @@
         "heading_line_2": "beautifully curated.",
         "subheading": "Skincare, makeup, haircare, innerwear, toys and thoughtful gifts from the brands you know, all in one considered store.",
         "cta_label": "Shop Now",
+        "cta_link": "/collections/all",
         "cta2_label": "Explore Brands",
+        "cta2_link": "#brands-az",
         "show_float_card": true,
-        "float_label": "Imitation jewellery"
+        "float_label": "Imitation jewellery",
+        "float_link": "/collections/imitation-jewellery"
       }
     },
     "departments": {
@@ -256,8 +259,8 @@
   },
   "order": [
     "announcement",
-    "countdown",
     "hero",
+    "countdown",
     "departments",
     "featured-brands",
     "trending",
