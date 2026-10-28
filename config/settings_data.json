@@ -1,5 +1,8 @@
 {
   "current": {
+    "logo_text": "MAHADEV",
+    "logo_subline": "CUTLERY & GIFT ARTICLES",
+    "logo_width": 160,
     "address_lines": "A-15, Shivalik Bungalows, Vastral Road\nOpposite Ratanpura Gam, Vastral\nAhmedabad, Gujarat 382418\nIndia",
     "phone_1": "9898648776",
     "phone_2": "9998268636",
@@ -7,8 +10,6 @@
     "instagram_url": "https://www.instagram.com/mahadev_cutlery/",
     "maps_url": "https://maps.app.goo.gl/P3AkDsq9bySkxAVbA",
     "store_hours": "",
-    "logo_text": "MAHADEV",
-    "logo_subline": "CUTLERY & GIFT ARTICLES",
     "whatsapp_enabled": true,
     "whatsapp_number": "919898648776",
     "gift_wrap_enabled": true,
@@ -33,9 +34,15 @@
     "color_ink_soft": "#6F6B66",
     "color_accent": "#B8875A",
     "color_border": "#EAE6E0",
+    "page_max_width": 1360,
+    "card_radius": 4,
+    "button_radius": 4,
+    "show_vendor": true,
+    "show_compare_at_price": true,
+    "enable_wishlist": true,
+    "enable_recently_viewed": true,
     "social_link": "",
     "cart_type": "drawer",
-    "show_vendor": true,
     "sections": {
       "header": {
         "type": "header",

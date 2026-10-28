@@ -113,6 +113,11 @@
     document.querySelectorAll('[data-mc-countdown]').forEach(initCountdown);
   }
 
+  window.MC_Countdown = { init: init };
+  window.addEventListener('shopify:section:load', function () {
+    init();
+  });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

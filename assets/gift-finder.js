@@ -183,6 +183,11 @@
     document.querySelectorAll('[data-mc-gift-finder]').forEach(initFinder);
   }
 
+  window.MC_GiftFinder = { init: init };
+  window.addEventListener('shopify:section:load', function () {
+    init();
+  });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

@@ -1,0 +1,34 @@
+# Shopify Ignore file for Mahadev Cutlery & Gift Articles
+# Ensures Shopify GitHub sync only touches valid theme files
+
+# Workspace & Application directories
+src/
+docs/
+data/
+scripts/
+public/
+upload/
+backups/
+db/
+mini-services/
+tests/
+tool-results/
+examples/
+.zscripts/
+.env*
+node_modules/
+.next/
+download/
+shopify-theme/
+
+# Config & Build files
+*.md
+package.json
+bun.lock
+tsconfig.json
+tailwind.config.ts
+next.config.ts
+postcss.config.mjs
+eslint.config.mjs
+components.json
+Caddyfile

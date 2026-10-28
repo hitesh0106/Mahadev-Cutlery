@@ -14,7 +14,13 @@
 {%- if settings.gift_wrap_enabled -%}
   {%- assign gw_charged = settings.gift_wrap_charged -%}
   {%- assign gw_handle = settings.gift_wrap_product_handle -%}
-  {%- if gw_charged and (gw_handle == blank or gift_wrap_product == blank) -%}
+  {%- assign gw_missing = false -%}
+  {%- if gw_charged -%}
+    {%- if gw_handle == blank or gift_wrap_product == blank -%}
+      {%- assign gw_missing = true -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- if gw_missing -%}
     {%- comment -%} Misconfiguration: never show an invented fee — render nothing, warn the merchant. {%- endcomment -%}
     <script>console.warn('[Mahadev theme] Gift wrapping is set to "charged" but the gift wrap product (settings.gift_wrap_product_handle) is empty or missing. Gift-wrap option hidden. Create a real "Gift Wrapping" product and set its handle in theme settings.');</script>
     {%- if request.design_mode -%}

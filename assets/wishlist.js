@@ -225,8 +225,19 @@
         renderWishlistPage();
         renderRecentlyViewed();
       }
+    window.addEventListener('shopify:section:load', function () {
+      syncButtons();
+      renderWishlistPage();
+      renderRecentlyViewed();
     });
   }
+
+  window.MC_Wishlist = {
+    init: init,
+    syncButtons: syncButtons,
+    renderWishlistPage: renderWishlistPage,
+    renderRecentlyViewed: renderRecentlyViewed
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

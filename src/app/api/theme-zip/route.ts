@@ -12,7 +12,9 @@ const { ZipArchive } = await import('archiver');
 
 export const runtime = 'nodejs';
 
-const THEME_DIR = path.join(process.cwd(), 'shopify-theme');
+const THEME_DIR = existsSync(path.join(process.cwd(), 'layout/theme.liquid'))
+  ? process.cwd()
+  : path.join(process.cwd(), 'shopify-theme');
 
 const REQUIRED_FOLDERS = [
   'assets',

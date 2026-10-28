@@ -8,43 +8,154 @@
     "theme_support_url": "https://shopify.dev/docs/themes"
   },
   {
+    "name": "Brand identity",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo image"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo width (px)",
+        "min": 60,
+        "max": 320,
+        "step": 10,
+        "default": 160
+      },
+      {
+        "type": "text",
+        "id": "logo_text",
+        "label": "Store name / Logo text",
+        "default": "MAHADEV",
+        "info": "Used when no logo image is uploaded."
+      },
+      {
+        "type": "text",
+        "id": "logo_subline",
+        "label": "Logo subtitle",
+        "default": "CUTLERY & GIFT ARTICLES"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "Will be scaled to 32x32px."
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Page background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_bg_soft",
+        "label": "Secondary / soft background",
+        "default": "#FAF8F5"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Main text",
+        "default": "#20201E"
+      },
+      {
+        "type": "color",
+        "id": "color_ink_soft",
+        "label": "Muted / secondary text",
+        "default": "#6F6B66"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent colour",
+        "default": "#B8875A"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Border colour",
+        "default": "#EAE6E0"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_max_width",
+        "label": "Maximum content width (px)",
+        "min": 1100,
+        "max": 1600,
+        "step": 20,
+        "default": 1360
+      },
+      {
+        "type": "range",
+        "id": "card_radius",
+        "label": "Card corner radius (px)",
+        "min": 0,
+        "max": 24,
+        "step": 2,
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "button_radius",
+        "label": "Button corner radius (px)",
+        "min": 0,
+        "max": 24,
+        "step": 2,
+        "default": 4
+      }
+    ]
+  },
+  {
     "name": "Store information",
     "settings": [
       {
         "type": "textarea",
         "id": "address_lines",
-        "label": "Address lines",
+        "label": "Store address lines",
         "info": "One line per row. Empty lines are not rendered in the footer.",
         "default": "A-15, Shivalik Bungalows, Vastral Road\nOpposite Ratanpura Gam, Vastral\nAhmedabad, Gujarat 382418\nIndia"
       },
       {
         "type": "text",
         "id": "phone_1",
-        "label": "Phone 1",
+        "label": "Configurable phone 1",
         "default": "9898648776"
       },
       {
         "type": "text",
         "id": "phone_2",
-        "label": "Phone 2",
+        "label": "Configurable phone 2",
         "default": "9998268636"
       },
       {
         "type": "text",
         "id": "email",
-        "label": "Email",
+        "label": "Configurable email address",
         "default": "mahadevcutlery@gmail.com"
       },
       {
         "type": "text",
         "id": "instagram_url",
-        "label": "Instagram URL",
+        "label": "Instagram profile URL",
         "default": "https://www.instagram.com/mahadev_cutlery/"
       },
       {
         "type": "text",
         "id": "maps_url",
-        "label": "Google Maps URL",
+        "label": "Google Maps directions URL",
         "default": "https://maps.app.goo.gl/P3AkDsq9bySkxAVbA"
       },
       {
@@ -53,19 +164,35 @@
         "label": "Store hours",
         "info": "Optional. Leave empty to hide from the footer.",
         "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Commerce presentation",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show product vendor / brand",
+        "default": true
       },
       {
-        "type": "text",
-        "id": "logo_text",
-        "label": "Logo text",
-        "default": "MAHADEV",
-        "info": "Falls back to the shop name if left empty."
+        "type": "checkbox",
+        "id": "show_compare_at_price",
+        "label": "Show compare-at price when on sale",
+        "default": true
       },
       {
-        "type": "text",
-        "id": "logo_subline",
-        "label": "Logo subline",
-        "default": "CUTLERY & GIFT ARTICLES"
+        "type": "checkbox",
+        "id": "enable_wishlist",
+        "label": "Enable wishlist functionality",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recently_viewed",
+        "label": "Enable recently viewed products",
+        "default": true
       }
     ]
   },
@@ -75,15 +202,15 @@
       {
         "type": "checkbox",
         "id": "whatsapp_enabled",
-        "label": "Enable WhatsApp ordering buttons",
+        "label": "Enable WhatsApp product enquiry / ordering",
         "default": true
       },
       {
         "type": "text",
         "id": "whatsapp_number",
-        "label": "WhatsApp number",
+        "label": "WhatsApp phone number",
         "default": "919898648776",
-        "info": "Digits only, with country code and no + sign (e.g. 919898648776). Buttons are hidden when this is empty."
+        "info": "Digits only, with country code and no + sign (e.g. 919898648776). Buttons are hidden when empty."
       }
     ]
   },
@@ -99,15 +226,15 @@
       {
         "type": "checkbox",
         "id": "gift_wrap_charged",
-        "label": "Charge for gift wrapping (via a real product)",
+        "label": "Charge for gift wrapping (via a real Shopify product)",
         "default": false,
-        "info": "When off, gift wrapping is described as free. When on, the customer is charged by adding a real product to the cart — no invented fee is ever displayed."
+        "info": "When off, gift wrapping is free. When on, the customer is charged using a real Shopify product price."
       },
       {
         "type": "text",
         "id": "gift_wrap_product_handle",
         "label": "Gift wrapping product handle",
-        "info": "IMPORTANT: first create a real \"Gift Wrapping\" product in Shopify with its actual price, then enter its handle here (e.g. gift-wrapping). If charged is on but this handle is empty or missing, no gift-wrap option and no fee are shown.",
+        "info": "Create a real 'Gift Wrapping' product in Shopify Admin with its real price, then enter its handle here.",
         "default": ""
       }
     ]
@@ -122,13 +249,13 @@
       {
         "type": "checkbox",
         "id": "festival_1_enabled",
-        "label": "Enable festival 1",
+        "label": "Enable festival 1 countdown",
         "default": true
       },
       {
         "type": "text",
         "id": "festival_1_name",
-        "label": "Name",
+        "label": "Festival 1 name",
         "default": "Diwali"
       },
       {
@@ -163,13 +290,13 @@
       {
         "type": "checkbox",
         "id": "festival_2_enabled",
-        "label": "Enable festival 2",
+        "label": "Enable festival 2 countdown",
         "default": false
       },
       {
         "type": "text",
         "id": "festival_2_name",
-        "label": "Name",
+        "label": "Festival 2 name",
         "default": "Raksha Bandhan"
       },
       {
@@ -214,47 +341,6 @@
     ]
   },
   {
-    "name": "Colors",
-    "settings": [
-      {
-        "type": "color",
-        "id": "color_bg",
-        "label": "Background",
-        "default": "#FFFFFF"
-      },
-      {
-        "type": "color",
-        "id": "color_bg_soft",
-        "label": "Soft background",
-        "default": "#FAF8F5"
-      },
-      {
-        "type": "color",
-        "id": "color_ink",
-        "label": "Text",
-        "default": "#20201E"
-      },
-      {
-        "type": "color",
-        "id": "color_ink_soft",
-        "label": "Secondary text",
-        "default": "#6F6B66"
-      },
-      {
-        "type": "color",
-        "id": "color_accent",
-        "label": "Accent",
-        "default": "#B8875A"
-      },
-      {
-        "type": "color",
-        "id": "color_border",
-        "label": "Borders",
-        "default": "#EAE6E0"
-      }
-    ]
-  },
-  {
     "name": "Social",
     "settings": [
       {
@@ -262,7 +348,7 @@
         "id": "social_link",
         "label": "Additional social link (optional)",
         "default": "",
-        "info": "Optional extra profile link (e.g. Facebook or YouTube). The store's Instagram link is set under Store information. Hidden when empty."
+        "info": "Optional extra profile link (e.g. Facebook or YouTube). Hidden when empty."
       }
     ]
   },
@@ -272,18 +358,12 @@
       {
         "type": "select",
         "id": "cart_type",
-        "label": "Cart type",
+        "label": "Cart presentation mode",
         "options": [
-          { "value": "drawer", "label": "Drawer" },
-          { "value": "page", "label": "Page" }
+          { "value": "drawer", "label": "Slide-out drawer" },
+          { "value": "page", "label": "Full cart page" }
         ],
         "default": "drawer"
-      },
-      {
-        "type": "checkbox",
-        "id": "show_vendor",
-        "label": "Show product vendor on cards and in cart",
-        "default": true
       }
     ]
   }

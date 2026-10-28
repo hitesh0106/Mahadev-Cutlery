@@ -657,6 +657,38 @@
     MC.refreshCart();
   }
 
+  /* ── Shopify Theme Editor lifecycle ──────────────────────────────────── */
+  document.addEventListener('shopify:section:load', function (evt) {
+    var section = evt.target;
+    initDrawers();
+    initMenus();
+    initReveals();
+    bindQty(section);
+    if (section.querySelector('[data-mc-product-page]')) {
+      initProductPage();
+    }
+    if (section.querySelector('[data-mc-filters-toggle]')) {
+      initFilters();
+    }
+    if (section.querySelector('[data-mc-cart-page-form]')) {
+      initCartPage();
+    }
+    if (window.MC_Wishlist && typeof window.MC_Wishlist.init === 'function') {
+      window.MC_Wishlist.init();
+    }
+    if (window.MC_Countdown && typeof window.MC_Countdown.init === 'function') {
+      window.MC_Countdown.init();
+    }
+    if (window.MC_GiftFinder && typeof window.MC_GiftFinder.init === 'function') {
+      window.MC_GiftFinder.init();
+    }
+  });
+
+  document.addEventListener('shopify:section:select', function () {
+    initReveals();
+  });
+
+  MC.init = init;
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

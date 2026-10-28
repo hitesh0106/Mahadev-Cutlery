@@ -7,7 +7,9 @@
 import fs from 'fs';
 import path from 'path';
 
-const ROOT = '/home/z/my-project/shopify-theme';
+const ROOT = fs.existsSync(path.resolve(__dirname, '../layout/theme.liquid'))
+  ? path.resolve(__dirname, '..')
+  : path.resolve(__dirname, '../shopify-theme');
 const errors: string[] = [];
 const warnings: string[] = [];
 
@@ -20,7 +22,11 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-const allFiles = walk(ROOT);
+const THEME_FOLDERS = ['assets', 'config', 'layout', 'locales', 'sections', 'snippets', 'templates'];
+const allFiles = THEME_FOLDERS.flatMap((f) => {
+  const p = path.join(ROOT, f);
+  return fs.existsSync(p) ? walk(p) : [];
+});
 
 // ── 1. JSON validity ─────────────────────────────────────────────────────
 const jsonFiles = allFiles.filter((f) => f.endsWith('.json'));

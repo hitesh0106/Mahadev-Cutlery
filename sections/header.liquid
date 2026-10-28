@@ -26,16 +26,34 @@
     </button>
 
     <a class="mc-logo" href="{{ routes.root_url }}" aria-label="{{ 'header.home' | t }} — {{ shop.name }}">
-      <span class="mc-logo__text">{{ hh_logo_text | escape }}</span>
-      {%- if settings.logo_subline != blank -%}
-        <span class="mc-logo__subline">{{ settings.logo_subline | escape }}</span>
+      {%- if settings.logo != blank -%}
+        {%- assign logo_w = settings.logo_width | default: 160 -%}
+        <img
+          class="mc-logo__img"
+          src="{{ settings.logo | image_url: width: logo_w }}"
+          alt="{{ shop.name | escape }}"
+          width="{{ logo_w }}"
+          height="{{ logo_w | divided_by: settings.logo.aspect_ratio | round }}"
+          loading="eager"
+        >
+      {%- else -%}
+        <span class="mc-logo__text">{{ hh_logo_text | escape }}</span>
+        {%- if settings.logo_subline != blank -%}
+          <span class="mc-logo__subline">{{ settings.logo_subline | escape }}</span>
+        {%- endif -%}
       {%- endif -%}
     </a>
 
     <nav class="mc-nav" aria-label="{{ 'general.menu' | t }}">
       <ul class="mc-nav__list">
-        <li class="mc-nav__item"><a class="mc-nav__link" href="{{ routes.root_url }}">{{ 'header.home' | t }}</a></li>
-        <li class="mc-nav__item"><a class="mc-nav__link" href="{{ routes.all_products_collection_url }}">{{ 'header.shop_all' | t }}</a></li>
+        {%- if hh_main != blank and hh_main.links.size > 0 -%}
+          {%- for link in hh_main.links -%}
+            <li class="mc-nav__item"><a class="mc-nav__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+          {%- endfor -%}
+        {%- else -%}
+          <li class="mc-nav__item"><a class="mc-nav__link" href="{{ routes.root_url }}">{{ 'header.home' | t }}</a></li>
+          <li class="mc-nav__item"><a class="mc-nav__link" href="{{ routes.all_products_collection_url }}">{{ 'header.shop_all' | t }}</a></li>
+        {%- endif -%}
 
         {%- if hh_departments != blank and hh_departments.links.size > 0 -%}
           <li class="mc-nav__item mc-nav__item--mega" data-mc-mega>
@@ -105,9 +123,11 @@
         </button>
       {%- endif -%}
 
-      <a class="mc-icon-btn" href="{{ section.settings.wishlist_url | default: '/pages/wishlist' }}" aria-label="{{ 'header.wishlist' | t }}">
-        {% render 'icon', name: 'heart' %}
-      </a>
+      {%- if settings.enable_wishlist != false -%}
+        <a class="mc-icon-btn" href="{{ section.settings.wishlist_url | default: '/pages/wishlist' }}" aria-label="{{ 'header.wishlist' | t }}">
+          {% render 'icon', name: 'heart' %}
+        </a>
+      {%- endif -%}
 
       {%- if shop.customer_accounts_enabled -%}
         <a class="mc-icon-btn mc-header__account" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" aria-label="{{ 'header.account' | t }}">
@@ -158,8 +178,14 @@
       </button>
     </header>
     <nav class="mc-nav-drawer__body" data-mc-drawer-scroll aria-label="{{ 'general.menu' | t }}">
-      <a class="mc-nav-drawer__link" href="{{ routes.root_url }}">{{ 'header.home' | t }}</a>
-      <a class="mc-nav-drawer__link" href="{{ routes.all_products_collection_url }}">{{ 'header.shop_all' | t }}</a>
+      {%- if hh_main != blank and hh_main.links.size > 0 -%}
+        {%- for link in hh_main.links -%}
+          <a class="mc-nav-drawer__link" href="{{ link.url }}">{{ link.title | escape }}</a>
+        {%- endfor -%}
+      {%- else -%}
+        <a class="mc-nav-drawer__link" href="{{ routes.root_url }}">{{ 'header.home' | t }}</a>
+        <a class="mc-nav-drawer__link" href="{{ routes.all_products_collection_url }}">{{ 'header.shop_all' | t }}</a>
+      {%- endif -%}
 
       {%- if hh_departments != blank and hh_departments.links.size > 0 -%}
         <details class="mc-nav-drawer__group">
@@ -187,7 +213,9 @@
         <a class="mc-nav-drawer__link" href="{{ section.settings.offers_link }}">{{ 'header.offers' | t }}</a>
       {%- endif -%}
 
-      <a class="mc-nav-drawer__link" href="{{ section.settings.wishlist_url | default: '/pages/wishlist' }}">{{ 'header.wishlist' | t }}</a>
+      {%- if settings.enable_wishlist != false -%}
+        <a class="mc-nav-drawer__link" href="{{ section.settings.wishlist_url | default: '/pages/wishlist' }}">{{ 'header.wishlist' | t }}</a>
+      {%- endif -%}
       {%- if shop.customer_accounts_enabled -%}
         <a class="mc-nav-drawer__link" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}">{{ 'header.account' | t }}</a>
       {%- endif -%}

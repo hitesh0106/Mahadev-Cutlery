@@ -235,8 +235,9 @@ if (importDoc.includes('Products → Import') && importDoc.includes('CSV UTF-8')
 else fail('docs/PRODUCT_IMPORT.md workflow documentation');
 
 // 10 ── Theme ZIP structure intact (PART 13 #16)
-const themeDirs = ['assets', 'config', 'layout', 'locales', 'sections', 'snippets', 'templates'].map((d) => `shopify-theme/${d}`);
-const allThemeDirs = themeDirs.every((d) => existsSync(join(ROOT, d)));
+const themeRoot = existsSync(join(ROOT, 'layout/theme.liquid')) ? ROOT : join(ROOT, 'shopify-theme');
+const themeDirs = ['assets', 'config', 'layout', 'locales', 'sections', 'snippets', 'templates'].map((d) => join(themeRoot, d));
+const allThemeDirs = themeDirs.every((d) => existsSync(d));
 if (allThemeDirs) ok('Shopify theme structure intact (assets/config/layout/locales/sections/snippets/templates)');
 else fail('Shopify theme structure intact', 'a theme folder is missing');
 

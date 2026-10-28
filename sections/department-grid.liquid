@@ -64,19 +64,31 @@
                     alt: dg_alt
                   }}
                 {%- else -%}
+                  {%- liquid
+                    case dg_handle_key
+                      when 'beauty-makeup'
+                        assign fallback_asset = 'dept-makeup.jpg'
+                      when 'skincare'
+                        assign fallback_asset = 'dept-beauty.jpg'
+                      when 'haircare'
+                        assign fallback_asset = 'dept-haircare.jpg'
+                      when 'hosiery-innerwear'
+                        assign fallback_asset = 'dept-innerwear.jpg'
+                      when 'toys-kids'
+                        assign fallback_asset = 'dept-kids.jpg'
+                      when 'gift-articles'
+                        assign fallback_asset = 'dept-gifts.jpg'
+                      when 'imitation-jewellery'
+                        assign fallback_asset = 'dept-jewellery.jpg'
+                      when 'accessories-grooming'
+                        assign fallback_asset = 'dept-tools.jpg'
+                      else
+                        assign fallback_asset = 'dept-gifts.jpg'
+                    endcase
+                  -%}
                   <img
                     class="mc-dept-cell__img"
-                    src="{%- case dg_handle_key -%}
-                      {%- when 'beauty-makeup' -%}{{ 'dept-makeup.jpg' | asset_url }}
-                      {%- when 'skincare' -%}{{ 'dept-beauty.jpg' | asset_url }}
-                      {%- when 'haircare' -%}{{ 'dept-haircare.jpg' | asset_url }}
-                      {%- when 'hosiery-innerwear' -%}{{ 'dept-innerwear.jpg' | asset_url }}
-                      {%- when 'toys-kids' -%}{{ 'dept-kids.jpg' | asset_url }}
-                      {%- when 'gift-articles' -%}{{ 'dept-gifts.jpg' | asset_url }}
-                      {%- when 'imitation-jewellery' -%}{{ 'dept-jewellery.jpg' | asset_url }}
-                      {%- when 'accessories-grooming' -%}{{ 'dept-tools.jpg' | asset_url }}
-                      {%- else -%}{{ 'dept-gifts.jpg' | asset_url }}
-                    {%- endcase -%}"
+                    src="{{ fallback_asset | asset_url }}"
                     alt=""
                     loading="lazy"
                     width="600"

@@ -6,7 +6,7 @@
   - product: {Object} Product (required)
   - style: {String} (optional) "icon" (default) or "full" (icon + label)
 {%- endcomment -%}
-{%- if product != blank -%}
+{%- if settings.enable_wishlist != false and product != blank -%}
   {%- capture wl_img -%}{% if product.featured_image %}{{ product.featured_image | image_url: width: 300 }}{% else %}{% endif %}{%- endcapture -%}
   {%- capture wl_json -%}{"handle":{{ product.handle | json }},"title":{{ product.title | json }},"vendor":{{ product.vendor | json }},"price":{{ product.price | default: 0 }},"image":"{{ wl_img | strip }}","url":"{{ product.url }}","addedAt":0}{%- endcapture -%}
   <button

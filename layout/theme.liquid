@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="{{ settings.color_accent }}">
   <link rel="canonical" href="{{ canonical_url }}">
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
   {%- if page_description -%}
     <meta name="description" content="{{ page_description | escape }}">
   {%- endif -%}
@@ -27,6 +30,9 @@
       --mc-ink-soft: {{ settings.color_ink_soft | default: '#6F6B66' }};
       --mc-accent: {{ settings.color_accent | default: '#B8875A' }};
       --mc-border: {{ settings.color_border | default: '#EAE6E0' }};
+      --mc-container: {{ settings.page_max_width | default: 1360 }}px;
+      --mc-radius: {{ settings.card_radius | default: 4 }}px;
+      --mc-radius-sm: {{ settings.button_radius | default: 4 }}px;
     }
   </style>
 </head>

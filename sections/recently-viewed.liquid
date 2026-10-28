@@ -3,12 +3,14 @@
   localStorage (mc_recently_viewed_v1), excluding the current handle via data-mc-current-handle.
   Hidden entirely by JS when there is nothing to show — never shows fake products.
 {%- endcomment -%}
+{%- if settings.enable_recently_viewed != false -%}
 <section class="mc-section mc-recently-viewed" data-mc-recently-viewed data-mc-current-handle="{{ product.handle | default: '' }}" hidden>
   <div class="mc-container">
     <h2 class="mc-section__heading mc-section__heading--sub">{{ 'products.recently_viewed_title' | t }}</h2>
     <div class="mc-grid mc-grid--products" data-mc-recently-viewed-list></div>
   </div>
 </section>
+{%- endif -%}
 
 {% schema %}
 {
