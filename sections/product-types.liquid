@@ -12,7 +12,6 @@
     endif
   endfor
 -%}
-{%- if pt_rendered > 0 -%}
   <section class="mc-section mc-section--soft mc-types">
     <div class="mc-container">
       <div class="mc-section__head mc-section__head--center">
@@ -26,46 +25,63 @@
         </div>
       </div>
       <ul class="mc-types__grid">
-        {%- for block in section.blocks -%}
-          {%- assign pt_title = block.settings.title -%}
-          {%- if pt_title == blank -%}{%- continue -%}{%- endif -%}
-          {%- liquid
-            assign pt_handle = pt_title | handleize
-            assign pt_asset = 'dept-beauty.jpg'
-            if pt_handle contains 'shampoo' or pt_handle contains 'conditioner'
-              assign pt_asset = 'dept-haircare.jpg'
-            elsif pt_handle contains 'lip' or pt_handle contains 'makeup'
-              assign pt_asset = 'dept-makeup.jpg'
-            elsif pt_handle contains 'innerwear'
-              assign pt_asset = 'dept-innerwear.jpg'
-            elsif pt_handle contains 'gift'
-              assign pt_asset = 'dept-gifts.jpg'
-            elsif pt_handle contains 'toy'
-              assign pt_asset = 'dept-kids.jpg'
-            elsif pt_handle contains 'cream'
-              assign pt_asset = 'editorial-skincare.jpg'
-            endif
-          -%}
-          <li {{ block.shopify_attributes }}>
-            <a
-              class="mc-type"
-              href="{% if block.settings.link != blank %}{{ block.settings.link }}{% else %}{{ routes.search_url }}?q={{ pt_title | url_encode }}{% endif %}"
-            >
-              <span class="mc-type__media">
-                {%- if block.settings.image != blank -%}
-                  {{ block.settings.image | image_url: width: 264 | image_tag: loading: 'lazy', widths: '132, 264', class: 'mc-type__img', alt: '' }}
-                {%- else -%}
-                  <img class="mc-type__img" src="{{ pt_asset | asset_url }}" alt="" loading="lazy" width="264" height="264">
-                {%- endif -%}
-              </span>
-              <span class="mc-type__label">{{ pt_title | escape }}</span>
-            </a>
-          </li>
-        {%- endfor -%}
+        {%- if pt_rendered > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- assign pt_title = block.settings.title -%}
+            {%- if pt_title == blank -%}{%- continue -%}{%- endif -%}
+            {%- liquid
+              assign pt_handle = pt_title | handleize
+              assign pt_asset = 'dept-beauty.jpg'
+              if pt_handle contains 'shampoo' or pt_handle contains 'conditioner'
+                assign pt_asset = 'dept-haircare.jpg'
+              elsif pt_handle contains 'lip' or pt_handle contains 'makeup'
+                assign pt_asset = 'dept-makeup.jpg'
+              elsif pt_handle contains 'innerwear'
+                assign pt_asset = 'dept-innerwear.jpg'
+              elsif pt_handle contains 'gift'
+                assign pt_asset = 'dept-gifts.jpg'
+              elsif pt_handle contains 'toy'
+                assign pt_asset = 'dept-kids.jpg'
+              elsif pt_handle contains 'cream'
+                assign pt_asset = 'editorial-skincare.jpg'
+              endif
+            -%}
+            <li {{ block.shopify_attributes }}>
+              <a
+                class="mc-type"
+                href="{% if block.settings.link != blank %}{{ block.settings.link }}{% else %}{{ routes.search_url }}?q={{ pt_title | url_encode }}{% endif %}"
+              >
+                <span class="mc-type__media">
+                  {%- if block.settings.image != blank -%}
+                    {{ block.settings.image | image_url: width: 264 | image_tag: loading: 'lazy', widths: '132, 264', class: 'mc-type__img', alt: '' }}
+                  {%- else -%}
+                    <img class="mc-type__img" src="{{ pt_asset | asset_url }}" alt="" loading="lazy" width="264" height="264">
+                  {%- endif -%}
+                </span>
+                <span class="mc-type__label">{{ pt_title | escape }}</span>
+              </a>
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%} Guaranteed canonical product types from Part 2 & Part 3 {%- endcomment -%}
+          {%- assign pt_defaults = "Face Wash:dept-beauty.jpg,Moisturizer:editorial-skincare.jpg,Face Serum:dept-beauty.jpg,Shampoo:dept-haircare.jpg,Conditioner:dept-haircare.jpg,Lipstick & Lip Care:dept-makeup.jpg,Foundation & Compact:dept-makeup.jpg,Kajal & Mascara:dept-makeup.jpg,Men's Innerwear:dept-innerwear.jpg,Women's Innerwear:dept-innerwear.jpg,Children's Innerwear:dept-innerwear.jpg,Hair Styling Tools:dept-haircare.jpg,Toys & Games:dept-kids.jpg,Gift Sets:dept-gifts.jpg,Imitation Jewellery:dept-jewellery.jpg,Grooming Tools:dept-tools.jpg" | split: ',' -%}
+          {%- for item in pt_defaults -%}
+            {%- assign parts = item | split: ':' -%}
+            {%- assign pt_name = parts[0] -%}
+            {%- assign pt_img = parts[1] -%}
+            <li>
+              <a class="mc-type" href="{{ routes.search_url }}?q={{ pt_name | url_encode }}">
+                <span class="mc-type__media">
+                  <img class="mc-type__img" src="{{ pt_img | asset_url }}" alt="" loading="lazy" width="264" height="264">
+                </span>
+                <span class="mc-type__label">{{ pt_name | escape }}</span>
+              </a>
+            </li>
+          {%- endfor -%}
+        {%- endif -%}
       </ul>
     </div>
   </section>
-{%- endif -%}
 
 {% schema %}
 {

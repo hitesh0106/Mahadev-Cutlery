@@ -132,6 +132,33 @@
               </div>
             </div>
           </li>
+        {%- else -%}
+          <li class="mc-nav__item mc-nav__item--mega" data-mc-mega>
+            <button
+              type="button"
+              class="mc-nav__link mc-nav__toggle"
+              data-mc-menu-toggle
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              {{ 'header.departments' | t | default: 'Departments' }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}
+            </button>
+            <div class="mc-mega">
+              <div class="mc-mega__inner mc-container">
+                <p class="mc-mega__heading">{{ 'header.departments' | t | default: 'Shop by Department' }}</p>
+                <ul class="mc-mega__list">
+                  <li><a class="mc-mega__link" href="{{ routes.collections_url }}/beauty-makeup">Beauty &amp; Makeup</a></li>
+                  <li><a class="mc-mega__link" href="{{ routes.collections_url }}/skincare">Skincare</a></li>
+                  <li><a class="mc-mega__link" href="{{ routes.collections_url }}/haircare">Haircare</a></li>
+                  <li><a class="mc-mega__link" href="{{ routes.collections_url }}/hosiery-innerwear">Hosiery &amp; Innerwear</a></li>
+                  <li><a class="mc-mega__link" href="{{ routes.collections_url }}/toys-kids">Toys &amp; Kids</a></li>
+                  <li><a class="mc-mega__link" href="{{ routes.collections_url }}/gift-articles">Gift Articles</a></li>
+                  <li><a class="mc-mega__link" href="{{ routes.collections_url }}/imitation-jewellery">Imitation Jewellery</a></li>
+                  <li><a class="mc-mega__link" href="{{ routes.collections_url }}/accessories-grooming">Accessories &amp; Grooming</a></li>
+                </ul>
+              </div>
+            </div>
+          </li>
         {%- endif -%}
 
         {%- if hh_brands != blank and hh_brands.links.size > 0 -%}
@@ -151,6 +178,30 @@
                 <ul class="mc-mega__list mc-mega__list--cols">
                   {%- for link in hh_brands.links -%}
                     <li><a class="mc-mega__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </div>
+          </li>
+        {%- else -%}
+          <li class="mc-nav__item mc-nav__item--mega" data-mc-mega>
+            <button
+              type="button"
+              class="mc-nav__link mc-nav__toggle"
+              data-mc-menu-toggle
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              {{ 'header.brands' | t | default: 'Brands' }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}
+            </button>
+            <div class="mc-mega">
+              <div class="mc-mega__inner mc-container">
+                <p class="mc-mega__heading">{{ 'header.brands' | t | default: 'Shop by Brand' }}</p>
+                <ul class="mc-mega__list mc-mega__list--cols">
+                  {%- assign nav_brands = "Jockey:jockey,Van Heusen:van-heusen,Zoiro:zoiro,Bodycare:bodycare,Lady Care:lady-care,Swiss Beauty:swiss-beauty,Lakmé:lakme,Maybelline New York:maybelline-new-york,Faces Canada:faces-canada,Colorbar:colorbar,MARS Cosmetics:mars-cosmetics,Minimalist:minimalist,Dot & Key:dot-key,Cetaphil:cetaphil,Sebamed:sebamed,POND'S:ponds,NIVEA:nivea,Garnier:garnier,Pilgrim:pilgrim,Plix:plix,Lotus Herbals:lotus-herbals,L'Oréal Paris:loreal-paris,L'Oréal Professionnel:loreal-professionnel,Matrix:matrix,Wella Professionals:wella-professionals,VEGA:vega,Philips:philips,Sunny:sunny,Ghar Soaps:ghar-soaps" | split: ',' -%}
+                  {%- for item in nav_brands -%}
+                    {%- assign b_parts = item | split: ':' -%}
+                    <li><a class="mc-mega__link" href="{{ routes.collections_url }}/{{ b_parts[1] }}">{{ b_parts[0] }}</a></li>
                   {%- endfor -%}
                 </ul>
               </div>
@@ -249,6 +300,20 @@
             {%- endfor -%}
           </ul>
         </details>
+      {%- else -%}
+        <details class="mc-nav-drawer__group">
+          <summary class="mc-nav-drawer__link">{{ 'header.departments' | t | default: 'Departments' }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}</summary>
+          <ul>
+            <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/beauty-makeup">Beauty &amp; Makeup</a></li>
+            <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/skincare">Skincare</a></li>
+            <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/haircare">Haircare</a></li>
+            <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/hosiery-innerwear">Hosiery &amp; Innerwear</a></li>
+            <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/toys-kids">Toys &amp; Kids</a></li>
+            <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/gift-articles">Gift Articles</a></li>
+            <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/imitation-jewellery">Imitation Jewellery</a></li>
+            <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/accessories-grooming">Accessories &amp; Grooming</a></li>
+          </ul>
+        </details>
       {%- endif -%}
 
       {%- if hh_brands != blank and hh_brands.links.size > 0 -%}
@@ -257,6 +322,17 @@
           <ul>
             {%- for link in hh_brands.links -%}
               <li><a class="mc-nav-drawer__sublink" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </details>
+      {%- else -%}
+        <details class="mc-nav-drawer__group">
+          <summary class="mc-nav-drawer__link">{{ 'header.brands' | t | default: 'Brands' }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}</summary>
+          <ul>
+            {%- assign drawer_brands = "Jockey:jockey,Van Heusen:van-heusen,Zoiro:zoiro,Bodycare:bodycare,Lady Care:lady-care,Swiss Beauty:swiss-beauty,Lakmé:lakme,Maybelline New York:maybelline-new-york,Faces Canada:faces-canada,Colorbar:colorbar,MARS Cosmetics:mars-cosmetics,Minimalist:minimalist,Dot & Key:dot-key,Cetaphil:cetaphil,Sebamed:sebamed,POND'S:ponds,NIVEA:nivea,Garnier:garnier,Pilgrim:pilgrim,Plix:plix,Lotus Herbals:lotus-herbals,L'Oréal Paris:loreal-paris,L'Oréal Professionnel:loreal-professionnel,Matrix:matrix,Wella Professionals:wella-professionals,VEGA:vega,Philips:philips,Sunny:sunny,Ghar Soaps:ghar-soaps" | split: ',' -%}
+            {%- for item in drawer_brands -%}
+              {%- assign b_parts = item | split: ':' -%}
+              <li><a class="mc-nav-drawer__sublink" href="{{ routes.collections_url }}/{{ b_parts[1] }}">{{ b_parts[0] }}</a></li>
             {%- endfor -%}
           </ul>
         </details>

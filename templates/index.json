@@ -28,12 +28,12 @@
         "heading_line_2": "beautifully curated.",
         "subheading": "Skincare, makeup, haircare, innerwear, toys and thoughtful gifts from the brands you know, all in one considered store.",
         "cta_label": "Shop Now",
-        "cta_link": "",
+        "cta_link": "/collections",
         "cta2_label": "Explore Brands",
-        "cta2_link": "",
+        "cta2_link": "/pages/brands",
         "show_float_card": true,
         "float_label": "Imitation jewellery",
-        "float_link": ""
+        "float_link": "/collections/imitation-jewellery"
       }
     },
     "departments": {
@@ -42,7 +42,7 @@
         "eyebrow": "Departments",
         "heading": "Shop by department",
         "action_label": "Shop all",
-        "action_link": "",
+        "action_link": "/collections",
         "anchor_id": "departments"
       }
     },
@@ -52,7 +52,7 @@
         "eyebrow": "Brands we stock",
         "heading": "Featured brands",
         "action_label": "All brands A–Z",
-        "action_link": "",
+        "action_link": "/pages/brands",
         "card_cta_label": "Shop"
       }
     },

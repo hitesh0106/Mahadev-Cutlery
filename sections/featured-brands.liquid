@@ -13,7 +13,6 @@
     endif
   endfor
 -%}
-{%- if fb_rendered > 0 -%}
   <section class="mc-section mc-section--soft mc-fbrands" data-mc-carousel>
     <div class="mc-container">
       <div class="mc-section__head">
@@ -40,33 +39,54 @@
       tabindex="0"
       aria-label="{{ section.settings.heading | default: 'Featured brands' | escape }}"
     >
-      {%- for block in section.blocks -%}
-        {%- assign fb_name = block.settings.name -%}
-        {%- if fb_name == blank -%}{%- continue -%}{%- endif -%}
-        {%- liquid
-          if block.settings.collection != blank
-            assign fb_href = block.settings.collection.url
-          elsif block.settings.handle != blank
-            assign fb_href = '/collections/' | append: block.settings.handle
-          else
-            assign fb_href = '/pages/brands'
-          endif
-        -%}
-        <a
-          class="mc-fbrand"
-          href="{{ fb_href }}"
-          {{ block.shopify_attributes }}
-        >
-          <span class="mc-fbrand__name">{{ fb_name | escape }}</span>
-          {%- if block.settings.note != blank -%}
-            <span class="mc-fbrand__note">{{ block.settings.note | escape }}</span>
-          {%- endif -%}
-          <span class="mc-fbrand__shop">
-            {{ section.settings.card_cta_label | default: 'Shop' | escape }}
-            <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </span>
-        </a>
-      {%- endfor -%}
+      {%- if fb_rendered > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- assign fb_name = block.settings.name -%}
+          {%- if fb_name == blank -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            if block.settings.collection != blank
+              assign fb_href = block.settings.collection.url
+            elsif block.settings.handle != blank
+              assign fb_href = '/collections/' | append: block.settings.handle
+            else
+              assign fb_href = '/pages/brands'
+            endif
+          -%}
+          <a
+            class="mc-fbrand"
+            href="{{ fb_href }}"
+            {{ block.shopify_attributes }}
+          >
+            <span class="mc-fbrand__name">{{ fb_name | escape }}</span>
+            {%- if block.settings.note != blank -%}
+              <span class="mc-fbrand__note">{{ block.settings.note | escape }}</span>
+            {%- endif -%}
+            <span class="mc-fbrand__shop">
+              {{ section.settings.card_cta_label | default: 'Shop' | escape }}
+              <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </a>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Guaranteed canonical brands fallback from Part 2 {%- endcomment -%}
+        {%- assign fb_defaults = "Jockey:jockey:Innerwear & Socks,Van Heusen:van-heusen:Innerwear & Loungewear,Zoiro:zoiro:Men's innerwear only,Bodycare:bodycare:Women's & children's,Lady Care:lady-care:Women's nikar & panty,Swiss Beauty:swiss-beauty:Cosmetics & tools,Lakmé:lakme:Cosmetics & skincare,Maybelline New York:maybelline-new-york:Cosmetics,Faces Canada:faces-canada:Cosmetics & tools,Colorbar:colorbar:Cosmetics & nail care,MARS Cosmetics:mars-cosmetics:Beauty & makeup,Minimalist:minimalist:Skincare routines,Dot & Key:dot-key:Skincare & serums,Cetaphil:cetaphil:Gentle skincare,Sebamed:sebamed:Skincare & cleansers,POND'S:ponds:Skincare & face wash,NIVEA:nivea:Body care & skincare,Garnier:garnier:Skincare & haircare,Pilgrim:pilgrim:Skincare & haircare,Plix:plix:Skincare & wellness,Lotus Herbals:lotus-herbals:Skincare & sun protection,L'Oréal Paris:loreal-paris:Haircare, skincare & makeup,L'Oréal Professionnel:loreal-professionnel:Professional salon haircare,Matrix:matrix:Professional haircare,Wella Professionals:wella-professionals:Professional haircare,VEGA:vega:Hair & grooming tools,Philips:philips:Grooming appliances,Sunny:sunny:Innerwear & store favourites,Ghar Soaps:ghar-soaps:Personal care soaps" | split: ',' -%}
+        {%- for item in fb_defaults -%}
+          {%- assign parts = item | split: ':' -%}
+          {%- assign b_name = parts[0] -%}
+          {%- assign b_handle = parts[1] -%}
+          {%- assign b_note = parts[2] -%}
+          <a class="mc-fbrand" href="{{ routes.collections_url }}/{{ b_handle }}">
+            <span class="mc-fbrand__name">{{ b_name | escape }}</span>
+            {%- if b_note != blank -%}
+              <span class="mc-fbrand__note">{{ b_note | escape }}</span>
+            {%- endif -%}
+            <span class="mc-fbrand__shop">
+              {{ section.settings.card_cta_label | default: 'Shop' | escape }}
+              <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
     </div>
 
     <div class="mc-container mc-fbrands__nav">
@@ -95,7 +115,7 @@
       });
     })();
   </script>
-{%- endif -%}
+
 
 {% schema %}
 {
