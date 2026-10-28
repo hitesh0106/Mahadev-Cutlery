@@ -21,12 +21,12 @@
 {%- endif -%}
 
 {%- assign fc_heading = section.settings.heading | default: fc_name -%}
-{%- assign fc_target_epoch = fc_date | date: '%s' -%}
-{%- assign fc_now_epoch = 'now' | date: '%s' -%}
+{%- assign fc_target_epoch = fc_date | date: '%s' | plus: 0 -%}
+{%- assign fc_now_epoch = 'now' | date: '%s' | plus: 0 -%}
 {%- assign fc_hide_secs = settings.festival_hide_after_days | default: 3 | times: 86400 -%}
 {%- assign fc_limit_epoch = fc_target_epoch | plus: fc_hide_secs -%}
 
-{%- if fc_enabled and fc_name != blank and fc_date != blank and fc_target_epoch != blank and fc_limit_epoch > fc_now_epoch -%}
+{%- if fc_enabled and fc_name != blank and fc_date != blank and fc_target_epoch > 0 and fc_limit_epoch > fc_now_epoch -%}
   <section
     class="mc-countdown"
     data-mc-countdown

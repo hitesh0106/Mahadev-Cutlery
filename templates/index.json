@@ -43,14 +43,14 @@
         "anchor_id": "departments"
       },
       "blocks": {
-        "d1": { "type": "department", "settings": { "handle": "beauty-makeup", "title": "Beauty & Makeup", "sub": "Lips, eyes, face" } },
+        "d1": { "type": "department", "settings": { "handle": "beauty-makeup", "title": "Makeup & Cosmetics", "sub": "Lips, eyes, face" } },
         "d2": { "type": "department", "settings": { "handle": "skincare", "title": "Skincare", "sub": "Cleanse, treat, protect" } },
         "d3": { "type": "department", "settings": { "handle": "haircare", "title": "Haircare", "sub": "Everyday & professional" } },
         "d4": { "type": "department", "settings": { "handle": "hosiery-innerwear", "title": "Hosiery & Innerwear", "sub": "Men, women & kids" } },
-        "d5": { "type": "department", "settings": { "handle": "toys-kids", "title": "Toys & Kids", "sub": "Play & learn" } },
+        "d5": { "type": "department", "settings": { "handle": "toys-kids", "title": "Kids & Toys", "sub": "Play & learn" } },
         "d6": { "type": "department", "settings": { "handle": "gift-articles", "title": "Gift Articles", "sub": "For every occasion" } },
         "d7": { "type": "department", "settings": { "handle": "imitation-jewellery", "title": "Imitation Jewellery", "sub": "Everyday sparkle" } },
-        "d8": { "type": "department", "settings": { "handle": "accessories-grooming", "title": "Accessories & Grooming", "sub": "Tools, grooming & more" } }
+        "d8": { "type": "department", "settings": { "handle": "accessories-grooming", "title": "Beauty Tools & Grooming", "sub": "Brushes, combs, trimmers" } }
       }
     },
     "featured-brands": {
@@ -260,8 +260,8 @@
   "order": [
     "announcement",
     "hero",
-    "countdown",
     "departments",
+    "countdown",
     "featured-brands",
     "trending",
     "new-arrivals",

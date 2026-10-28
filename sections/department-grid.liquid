@@ -20,7 +20,7 @@
       <div class="mc-section__head">
         <div>
           {%- if section.settings.eyebrow != blank -%}
-            <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+            <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
           {%- endif -%}
           {%- if section.settings.heading != blank -%}
             <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
@@ -28,7 +28,7 @@
         </div>
         {%- if section.settings.action_label != blank -%}
           <a class="mc-action-link" href="{{ section.settings.action_link | default: routes.all_products_collection_url }}">
-            {{ section.settings.action_label | escape }}
+            {{ section.settings.action_label | escape | upcase }}
             <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>
         {%- endif -%}
@@ -58,7 +58,7 @@
                 {%- if block.settings.image != blank -%}
                   {{ block.settings.image | image_url: width: 900 | image_tag:
                     loading: 'lazy',
-                    sizes: '(min-width: 990px) 30vw, 50vw',
+                    sizes: '(min-width: 990px) 33vw, 50vw',
                     widths: '300, 600, 900',
                     class: 'mc-dept-cell__img',
                     alt: dg_alt
@@ -89,7 +89,7 @@
                   <img
                     class="mc-dept-cell__img"
                     src="{{ fallback_asset | asset_url }}"
-                    alt=""
+                    alt="{{ dg_alt | escape }}"
                     loading="lazy"
                     width="600"
                     height="800"
@@ -97,16 +97,15 @@
                 {%- endif -%}
               </span>
               <span class="mc-dept-cell__body">
-                <span class="mc-dept-cell__title">{{ dg_title | escape }}</span>
+                <span class="mc-dept-cell__info">
+                  <span class="mc-dept-cell__title">{{ dg_title | escape }}</span>
+                  {%- if block.settings.sub != blank -%}
+                    <span class="mc-dept-cell__sub">{{ block.settings.sub | escape }}</span>
+                  {%- endif -%}
+                </span>
                 <span class="mc-dept-cell__arrow" aria-hidden="true">
                   <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </span>
-                {%- if block.settings.sub != blank -%}
-                  <span class="mc-dept-cell__sub">{{ block.settings.sub | escape }}</span>
-                {%- endif -%}
-                {%- if block.settings.rule_text != blank -%}
-                  <span class="mc-dept-card__rule">{{ block.settings.rule_text | escape }}</span>
-                {%- endif -%}
               </span>
             </a>
           </li>

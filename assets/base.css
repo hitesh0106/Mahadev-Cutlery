@@ -1046,7 +1046,189 @@ label.mc-label {
   padding: 6px 10px 10px;
 }
 
-/* Department / collection cards */
+/* ── Section Head & Action Link (Reference Parity) ─────────────────────── */
+.mc-section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: clamp(24px, 3.6vw, 42px);
+}
+.mc-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mc-ink-soft);
+  margin-bottom: 8px;
+}
+.mc-section__heading {
+  font-family: var(--mc-font-heading);
+  font-size: clamp(28px, 3.8vw, 48px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--mc-ink);
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.mc-section__heading--flush {
+  margin: 0;
+}
+.mc-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mc-ink);
+  text-decoration: none;
+  padding-bottom: 3px;
+  border-bottom: 1.5px solid var(--mc-ink);
+  transition: all 0.25s var(--mc-ease);
+  white-space: nowrap;
+}
+.mc-action-link:hover {
+  color: var(--mc-accent);
+  border-color: var(--mc-accent);
+  gap: 12px;
+}
+
+/* ── Shop by Department Editorial Grid ─────────────────────────────────── */
+.mc-departments {
+  padding-block: clamp(48px, 6.5vw, 88px);
+  background: #ffffff;
+}
+.mc-departments__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mc-dept-cell {
+  list-style: none;
+}
+.mc-dept-cell__link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+.mc-dept-cell__media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3.4;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--mc-cream);
+}
+.mc-dept-cell__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mc-dept-cell__link:hover .mc-dept-cell__img {
+  transform: scale(1.05);
+}
+.mc-dept-cell__body {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+.mc-dept-cell__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.mc-dept-cell__title {
+  font-family: var(--mc-font-heading);
+  font-size: clamp(17px, 1.45vw, 24px);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--mc-ink);
+  transition: transform 0.3s var(--mc-ease);
+}
+.mc-dept-cell__link:hover .mc-dept-cell__title {
+  transform: translateX(2px);
+}
+.mc-dept-cell__sub {
+  font-size: 13px;
+  color: var(--mc-ink-soft);
+  line-height: 1.4;
+}
+.mc-dept-cell__arrow {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--mc-border);
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  color: var(--mc-ink);
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mc-dept-cell__link:hover .mc-dept-cell__arrow {
+  background: var(--mc-ink);
+  color: #ffffff;
+  border-color: var(--mc-ink);
+  transform: translateX(3px) rotate(-35deg);
+}
+
+@media (min-width: 640px) {
+  .mc-departments__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px 18px;
+  }
+}
+@media (min-width: 990px) {
+  .mc-departments__grid {
+    grid-template-columns: repeat(15, 1fr);
+    gap: 32px 24px;
+  }
+  /* Row 1: Top 3 cards span 5 columns each (3 * 5 = 15) */
+  .mc-dept-cell:nth-child(1),
+  .mc-dept-cell:nth-child(2),
+  .mc-dept-cell:nth-child(3) {
+    grid-column: span 5;
+  }
+  .mc-dept-cell:nth-child(1) .mc-dept-cell__media,
+  .mc-dept-cell:nth-child(2) .mc-dept-cell__media,
+  .mc-dept-cell:nth-child(3) .mc-dept-cell__media {
+    aspect-ratio: 4 / 2.85;
+  }
+  /* Row 2: Bottom 5 cards span 3 columns each (5 * 3 = 15) */
+  .mc-dept-cell:nth-child(4),
+  .mc-dept-cell:nth-child(5),
+  .mc-dept-cell:nth-child(6),
+  .mc-dept-cell:nth-child(7),
+  .mc-dept-cell:nth-child(8) {
+    grid-column: span 3;
+  }
+  .mc-dept-cell:nth-child(4) .mc-dept-cell__media,
+  .mc-dept-cell:nth-child(5) .mc-dept-cell__media,
+  .mc-dept-cell:nth-child(6) .mc-dept-cell__media,
+  .mc-dept-cell:nth-child(7) .mc-dept-cell__media,
+  .mc-dept-cell:nth-child(8) .mc-dept-cell__media {
+    aspect-ratio: 4 / 4.4;
+  }
+}
+
+/* Department / collection cards fallback */
 .mc-dept-card,
 .mc-collection-card {
   position: relative;
