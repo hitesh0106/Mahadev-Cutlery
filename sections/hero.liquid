@@ -31,13 +31,13 @@
         {%- if section.settings.cta_label != blank or hero_cta2_label != blank -%}
           <div class="mc-hero__ctas mc-anim-rise" style="--rise-delay: 240ms">
             {%- if section.settings.cta_label != blank -%}
-              <a class="mc-btn mc-btn--ink mc-btn--lg" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
+              <a class="mc-btn mc-btn--ink mc-btn--lg" href="{% if section.settings.cta_link != blank %}{{ section.settings.cta_link }}{% else %}{{ routes.all_products_collection_url }}{% endif %}">
                 {{ section.settings.cta_label | escape }}
                 <svg class="mc-icon mc-btn__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </a>
             {%- endif -%}
             {%- if hero_cta2_label != blank -%}
-              <a class="mc-btn mc-btn--outline-ink mc-btn--lg" href="{{ hero_cta2_link | default: '/pages/brands' }}">{{ hero_cta2_label | escape }}</a>
+              <a class="mc-btn mc-btn--outline-ink mc-btn--lg" href="{% if hero_cta2_link != blank %}{{ hero_cta2_link }}{% else %}{{ routes.all_products_collection_url }}{% endif %}">{{ hero_cta2_label | escape }}</a>
             {%- endif -%}
           </div>
         {%- endif -%}
@@ -71,7 +71,7 @@
           <a
             class="mc-hero__float mc-anim-rise"
             style="--rise-delay: 420ms"
-            href="{{ section.settings.float_link | default: '/collections/imitation-jewellery' }}"
+            href="{% if section.settings.float_link != blank %}{{ section.settings.float_link }}{% else %}{{ routes.collections_url }}/imitation-jewellery{% endif %}"
           >
             <span class="mc-hero__float-media">
               {%- if hero_float_img != blank -%}
