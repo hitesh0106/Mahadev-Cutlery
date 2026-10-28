@@ -31,26 +31,26 @@
         assign es_tone_class = ''
     endcase
   -%}
-  <section class="mc-section {{ es_tone_class }} mc-edit{% if section.settings.image_side == 'right' %} mc-edit--right{% endif %}" id="{{ section.settings.anchor_id | default: section.id }}">
+  <section class="mc-section {{ es_tone_class }} mc-edit{% if section.settings.image_side == 'right' %} mc-edit--right{% endif %}" id="{{ section.settings.anchor_id | default: section.id }}" data-testid="edit-section">
     <div class="mc-container mc-edit__inner">
-      <div class="mc-edit__media mc-reveal">
+      <div class="mc-edit__media">
         {%- if section.settings.image != blank -%}
           {{ section.settings.image | image_url: width: 900 | image_tag:
-            loading: 'lazy',
+            loading: 'eager',
             sizes: '(min-width: 990px) 45vw, 100vw',
             widths: '400, 600, 900',
             class: 'mc-edit__img',
             alt: section.settings.image.alt | default: section.settings.title
           }}
         {%- else -%}
-          <img class="mc-edit__img" src="{{ section.settings.fallback_image | default: 'editorial-skincare.jpg' | asset_url }}" alt="" loading="lazy" width="900" height="1125">
+          <img class="mc-edit__img" src="{{ section.settings.fallback_image | default: 'editorial-skincare.jpg' | asset_url }}" alt="{{ section.settings.title | escape }}" loading="eager" width="900" height="1125">
         {%- endif -%}
       </div>
 
       <div class="mc-edit__body">
-        <div class="mc-edit__copy mc-reveal">
+        <div class="mc-edit__copy">
           {%- if section.settings.eyebrow != blank -%}
-            <p class="mc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+            <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
           {%- endif -%}
           {%- if section.settings.title != blank -%}
             <h2 class="mc-edit__title">{{ section.settings.title | escape }}</h2>
@@ -61,7 +61,7 @@
         </div>
 
         {%- if es_rendered > 0 -%}
-          <div class="mc-edit__chips mc-reveal">
+          <div class="mc-edit__chips">
             {%- for block in section.blocks -%}
               {%- assign es_label = block.settings.label -%}
               {%- if es_label == blank -%}{%- continue -%}{%- endif -%}
@@ -76,16 +76,198 @@
 
         {%- liquid
           assign es_collection = section.settings.collection
+          assign has_es_products = false
           if es_collection != blank and es_collection.products_count > 0
-            echo '<ul class="mc-edit__products mc-reveal">'
-            for es_product in es_collection.products limit: 2
-              echo '<li>'
-              render 'product-card', card_product: es_product
-              echo '</li>'
-            endfor
-            echo '</ul>'
+            assign has_es_products = true
           endif
+
+          assign sec_anchor = section.settings.anchor_id | downcase
+          assign sec_eyebrow = section.settings.eyebrow | downcase
+          assign sec_title = section.settings.title | downcase
         -%}
+
+        <ul class="mc-edit__products">
+          {%- if has_es_products -%}
+            {%- for es_product in es_collection.products limit: 2 -%}
+              <li>
+                {% render 'product-card', card_product: es_product, show_vendor: true, reveal: false %}
+              </li>
+            {%- endfor -%}
+          {%- else -%}
+            {%- if sec_anchor contains 'inner' or sec_eyebrow contains 'hosiery' or sec_eyebrow contains 'inner' or sec_title contains 'comfort' -%}
+              {%- comment -%} Sample card 1: Men's cotton brief, pack of 2 {%- endcomment -%}
+              <li>
+                <article class="mc-card">
+                  <div class="mc-card__media-wrap">
+                    <a class="mc-card__media" href="{{ routes.collections_url }}/hosiery-innerwear" aria-label="Men's cotton brief, pack of 2">
+                      <img class="mc-card__img" src="{{ 'dept-innerwear.jpg' | asset_url }}" alt="Men's cotton brief, pack of 2" width="600" height="600" loading="eager">
+                    </a>
+                    <div class="mc-card__wishlist">
+                      <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                        <span class="mc-wl-btn__icons" aria-hidden="true">
+                          {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                          {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mc-card__body">
+                    <p class="mc-card__vendor">SAMPLE BRAND</p>
+                    <h3 class="mc-card__title">
+                      <a href="{{ routes.collections_url }}/hosiery-innerwear">Men's cotton brief, pack of 2</a>
+                    </h3>
+                    <div class="mc-card__price">
+                      <span class="mc-price">₹399</span>
+                    </div>
+                  </div>
+                </article>
+              </li>
+              {%- comment -%} Sample card 2: Nourishing shampoo & conditioner set {%- endcomment -%}
+              <li>
+                <article class="mc-card">
+                  <div class="mc-card__media-wrap">
+                    <a class="mc-card__media" href="{{ routes.collections_url }}/haircare" aria-label="Nourishing shampoo & conditioner set">
+                      <img class="mc-card__img" src="{{ 'dept-haircare.jpg' | asset_url }}" alt="Nourishing shampoo & conditioner set" width="600" height="600" loading="eager">
+                    </a>
+                    <div class="mc-card__wishlist">
+                      <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                        <span class="mc-wl-btn__icons" aria-hidden="true">
+                          {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                          {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mc-card__body">
+                    <p class="mc-card__vendor">SAMPLE BRAND</p>
+                    <h3 class="mc-card__title">
+                      <a href="{{ routes.collections_url }}/haircare">Nourishing shampoo & conditioner set</a>
+                    </h3>
+                    <div class="mc-card__price">
+                      <span class="mc-price">₹899</span>
+                    </div>
+                  </div>
+                </article>
+              </li>
+            {%- elsif sec_anchor contains 'gift' or sec_eyebrow contains 'gift' or sec_title contains 'joy' -%}
+              {%- comment -%} Sample card 1: Festive gift hamper box {%- endcomment -%}
+              <li>
+                <article class="mc-card">
+                  <div class="mc-card__media-wrap">
+                    <a class="mc-card__media" href="{{ routes.collections_url }}/gift-articles" aria-label="Festive gift hamper box">
+                      <img class="mc-card__img" src="{{ 'dept-gifts.jpg' | asset_url }}" alt="Festive gift hamper box" width="600" height="600" loading="eager">
+                    </a>
+                    <div class="mc-card__badges">
+                      <span class="mc-badge mc-badge--sale">13% OFF</span>
+                    </div>
+                    <div class="mc-card__wishlist">
+                      <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                        <span class="mc-wl-btn__icons" aria-hidden="true">
+                          {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                          {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mc-card__body">
+                    <p class="mc-card__vendor">SAMPLE BRAND</p>
+                    <h3 class="mc-card__title">
+                      <a href="{{ routes.collections_url }}/gift-articles">Festive gift hamper box</a>
+                    </h3>
+                    <div class="mc-card__price">
+                      <span class="mc-price mc-price--sale">₹1,299 <s class="mc-price__compare">₹1,499</s></span>
+                    </div>
+                  </div>
+                </article>
+              </li>
+              {%- comment -%} Sample card 2: Gold-tone bangle set {%- endcomment -%}
+              <li>
+                <article class="mc-card">
+                  <div class="mc-card__media-wrap">
+                    <a class="mc-card__media" href="{{ routes.collections_url }}/imitation-jewellery" aria-label="Gold-tone bangle set">
+                      <img class="mc-card__img" src="{{ 'dept-jewellery.jpg' | asset_url }}" alt="Gold-tone bangle set" width="600" height="600" loading="eager">
+                    </a>
+                    <div class="mc-card__wishlist">
+                      <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                        <span class="mc-wl-btn__icons" aria-hidden="true">
+                          {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                          {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mc-card__body">
+                    <p class="mc-card__vendor">SAMPLE BRAND</p>
+                    <h3 class="mc-card__title">
+                      <a href="{{ routes.collections_url }}/imitation-jewellery">Gold-tone bangle set</a>
+                    </h3>
+                    <div class="mc-card__price">
+                      <span class="mc-price">₹549</span>
+                    </div>
+                  </div>
+                </article>
+              </li>
+            {%- else -%}
+              {%- comment -%} Sample card 1: Hydrating gel face wash, 100 ml {%- endcomment -%}
+              <li>
+                <article class="mc-card">
+                  <div class="mc-card__media-wrap">
+                    <a class="mc-card__media" href="{{ routes.collections_url }}/skincare" aria-label="Hydrating gel face wash, 100 ml">
+                      <img class="mc-card__img" src="{{ 'dept-beauty.jpg' | asset_url }}" alt="Hydrating gel face wash, 100 ml" width="600" height="600" loading="eager">
+                    </a>
+                    <div class="mc-card__wishlist">
+                      <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                        <span class="mc-wl-btn__icons" aria-hidden="true">
+                          {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                          {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mc-card__body">
+                    <p class="mc-card__vendor">SAMPLE BRAND</p>
+                    <h3 class="mc-card__title">
+                      <a href="{{ routes.collections_url }}/skincare">Hydrating gel face wash, 100 ml</a>
+                    </h3>
+                    <div class="mc-card__price">
+                      <span class="mc-price">₹299</span>
+                    </div>
+                  </div>
+                </article>
+              </li>
+              {%- comment -%} Sample card 2: Matte lipstick trio (19% OFF) {%- endcomment -%}
+              <li>
+                <article class="mc-card">
+                  <div class="mc-card__media-wrap">
+                    <a class="mc-card__media" href="{{ routes.collections_url }}/beauty-makeup" aria-label="Matte lipstick trio">
+                      <img class="mc-card__img" src="{{ 'dept-makeup.jpg' | asset_url }}" alt="Matte lipstick trio" width="600" height="600" loading="eager">
+                    </a>
+                    <div class="mc-card__badges">
+                      <span class="mc-badge mc-badge--sale">19% OFF</span>
+                    </div>
+                    <div class="mc-card__wishlist">
+                      <button type="button" class="mc-wl-btn" data-mc-wishlist aria-label="Save to wishlist" onclick="this.classList.toggle('is-active')">
+                        <span class="mc-wl-btn__icons" aria-hidden="true">
+                          {% render 'icon', name: 'heart', class: 'mc-wl-btn__outline' %}
+                          {% render 'icon', name: 'heart-filled', class: 'mc-wl-btn__filled' %}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mc-card__body">
+                    <p class="mc-card__vendor">SAMPLE BRAND</p>
+                    <h3 class="mc-card__title">
+                      <a href="{{ routes.collections_url }}/beauty-makeup">Matte lipstick trio</a>
+                    </h3>
+                    <div class="mc-card__price">
+                      <span class="mc-price mc-price--sale">₹649 <s class="mc-price__compare">₹799</s></span>
+                    </div>
+                  </div>
+                </article>
+              </li>
+            {%- endif -%}
+          {%- endif -%}
+        </ul>
       </div>
     </div>
   </section>

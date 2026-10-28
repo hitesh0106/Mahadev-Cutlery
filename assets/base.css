@@ -2625,9 +2625,10 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   margin: 0;
 }
 .mc-edit__text { margin: 16px 0 0; max-width: 46ch; color: var(--mc-ink-soft); }
-.mc-edit__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.mc-edit__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; margin-bottom: 20px; }
 .mc-chip--static { color: var(--mc-ink-soft); cursor: default; }
-.mc-edit__products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; list-style: none; margin: 8px 0 0; padding: 0; }
+.mc-edit__products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 14px; list-style: none; margin: 20px 0 0; padding: 0; }
+.mc-edit__products li { list-style: none; min-width: 0; }
 .mc-edit__products:empty { display: none; }
 
 /* ── Budget cards ───────────────────────────────────────────────────────── */
@@ -2757,10 +2758,10 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   .mc-hero__inner--editorial .mc-hero__media--editorial { order: 2; }
   .mc-hero__figure { aspect-ratio: 5 / 4; }
   .mc-hero__float { width: 220px; right: auto; left: -32px; bottom: -20px; padding: 12px 12px 14px; }
-  .mc-edit__inner { grid-template-columns: 1.1fr 1fr; gap: 96px; }
+  .mc-edit__inner { grid-template-columns: 1fr 1fr; gap: clamp(48px, 6vw, 84px); align-items: center; }
   .mc-edit--right .mc-edit__media { order: 2; }
   .mc-edit--right .mc-edit__body { order: 1; }
-  .mc-edit__media { aspect-ratio: 4 / 5; }
+  .mc-edit__media { aspect-ratio: 4 / 4.6; }
   .mc-az__toolbar { top: 68px; }
   .mc-az__cols { columns: 4; }
 }
