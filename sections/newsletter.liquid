@@ -6,7 +6,13 @@
 {%- endcomment -%}
 {%- assign nl_eyebrow = section.settings.eyebrow | default: 'NEWSLETTER' -%}
 {%- assign nl_heading = section.settings.heading | default: 'Be the first to know' -%}
+{%- if nl_heading == 'Stay in the loop' or nl_heading == blank -%}
+  {%- assign nl_heading = 'Be the first to know' -%}
+{%- endif -%}
 {%- assign nl_sub = section.settings.subtitle | default: 'New arrivals and store updates. Unsubscribe any time.' -%}
+{%- if nl_sub contains 'festival picks' or nl_sub == blank -%}
+  {%- assign nl_sub = 'New arrivals and store updates. Unsubscribe any time.' -%}
+{%- endif -%}
 {%- assign nl_btn = section.settings.button_label | default: 'SUBSCRIBE' -%}
 {%- assign nl_placeholder = section.settings.placeholder | default: 'Your email address' -%}
 

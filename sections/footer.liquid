@@ -41,7 +41,7 @@
       </div>
 
       <!-- Col 2: SHOP -->
-      <nav class="mc-footer__col" aria-label="Shop">
+      <nav class="mc-footer__col mc-footer__col--shop" aria-label="Shop">
         <h3 class="mc-footer__heading">SHOP</h3>
         <ul class="mc-footer__links">
           <li><a href="{{ routes.all_products_collection_url }}">Shop all</a></li>
@@ -52,7 +52,7 @@
       </nav>
 
       <!-- Col 3: DEPARTMENTS -->
-      <nav class="mc-footer__col" aria-label="Departments">
+      <nav class="mc-footer__col mc-footer__col--depts" aria-label="Departments">
         <h3 class="mc-footer__heading">DEPARTMENTS</h3>
         <ul class="mc-footer__links">
           <li><a href="{{ routes.collections_url }}/skincare">Skincare</a></li>
@@ -65,7 +65,7 @@
       </nav>
 
       <!-- Col 4: CUSTOMER CARE -->
-      <nav class="mc-footer__col" aria-label="Customer Care">
+      <nav class="mc-footer__col mc-footer__col--care" aria-label="Customer Care">
         <h3 class="mc-footer__heading">CUSTOMER CARE</h3>
         <ul class="mc-footer__links">
           <li><a href="{{ routes.root_url }}pages/contact">Contact</a></li>
@@ -99,13 +99,15 @@
               {% render 'icon', name: 'phone', size: 15 %}
             </span>
             <div class="mc-footer__contact-content">
-              {%- if ft_phone_1 != blank -%}
-                <a class="mc-footer__link" href="tel:{{ ft_phone_1 | strip }}">{{ ft_phone_1 | escape }}</a>
-              {%- endif -%}
-              {%- if ft_phone_2 != blank -%}
-                {%- if ft_phone_1 != blank %}, {% endif -%}
-                <a class="mc-footer__link" href="tel:{{ ft_phone_2 | strip }}">{{ ft_phone_2 | escape }}</a>
-              {%- endif -%}
+              <div class="mc-footer__phones">
+                {%- if ft_phone_1 != blank -%}
+                  <a class="mc-footer__link" href="tel:{{ ft_phone_1 | strip }}">{{ ft_phone_1 | escape }}</a>
+                {%- endif -%}
+                {%- if ft_phone_2 != blank -%}
+                  {%- if ft_phone_1 != blank %}, {% endif -%}
+                  <a class="mc-footer__link" href="tel:{{ ft_phone_2 | strip }}">{{ ft_phone_2 | escape }}</a>
+                {%- endif -%}
+              </div>
             </div>
           </div>
 
@@ -125,7 +127,7 @@
 
     <!-- Bottom Bar -->
     <div class="mc-footer__bottom">
-      <p class="mc-footer__copyright">&copy; {{ ft_year }} {{ ft_logo | escape }} &amp; {{ ft_sub | escape }}. All rights reserved.</p>
+      <p class="mc-footer__copyright">&copy; {{ ft_year }} {{ ft_logo | escape }} {{ ft_sub | escape }}. All rights reserved.</p>
       <div class="mc-footer__bottom-right">
         <p class="mc-footer__admin-notice">Policies are listed automatically from Shopify Admin.</p>
         {% render 'language-selector' %}

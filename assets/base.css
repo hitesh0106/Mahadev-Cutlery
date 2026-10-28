@@ -2920,19 +2920,66 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   margin: 8px 0 0;
 }
 
-/* ── Footer (Image 4 Parity) ────────────────────────────────────────────── */
+/* ── Footer (Image 4 Parity & Responsive Polish) ───────────────────────── */
 .mc-footer {
   margin-top: auto;
   background-color: #20201E;
   color: #EDE8E1;
-  padding: clamp(52px, 6vw, 76px) 0 clamp(24px, 3vw, 36px);
+  padding: clamp(48px, 6vw, 76px) 0 clamp(20px, 3vw, 36px);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 .mc-footer__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: clamp(28px, 4vw, 44px);
-  padding-bottom: clamp(36px, 5vw, 56px);
+  gap: clamp(24px, 3.5vw, 44px);
+  padding-bottom: clamp(28px, 4vw, 56px);
+}
+@media (max-width: 679px) {
+  .mc-footer {
+    padding: 36px 0 20px;
+  }
+  .mc-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 16px;
+    padding-bottom: 24px;
+  }
+  .mc-footer__brand {
+    grid-column: 1 / -1;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .mc-footer__brand-text {
+    max-width: 100% !important;
+    font-size: 13px !important;
+    margin-bottom: 14px !important;
+  }
+  .mc-footer__col--shop {
+    grid-column: 1 / 2;
+  }
+  .mc-footer__col--depts {
+    grid-column: 2 / 3;
+  }
+  .mc-footer__col--care {
+    grid-column: 1 / -1;
+    padding-top: 4px;
+  }
+  .mc-footer__col--visit {
+    grid-column: 1 / -1;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .mc-footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-top: 16px;
+  }
+  .mc-footer__bottom-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
 }
 @media (min-width: 680px) and (max-width: 1023px) {
   .mc-footer__grid {
@@ -2975,12 +3022,12 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
 }
 .mc-footer__brand-subtitle {
   font-family: var(--mc-font-body, system-ui);
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: #8F8C86;
-  margin: 0 0 14px;
+  margin: 0 0 12px;
 }
 .mc-footer__brand-text {
   font-family: var(--mc-font-body, system-ui);
@@ -2988,7 +3035,7 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   line-height: 1.6;
   color: #A8A6A1;
   max-width: 32ch;
-  margin: 0 0 20px;
+  margin: 0 0 18px;
 }
 .mc-footer__social-list {
   display: flex;
@@ -3024,7 +3071,7 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #EDE8E1;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
 }
 .mc-footer__links {
   list-style: none;
@@ -3032,7 +3079,7 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
 }
 .mc-footer__links a,
 .mc-footer__link {
@@ -3053,12 +3100,12 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
 .mc-footer__contact-items {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 .mc-footer__contact-item {
   display: flex;
   align-items: flex-start;
-  gap: 11px;
+  gap: 10px;
   font-size: 13px;
   line-height: 1.55;
   color: #A8A6A1;
@@ -3074,7 +3121,7 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
 .mc-footer__contact-content {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 .mc-footer__address {
   font-style: normal;
@@ -3094,6 +3141,13 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
 .mc-footer__maps-link:hover {
   color: #FFFFFF;
 }
+.mc-footer__phones {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+  flex-wrap: wrap;
+}
 
 /* Bottom Bar */
 .mc-footer__bottom {
@@ -3101,8 +3155,8 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 14px;
-  padding-top: 22px;
+  gap: 12px;
+  padding-top: 20px;
   padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -3133,5 +3187,198 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   padding: 2px 8px;
   border-color: rgba(255, 255, 255, 0.15);
   color: #A8A6A1;
+}
+
+/* ── Cross-Device Screen Optimization (Mobile, Tablet, Laptop) ──────────── */
+@media (max-width: 640px) {
+  /* Header mobile polish */
+  .mc-header__inner {
+    min-height: 56px;
+    padding: 0 12px;
+    gap: 6px;
+  }
+  .mc-logo__text {
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+  .mc-logo__diamond {
+    font-size: 13px;
+    margin-right: 2px;
+  }
+  .mc-logo__subline {
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    margin-top: 1px;
+  }
+  .mc-header__actions {
+    gap: 0;
+  }
+  .mc-header__account {
+    display: none !important;
+  }
+  .mc-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .mc-icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Hero mobile polish */
+  .mc-hero__inner--editorial {
+    padding-top: 18px;
+    padding-bottom: 32px;
+    gap: 18px;
+  }
+  .mc-hero__content {
+    order: 1 !important;
+  }
+  .mc-hero__media--editorial {
+    order: 2 !important;
+    padding-bottom: 0 !important;
+  }
+  .mc-hero__heading--display {
+    font-size: clamp(26px, 7.6vw, 34px);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+  }
+  .mc-hero__subheading {
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 8px 0 14px;
+  }
+  .mc-hero__ctas {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .mc-btn--ink,
+  .mc-btn--outline-ink {
+    flex: 1;
+    min-height: 44px;
+    padding: 0 14px;
+    font-size: 11.5px;
+    justify-content: center;
+    white-space: nowrap;
+  }
+  .mc-hero__figure {
+    aspect-ratio: 16 / 11;
+  }
+  .mc-hero__float {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 114px;
+    padding: 6px 6px 8px;
+    border-radius: 4px;
+    box-shadow: 0 8px 20px rgba(32, 32, 30, 0.16);
+  }
+  .mc-hero__float-row {
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  /* Product cards mobile 2-col polish */
+  .mc-products-carousel {
+    gap: 14px 10px;
+  }
+  .mc-card__body {
+    padding: 8px 2px 4px;
+  }
+  .mc-card__vendor {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    margin-bottom: 2px;
+  }
+  .mc-card__title {
+    font-size: 12.5px;
+    line-height: 1.3;
+    margin-bottom: 3px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6em;
+  }
+  .mc-card__price {
+    font-size: 13.5px;
+  }
+  .mc-card__wishlist .mc-wl-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .mc-card__wishlist .mc-wl-btn .mc-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Newsletter mobile polish */
+  .mc-newsletter {
+    padding: clamp(36px, 6vw, 48px) 0;
+  }
+  .mc-newsletter__heading {
+    font-size: clamp(24px, 6.5vw, 30px);
+    margin: 0 0 8px;
+  }
+  .mc-newsletter__subtitle {
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+  .mc-newsletter__group {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  .mc-newsletter__input {
+    width: 100%;
+    height: 48px;
+    font-size: 14px;
+    border-radius: 2px;
+  }
+  .mc-newsletter__btn {
+    width: 100%;
+    height: 48px;
+    font-size: 12px;
+    font-weight: 700;
+    justify-content: center;
+    border-radius: 2px;
+  }
+}
+
+/* Tablet optimization (641px - 989px) */
+@media (min-width: 641px) and (max-width: 989px) {
+  .mc-hero__inner--editorial {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+    min-height: auto;
+  }
+  .mc-hero__content {
+    order: 1;
+  }
+  .mc-hero__media--editorial {
+    order: 2;
+  }
+  .mc-hero__heading--display {
+    font-size: clamp(32px, 4.2vw, 46px);
+  }
+  .mc-hero__subheading {
+    font-size: 15px;
+  }
+  .mc-hero__float {
+    width: 140px;
+    right: 12px;
+    bottom: 12px;
+  }
+}
+
+/* Hide floating carousel nav arrows on mobile & tablet where cards form a full grid */
+@media (max-width: 989px) {
+  .mc-carousel-nav {
+    display: none !important;
+  }
 }
 

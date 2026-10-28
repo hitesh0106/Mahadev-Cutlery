@@ -18,7 +18,7 @@
 <section class="mc-section mc-finder" data-mc-gift-finder>
   <div class="mc-container mc-finder__inner">
     <header class="mc-finder__head">
-      <h1 class="mc-section__heading">{{ section.settings.title | default: 'finder.title' | t }}</h1>
+      <h1 class="mc-section__heading">{{ section.settings.title | default: 'Gift Finder' | escape }}</h1>
       {%- if section.settings.subtitle != blank -%}
         <p class="mc-finder__subtitle">{{ section.settings.subtitle | escape }}</p>
       {%- endif -%}
