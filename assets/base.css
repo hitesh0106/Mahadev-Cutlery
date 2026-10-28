@@ -1100,19 +1100,20 @@ label.mc-label {
 
 /* ── Shop by Department Editorial Grid ─────────────────────────────────── */
 .mc-departments {
-  padding-block: clamp(48px, 6.5vw, 88px);
+  padding-block: clamp(40px, 5.5vw, 84px);
   background: #ffffff;
 }
 .mc-departments__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px 16px;
+  gap: 16px 12px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .mc-dept-cell {
   list-style: none;
+  min-width: 0;
 }
 .mc-dept-cell__link {
   display: flex;
@@ -1127,7 +1128,7 @@ label.mc-label {
   width: 100%;
   aspect-ratio: 4 / 3.4;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: 4px;
   background: var(--mc-cream);
 }
 .mc-dept-cell__img {
@@ -1144,20 +1145,20 @@ label.mc-label {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 12px;
-  margin-top: 14px;
+  gap: 8px;
+  margin-top: 10px;
 }
 .mc-dept-cell__info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
 }
 .mc-dept-cell__title {
   font-family: var(--mc-font-heading);
-  font-size: clamp(17px, 1.45vw, 24px);
-  font-weight: 400;
-  line-height: 1.2;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.25;
   color: var(--mc-ink);
   transition: transform 0.3s var(--mc-ease);
 }
@@ -1165,14 +1166,17 @@ label.mc-label {
   transform: translateX(2px);
 }
 .mc-dept-cell__sub {
-  font-size: 13px;
+  font-size: 11.5px;
   color: var(--mc-ink-soft);
-  line-height: 1.4;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .mc-dept-cell__arrow {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
   border-radius: 50%;
   border: 1px solid var(--mc-border);
   display: grid;
@@ -1182,20 +1186,52 @@ label.mc-label {
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.mc-dept-cell__arrow .mc-icon {
+  width: 13px;
+  height: 13px;
+}
 .mc-dept-cell__link:hover .mc-dept-cell__arrow {
   background: var(--mc-ink);
   color: #ffffff;
   border-color: var(--mc-ink);
-  transform: translateX(3px) rotate(-35deg);
+  transform: translateX(2px) rotate(-35deg);
 }
 
+/* Tablet (iPad portrait & landscape up to 989px) */
 @media (min-width: 640px) {
   .mc-departments__grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 24px 18px;
+    gap: 22px 16px;
+  }
+  .mc-dept-cell__media {
+    aspect-ratio: 4 / 3.6;
+  }
+  .mc-dept-cell__body {
+    margin-top: 12px;
+    gap: 10px;
+  }
+  .mc-dept-cell__title {
+    font-size: 17px;
+  }
+  .mc-dept-cell__sub {
+    font-size: 12px;
+  }
+  .mc-dept-cell__arrow {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+  }
+  .mc-dept-cell__arrow .mc-icon {
+    width: 15px;
+    height: 15px;
   }
 }
+
+/* Desktop (>= 990px): 3 wide cards on top, 5 portrait cards on bottom */
 @media (min-width: 990px) {
+  .mc-departments {
+    padding-block: clamp(56px, 6.5vw, 88px);
+  }
   .mc-departments__grid {
     grid-template-columns: repeat(15, 1fr);
     gap: 32px 24px;
@@ -1225,6 +1261,26 @@ label.mc-label {
   .mc-dept-cell:nth-child(7) .mc-dept-cell__media,
   .mc-dept-cell:nth-child(8) .mc-dept-cell__media {
     aspect-ratio: 4 / 4.4;
+  }
+  .mc-dept-cell__body {
+    margin-top: 14px;
+    gap: 12px;
+  }
+  .mc-dept-cell__title {
+    font-size: clamp(18px, 1.45vw, 24px);
+  }
+  .mc-dept-cell__sub {
+    font-size: 13px;
+    white-space: normal;
+  }
+  .mc-dept-cell__arrow {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+  .mc-dept-cell__arrow .mc-icon {
+    width: 16px;
+    height: 16px;
   }
 }
 

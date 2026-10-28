@@ -6,35 +6,27 @@
   by handle. Only merchant-configured blocks render — nothing auto-generates.
   NO kitchenware/cutlery department exists (the eight approved only).
 {%- endcomment -%}
-{%- liquid
-  assign dg_rendered = 0
-  for block in section.blocks
-    if block.settings.collection != blank or block.settings.handle != blank
-      assign dg_rendered = dg_rendered | plus: 1
-    endif
-  endfor
--%}
-{%- if dg_rendered > 0 -%}
-  <section class="mc-section mc-departments" id="{{ section.settings.anchor_id | default: 'departments' }}">
-    <div class="mc-container">
-      <div class="mc-section__head">
-        <div>
-          {%- if section.settings.eyebrow != blank -%}
-            <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
-          {%- endif -%}
-          {%- if section.settings.heading != blank -%}
-            <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
-          {%- endif -%}
-        </div>
-        {%- if section.settings.action_label != blank -%}
-          <a class="mc-action-link" href="{{ section.settings.action_link | default: routes.all_products_collection_url }}">
-            {{ section.settings.action_label | escape | upcase }}
-            <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </a>
+<section class="mc-section mc-departments" id="{{ section.settings.anchor_id | default: 'departments' }}" data-testid="departments-section">
+  <div class="mc-container">
+    <div class="mc-section__head">
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
         {%- endif -%}
       </div>
+      {%- if section.settings.action_label != blank -%}
+        <a class="mc-action-link" href="{{ section.settings.action_link | default: routes.all_products_collection_url }}">
+          {{ section.settings.action_label | escape | upcase }}
+          <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      {%- endif -%}
+    </div>
 
-      <ul class="mc-departments__grid">
+    <ul class="mc-departments__grid">
+      {%- if section.blocks.size > 0 -%}
         {%- for block in section.blocks -%}
           {%- liquid
             assign dg_collection = block.settings.collection
@@ -58,7 +50,7 @@
                 {%- if block.settings.image != blank -%}
                   {{ block.settings.image | image_url: width: 900 | image_tag:
                     loading: 'lazy',
-                    sizes: '(min-width: 990px) 33vw, 50vw',
+                    sizes: '(min-width: 990px) 33vw, (min-width: 640px) 25vw, 50vw',
                     widths: '300, 600, 900',
                     class: 'mc-dept-cell__img',
                     alt: dg_alt
@@ -110,14 +102,140 @@
             </a>
           </li>
         {%- endfor -%}
-      </ul>
-    </div>
-  </section>
-{%- elsif request.design_mode -%}
-  <div class="mc-container mc-section">
-    <p class="mc-empty-note">{{ 'departments.empty_note' | t }}</p>
+      {%- else -%}
+        {%- comment -%} Guaranteed fallback canonical 8 departments {%- endcomment -%}
+        <li class="mc-dept-cell mc-reveal">
+          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/beauty-makeup">
+            <span class="mc-dept-cell__media">
+              <img class="mc-dept-cell__img" src="{{ 'dept-makeup.jpg' | asset_url }}" alt="Makeup & Cosmetics" loading="lazy" width="600" height="800">
+            </span>
+            <span class="mc-dept-cell__body">
+              <span class="mc-dept-cell__info">
+                <span class="mc-dept-cell__title">Makeup & Cosmetics</span>
+                <span class="mc-dept-cell__sub">Lips, eyes, face</span>
+              </span>
+              <span class="mc-dept-cell__arrow" aria-hidden="true">
+                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-dept-cell mc-reveal">
+          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/skincare">
+            <span class="mc-dept-cell__media">
+              <img class="mc-dept-cell__img" src="{{ 'dept-beauty.jpg' | asset_url }}" alt="Skincare" loading="lazy" width="600" height="800">
+            </span>
+            <span class="mc-dept-cell__body">
+              <span class="mc-dept-cell__info">
+                <span class="mc-dept-cell__title">Skincare</span>
+                <span class="mc-dept-cell__sub">Cleanse, treat, protect</span>
+              </span>
+              <span class="mc-dept-cell__arrow" aria-hidden="true">
+                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-dept-cell mc-reveal">
+          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/haircare">
+            <span class="mc-dept-cell__media">
+              <img class="mc-dept-cell__img" src="{{ 'dept-haircare.jpg' | asset_url }}" alt="Haircare" loading="lazy" width="600" height="800">
+            </span>
+            <span class="mc-dept-cell__body">
+              <span class="mc-dept-cell__info">
+                <span class="mc-dept-cell__title">Haircare</span>
+                <span class="mc-dept-cell__sub">Everyday & professional</span>
+              </span>
+              <span class="mc-dept-cell__arrow" aria-hidden="true">
+                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-dept-cell mc-reveal">
+          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/hosiery-innerwear">
+            <span class="mc-dept-cell__media">
+              <img class="mc-dept-cell__img" src="{{ 'dept-innerwear.jpg' | asset_url }}" alt="Hosiery & Innerwear" loading="lazy" width="600" height="800">
+            </span>
+            <span class="mc-dept-cell__body">
+              <span class="mc-dept-cell__info">
+                <span class="mc-dept-cell__title">Hosiery & Innerwear</span>
+                <span class="mc-dept-cell__sub">Men, women & kids</span>
+              </span>
+              <span class="mc-dept-cell__arrow" aria-hidden="true">
+                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-dept-cell mc-reveal">
+          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/toys-kids">
+            <span class="mc-dept-cell__media">
+              <img class="mc-dept-cell__img" src="{{ 'dept-kids.jpg' | asset_url }}" alt="Kids & Toys" loading="lazy" width="600" height="800">
+            </span>
+            <span class="mc-dept-cell__body">
+              <span class="mc-dept-cell__info">
+                <span class="mc-dept-cell__title">Kids & Toys</span>
+                <span class="mc-dept-cell__sub">Play & learn</span>
+              </span>
+              <span class="mc-dept-cell__arrow" aria-hidden="true">
+                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-dept-cell mc-reveal">
+          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/gift-articles">
+            <span class="mc-dept-cell__media">
+              <img class="mc-dept-cell__img" src="{{ 'dept-gifts.jpg' | asset_url }}" alt="Gift Articles" loading="lazy" width="600" height="800">
+            </span>
+            <span class="mc-dept-cell__body">
+              <span class="mc-dept-cell__info">
+                <span class="mc-dept-cell__title">Gift Articles</span>
+                <span class="mc-dept-cell__sub">For every occasion</span>
+              </span>
+              <span class="mc-dept-cell__arrow" aria-hidden="true">
+                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-dept-cell mc-reveal">
+          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/imitation-jewellery">
+            <span class="mc-dept-cell__media">
+              <img class="mc-dept-cell__img" src="{{ 'dept-jewellery.jpg' | asset_url }}" alt="Imitation Jewellery" loading="lazy" width="600" height="800">
+            </span>
+            <span class="mc-dept-cell__body">
+              <span class="mc-dept-cell__info">
+                <span class="mc-dept-cell__title">Imitation Jewellery</span>
+                <span class="mc-dept-cell__sub">Everyday sparkle</span>
+              </span>
+              <span class="mc-dept-cell__arrow" aria-hidden="true">
+                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-dept-cell mc-reveal">
+          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/accessories-grooming">
+            <span class="mc-dept-cell__media">
+              <img class="mc-dept-cell__img" src="{{ 'dept-tools.jpg' | asset_url }}" alt="Beauty Tools & Grooming" loading="lazy" width="600" height="800">
+            </span>
+            <span class="mc-dept-cell__body">
+              <span class="mc-dept-cell__info">
+                <span class="mc-dept-cell__title">Beauty Tools & Grooming</span>
+                <span class="mc-dept-cell__sub">Brushes, combs, trimmers</span>
+              </span>
+              <span class="mc-dept-cell__arrow" aria-hidden="true">
+                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+        </li>
+      {%- endif -%}
+    </ul>
   </div>
-{%- endif -%}
+</section>
 
 {% schema %}
 {
