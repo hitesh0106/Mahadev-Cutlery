@@ -168,6 +168,9 @@
         {%- if has_main_menu -%}
           {%- for link in hh_main.links -%}
             {%- assign l_title_lower = link.title | downcase -%}
+            {%- if l_title_lower == 'home' or l_title_lower == 'contact' or l_title_lower == 'contact us' -%}
+              {%- continue -%}
+            {%- endif -%}
             {%- if l_title_lower contains 'department' -%}
               <li class="mc-nav__item mc-nav__item--mega" data-mc-mega>
                 <button
@@ -303,7 +306,6 @@
             <li class="mc-more-item--adaptive"><a class="mc-dropdown__link" href="{{ routes.collections_url }}/accessories-grooming">Accessories &amp; Grooming</a></li>
             <li class="mc-more-item--adaptive"><a class="mc-dropdown__link" href="/pages/brands">{{ 'header.brands' | t | default: 'All Brands' }}</a></li>
             <li class="mc-more-item--adaptive"><a class="mc-dropdown__link" href="{{ routes.collections_url }}">{{ 'header.departments' | t | default: 'All Departments' }}</a></li>
-            <li><a class="mc-dropdown__link" href="{{ routes.root_url }}">{{ 'header.home' | t | default: 'Home' }}</a></li>
             {%- if section.settings.offers_link != blank -%}
               <li><a class="mc-dropdown__link" href="{{ section.settings.offers_link }}">{{ 'header.offers' | t | default: 'Offers' }}</a></li>
             {%- endif -%}
@@ -345,6 +347,9 @@
       {%- if has_main_menu -%}
         {%- for link in hh_main.links -%}
           {%- assign l_title_lower = link.title | downcase -%}
+          {%- if l_title_lower == 'home' or l_title_lower == 'contact' or l_title_lower == 'contact us' -%}
+            {%- continue -%}
+          {%- endif -%}
           {%- if l_title_lower contains 'department' -%}
             <details class="mc-nav-drawer__group">
               <summary class="mc-nav-drawer__link">{{ link.title | escape }} {% render 'icon', name: 'chevron', size: 14, class: 'mc-nav__chevron' %}</summary>
@@ -396,7 +401,6 @@
           {%- endif -%}
         {%- endfor -%}
       {%- else -%}
-        <a class="mc-nav-drawer__link" href="{{ routes.root_url }}">{{ 'header.home' | t }}</a>
         <a class="mc-nav-drawer__link" href="{{ routes.collections_url }}/beauty-makeup">Beauty &amp; Makeup</a>
         <a class="mc-nav-drawer__link" href="{{ routes.collections_url }}/skincare">Skincare</a>
         <a class="mc-nav-drawer__link" href="{{ routes.collections_url }}/haircare">Haircare</a>
