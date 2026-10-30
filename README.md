@@ -95,7 +95,37 @@ bun scripts/validate-catalog.ts
 ```bash
 bun scripts/package-theme.ts
 ```
-- Generates `download/mahadev-cutlery-shopify-theme-final.zip`.
+- Generates `download/mahadev-cutlery-shopify-theme-final.zip` (1.82 MB).
+- Generates `download/mahadev-theme.zip` (1.82 MB).
+- Generates `public/downloads/mahadev-cutlery-shopify-theme.zip` (1.82 MB).
+
+---
+
+## 🏛️ Header Architecture & Responsive System
+
+The storefront features an editorial 2-row luxury brand header designed for 100% browser zoom:
+
+### 1. Announcement Bar (Row 0)
+- Centered, slim announcement bar with smooth background (`#20201E`) and cream text (`#FAF8F5`).
+- Supports rotating multi-message announcements with pause on hover and keyboard-accessible prev/next arrows.
+- Fully editable text, links, and colors in Shopify Theme Customizer (`Header` section).
+
+### 2. Main Brand Row (Row 1)
+- **CSS Grid `1fr auto 1fr`:** Mathematically guarantees the **MAHADEV** serif wordmark and letter-spaced **CUTLERY & GIFT ARTICLES** subline stay 100% centered in the viewport at all times, never pushed off-center by asymmetrical left or right controls.
+- **Left Column:** Quick search trigger button and mobile drawer hamburger toggle.
+- **Right Column:** Accessible account icon (linking to Shopify customer accounts), wishlist indicator, and AJAX cart drawer trigger with dynamic item counter bubble.
+- **Consistent Icons:** All controls share 40px touch targets, 20px SVG icon sizes, and 1.6 stroke width.
+
+### 3. Primary Navigation Row (Row 2) & Intelligent Adaptive Menus
+- Centered navigation row directly beneath the brand row, showcasing the 8 approved primary departments with collection routes.
+- **Intelligent "More ▾" Dropdown:** On laptop widths (`1024px`–`1399px`) or high-DPI displays with OS scaling, secondary items (`Accessories & Grooming`, `All Brands`, `Departments`, `Offers`, `Home`) adaptively collapse into a styled "More" dropdown. Links never clip at the viewport edges, never overlap, and never force customers to zoom out.
+- **Dynamic JavaScript Fit Observer:** Automatically measures navigation scroll width vs. available container width on resize, applying compact spacing if merchant adds extra navigation links.
+- **Hover Bridges:** Added invisible hover bridges (`::after`) preventing mega-menus and dropdowns from prematurely closing when moving cursor from trigger to menu panel.
+- **Clean Mobile Drawer (`< 1024px`):** Replaces desktop navigation with an accessible off-canvas drawer featuring accordion department navigation, quick search, and customer links without duplicate menus.
+
+### 4. Zero Placeholder / Sample Content
+- Removed all hardcoded `SAMPLE BRAND`, fake prices, and sample cards from customer-facing liquid sections.
+- When collections are empty, standard Shopify OS 2.0 onboarding placeholder cards (`placeholder_svg_tag`) or graceful empty states are rendered with zero fake pricing or invented discounts.
 
 ---
 

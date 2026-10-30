@@ -519,16 +519,15 @@ label.mc-label {
 
 /* Row 1: Brand Row (Left: Search & Burger, Center: Logo, Right: Actions) */
 .mc-header__brand-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   max-width: var(--mc-container, 1360px);
   margin-inline: auto;
-  padding-inline: clamp(14px, 3vw, 36px);
-  min-height: 72px;
+  padding-inline: clamp(16px, 3vw, 40px);
+  min-height: 76px;
   padding-block: 8px;
-  gap: 16px;
   box-sizing: border-box;
 }
 .mc-header__col {
@@ -536,19 +535,19 @@ label.mc-label {
   align-items: center;
 }
 .mc-header__col--left {
-  flex: 1 1 0;
-  justify-content: flex-start;
+  justify-self: start;
   gap: 8px;
 }
 .mc-header__col--center {
-  flex: 0 0 auto;
-  justify-content: center;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 .mc-header__col--right {
-  flex: 1 1 0;
-  justify-content: flex-end;
-  gap: clamp(4px, 0.8vw, 10px);
+  justify-self: end;
+  gap: clamp(6px, 1vw, 12px);
 }
 
 .mc-header__burger {
@@ -605,34 +604,56 @@ label.mc-label {
   border-top: 1px solid var(--mc-border);
   background: rgba(255, 255, 255, 0.98);
   width: 100%;
+  box-sizing: border-box;
 }
 .mc-nav {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
+  max-width: var(--mc-container, 1360px);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 40px);
+  box-sizing: border-box;
   min-width: 0;
 }
 .mc-nav__list {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(8px, 1.3vw, 24px);
+  gap: clamp(8px, 1.25vw, 22px);
   list-style: none;
   margin: 0;
   padding: 0;
   flex-wrap: nowrap;
 }
+.mc-nav__list--compact {
+  gap: clamp(6px, 0.9vw, 14px) !important;
+}
+.mc-nav__list--compact .mc-nav__link {
+  font-size: 11.5px !important;
+  letter-spacing: 0.02em !important;
+}
 .mc-nav__item {
   position: relative;
   flex-shrink: 0;
+}
+/* Invisible hover bridge to prevent accidental closure */
+.mc-nav__item::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: transparent;
 }
 .mc-nav__link {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   min-height: 44px;
-  font-size: clamp(11.5px, 0.8vw, 13px);
+  font-size: clamp(11.5px, 0.8vw, 12.5px);
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -649,7 +670,7 @@ label.mc-label {
 .mc-nav__link::after {
   content: '';
   position: absolute;
-  bottom: 8px;
+  bottom: 6px;
   left: 4px;
   right: 4px;
   height: 1.5px;
@@ -678,6 +699,24 @@ label.mc-label {
   color: var(--mc-accent);
 }
 
+/* Responsive tiering for laptop resolutions & zoom levels */
+.mc-nav__item--more {
+  display: none;
+}
+@media (max-width: 1399px) {
+  .mc-nav__item--tier-wide {
+    display: none !important;
+  }
+  .mc-nav__item--more {
+    display: inline-flex !important;
+  }
+}
+@media (min-width: 1400px) {
+  .mc-more-item--adaptive {
+    display: none !important;
+  }
+}
+
 /* Luxury Dropdown */
 .mc-dropdown {
   position: absolute;
@@ -686,16 +725,21 @@ label.mc-label {
   min-width: 220px;
   background: #ffffff;
   border: 1px solid var(--mc-border);
-  border-radius: 4px;
+  border-radius: var(--mc-radius, 4px);
   box-shadow: 0 16px 36px rgba(32, 32, 30, 0.08);
   padding: 8px 0;
   opacity: 0;
   visibility: hidden;
   transform: translateY(6px);
-  transition: opacity 0.22s var(--mc-ease), transform 0.22s var(--mc-ease), visibility 0.22s;
+  transition: opacity 0.2s var(--mc-ease), transform 0.2s var(--mc-ease), visibility 0.2s;
   z-index: 120;
   list-style: none;
   margin: 0;
+}
+.mc-dropdown--more {
+  right: 0;
+  left: auto;
+  min-width: 240px;
 }
 .mc-dropdown--wide {
   min-width: 240px;
@@ -724,21 +768,54 @@ label.mc-label {
   padding-left: 24px;
 }
 
+/* Luxury Mega Menu */
 .mc-nav__item--mega { position: relative; }
 .mc-mega {
   position: absolute;
-  top: calc(100% + 10px);
+  top: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(6px);
-  min-width: 320px;
-  background: #fff;
+  width: min(calc(100vw - 32px), 820px);
+  background: #ffffff;
   border: 1px solid var(--mc-border);
-  border-radius: var(--mc-radius);
-  box-shadow: var(--mc-shadow);
+  border-radius: var(--mc-radius, 4px);
+  box-shadow: 0 18px 42px rgba(32, 32, 30, 0.09);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s var(--mc-ease), transform 0.3s var(--mc-ease), visibility 0.3s;
+  transition: opacity 0.22s var(--mc-ease), transform 0.22s var(--mc-ease), visibility 0.22s;
+  z-index: 120;
 }
+.mc-nav__item--mega:hover .mc-mega,
+.mc-nav__item--mega:focus-within .mc-mega,
+.mc-nav__item--mega.is-open .mc-mega {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.mc-mega__inner { padding: 24px 28px; }
+.mc-mega__heading {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mc-ink-soft);
+  margin-bottom: 14px;
+}
+.mc-mega__list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.mc-mega__list--cols { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+.mc-mega__link {
+  display: block;
+  padding: 8px 12px;
+  border-radius: var(--mc-radius-sm);
+  font-size: 13.5px;
+  color: var(--mc-ink);
+  transition: background-color 0.18s var(--mc-ease), color 0.18s var(--mc-ease);
+}
+.mc-mega__link:hover { background: var(--mc-accent-soft); color: var(--mc-accent); }
 .mc-nav__item--mega.is-open .mc-mega {
   opacity: 1;
   visibility: visible;
@@ -2228,25 +2305,25 @@ a.mc-pagination__item:hover { border-color: var(--mc-accent); color: var(--mc-ac
   .mc-grid--products { grid-template-columns: repeat(3, 1fr); }
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1023px) {
   .mc-header__burger { display: inline-flex !important; }
   .mc-header__nav-row { display: none !important; }
   .mc-nav { display: none !important; }
 }
 
-@media (min-width: 1200px) and (max-width: 1399px) {
+@media (min-width: 1024px) and (max-width: 1399px) {
   .mc-header__brand-row {
-    padding-inline: 20px;
+    padding-inline: clamp(16px, 2.5vw, 28px);
   }
   .mc-logo__text {
-    font-size: 24px;
+    font-size: clamp(21px, 2vw, 24px);
     letter-spacing: 0.07em;
   }
   .mc-nav__list {
     gap: clamp(8px, 1.1vw, 18px);
   }
   .mc-nav__link {
-    font-size: 11.5px;
+    font-size: clamp(11px, 0.78vw, 12px);
     letter-spacing: 0.03em;
     padding: 0 3px;
   }

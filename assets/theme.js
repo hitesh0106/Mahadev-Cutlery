@@ -334,6 +334,24 @@
         }
       });
     }
+
+    /* Dynamic desktop nav fitting for custom merchant menus */
+    var navContainer = document.querySelector('.mc-nav');
+    var navList = document.querySelector('[data-mc-nav-list]');
+    if (navContainer && navList) {
+      function checkNavFit() {
+        if (window.innerWidth < 1024) return;
+        var availableWidth = navContainer.clientWidth;
+        var totalWidth = navList.scrollWidth;
+        if (totalWidth > availableWidth) {
+          navList.classList.add('mc-nav__list--compact');
+        } else if (availableWidth - totalWidth > 60) {
+          navList.classList.remove('mc-nav__list--compact');
+        }
+      }
+      checkNavFit();
+      window.addEventListener('resize', checkNavFit, { passive: true });
+    }
   }
 
   /* ── Reveal on scroll ─────────────────────────────────────────────────── */
