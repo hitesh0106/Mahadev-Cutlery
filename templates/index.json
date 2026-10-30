@@ -131,13 +131,11 @@
     }
   },
   "order": [
-    "announcement",
     "hero",
     "departments",
     "featured-brands",
-    "trending",
-    "new-arrivals",
     "product-types",
+    "trending",
     "edit-skincare",
     "edit-innerwear",
     "edit-gifts",
