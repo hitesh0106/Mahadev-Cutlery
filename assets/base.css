@@ -2789,14 +2789,32 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
 /* ── Product type circles ───────────────────────────────────────────────── */
 .mc-types__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 8px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
+@media (min-width: 640px) {
+  .mc-types__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px 14px;
+  }
+}
+@media (min-width: 1024px) {
+  .mc-types__grid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 28px 16px;
+  }
+}
+@media (max-width: 420px) {
+  .mc-types__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 10px;
+  }
+}
 .mc-types__grid li { display: grid; justify-items: center; }
-.mc-type { display: grid; justify-items: center; gap: 10px; text-align: center; }
+.mc-type { display: grid; justify-items: center; gap: 10px; text-align: center; text-decoration: none; color: inherit; width: 100%; }
 .mc-type__media {
   display: grid;
   place-items: center;
@@ -2814,8 +2832,8 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   border-color: var(--mc-accent);
   box-shadow: 0 4px 14px rgba(32, 32, 30, 0.06);
 }
-.mc-type__img { width: 100%; height: 100%; object-fit: cover; }
-.mc-type__label { font-size: 14px; font-weight: 500; color: var(--mc-ink); }
+.mc-type__img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.mc-type__label { font-size: 13px; font-weight: 500; color: var(--mc-ink); line-height: 1.25; word-break: break-word; }
 
 /* ── Edit stories ───────────────────────────────────────────────────────── */
 .mc-edit__inner {
@@ -2954,7 +2972,6 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
 /* ── Mirror responsive ──────────────────────────────────────────────────── */
 @media (min-width: 640px) {
   .mc-fbrands__scroller { grid-auto-columns: 240px; padding-left: 24px; padding-right: 24px; }
-  .mc-types__grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 20px 14px; }
 }
 @media (min-width: 768px) {
   .mc-budget__grid { grid-template-columns: repeat(3, 1fr); }
