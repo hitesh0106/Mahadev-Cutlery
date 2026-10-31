@@ -1,29 +1,20 @@
 {%- comment -%}
-  Shop by department — reference editorial grid (2 featured cards + 3-across rows).
-  Each card has its OWN independent block with:
-    - Collection picker (type: "collection")
-    - Custom link (type: "url", fallback)
-    - Image picker (type: "image_picker")
-    - Title & Subtitle override
-    - Enable/disable toggle
-  Official 8 departments ONLY:
-    1. Beauty & Makeup
-    2. Skincare
-    3. Haircare
-    4. Hosiery & Innerwear
-    5. Toys & Kids
-    6. Gift Articles
-    7. Imitation Jewellery
-    8. Accessories & Grooming
-  NO kitchenware or cutlery department exists (store name remains MAHADEV CUTLERY & GIFT ARTICLES).
+  Shop by department — reference editorial grid (3+5 cards).
+  Supports BOTH:
+  1. Section-level independent collection pickers (collection_1 to collection_8)
+     so the merchant can select the exact collection for Skincare, Hosiery,
+     Beauty, Haircare, etc. directly in the Theme Editor right panel!
+  2. Block-level overrides (section.blocks) for merchants who want to add, remove,
+     or reorder department cards dynamically.
+
+  Each card (including the title, image, and circular arrow) links directly
+  to its own independent collection URL.
 {%- endcomment -%}
 {%- liquid
-  assign dg_rendered = 0
-  for block in section.blocks
-    if block.settings.enabled
-      assign dg_rendered = dg_rendered | plus: 1
-    endif
-  endfor
+  assign has_custom_blocks = false
+  if section.blocks.size > 0
+    assign has_custom_blocks = true
+  endif
 -%}
 <section class="mc-section mc-departments" id="{{ section.settings.anchor_id | default: 'departments' }}" data-testid="departments-section">
   <div class="mc-container">
@@ -45,7 +36,7 @@
     </div>
 
     <ul class="mc-departments__grid">
-      {%- if dg_rendered > 0 -%}
+      {%- if has_custom_blocks -%}
         {%- for block in section.blocks -%}
           {%- if block.settings.enabled == false -%}{%- continue -%}{%- endif -%}
           {%- liquid
@@ -196,135 +187,143 @@
           </li>
         {%- endfor -%}
       {%- else -%}
-        {%- comment -%} Guaranteed canonical fallback to 8 primary departments {%- endcomment -%}
-        <li class="mc-dept-cell">
-          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/beauty-makeup">
-            <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-makeup.jpg' | asset_url }}" alt="Beauty & Makeup" loading="eager" width="600" height="800">
-            </span>
-            <span class="mc-dept-cell__body">
-              <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Beauty &amp; Makeup</span>
-                <span class="mc-dept-cell__sub">Lips, eyes, face</span>
+        {%- comment -%}
+          Independent 8 Departments configured via Section Settings.
+          Allows the merchant to pick the collection directly in the Theme Editor right panel!
+        {%- endcomment -%}
+        {%- for i in (1..8) -%}
+          {%- liquid
+            case i
+              when 1
+                assign d_col = section.settings.collection_1
+                assign d_custom_img = section.settings.image_1
+                assign d_handle = 'beauty-makeup'
+                assign d_default_title = 'Beauty & Makeup'
+                assign d_default_sub = 'Lips, eyes, face'
+                assign d_asset = 'dept-makeup.jpg'
+                assign d_custom_title = section.settings.title_1
+              when 2
+                assign d_col = section.settings.collection_2
+                assign d_custom_img = section.settings.image_2
+                assign d_handle = 'skincare'
+                assign d_default_title = 'Skincare'
+                assign d_default_sub = 'Cleanse, treat, protect'
+                assign d_asset = 'dept-beauty.jpg'
+                assign d_custom_title = section.settings.title_2
+              when 3
+                assign d_col = section.settings.collection_3
+                assign d_custom_img = section.settings.image_3
+                assign d_handle = 'haircare'
+                assign d_default_title = 'Haircare'
+                assign d_default_sub = 'Everyday & professional'
+                assign d_asset = 'dept-haircare.jpg'
+                assign d_custom_title = section.settings.title_3
+              when 4
+                assign d_col = section.settings.collection_4
+                assign d_custom_img = section.settings.image_4
+                assign d_handle = 'hosiery-innerwear'
+                assign d_default_title = 'Hosiery & Innerwear'
+                assign d_default_sub = 'Men, women & kids'
+                assign d_asset = 'dept-innerwear.jpg'
+                assign d_custom_title = section.settings.title_4
+              when 5
+                assign d_col = section.settings.collection_5
+                assign d_custom_img = section.settings.image_5
+                assign d_handle = 'toys-kids'
+                assign d_default_title = 'Toys & Kids'
+                assign d_default_sub = 'Play & learn'
+                assign d_asset = 'dept-kids.jpg'
+                assign d_custom_title = section.settings.title_5
+              when 6
+                assign d_col = section.settings.collection_6
+                assign d_custom_img = section.settings.image_6
+                assign d_handle = 'gift-articles'
+                assign d_default_title = 'Gift Articles'
+                assign d_default_sub = 'For every occasion'
+                assign d_asset = 'dept-gifts.jpg'
+                assign d_custom_title = section.settings.title_6
+              when 7
+                assign d_col = section.settings.collection_7
+                assign d_custom_img = section.settings.image_7
+                assign d_handle = 'imitation-jewellery'
+                assign d_default_title = 'Imitation Jewellery'
+                assign d_default_sub = 'Everyday sparkle'
+                assign d_asset = 'dept-jewellery.jpg'
+                assign d_custom_title = section.settings.title_7
+              when 8
+                assign d_col = section.settings.collection_8
+                assign d_custom_img = section.settings.image_8
+                assign d_handle = 'accessories-grooming'
+                assign d_default_title = 'Accessories & Grooming'
+                assign d_default_sub = 'Brushes, combs, trimmers'
+                assign d_asset = 'dept-tools.jpg'
+                assign d_custom_title = section.settings.title_8
+            endcase
+
+            assign d_href = ''
+            if d_col != blank
+              assign d_href = d_col.url
+            else
+              assign d_href = routes.collections_url | append: '/' | append: d_handle
+            endif
+
+            assign d_title = d_custom_title | default: d_col.title | default: d_default_title
+            assign d_sub = d_default_sub
+          -%}
+          <li class="mc-dept-cell">
+            {%- if d_href != blank -%}
+              <a class="mc-dept-cell__link" href="{{ d_href }}" aria-label="{{ d_title | escape }}">
+            {%- else -%}
+              <div class="mc-dept-cell__link mc-dept-cell__link--static">
+            {%- endif -%}
+              <span class="mc-dept-cell__media">
+                {%- if d_custom_img != blank -%}
+                  {{ d_custom_img | image_url: width: 900 | image_tag:
+                    loading: 'eager',
+                    sizes: '(min-width: 990px) 33vw, (min-width: 640px) 25vw, 50vw',
+                    widths: '300, 600, 900',
+                    class: 'mc-dept-cell__img',
+                    alt: d_title | escape
+                  }}
+                {%- elsif d_col != blank and d_col.image != blank -%}
+                  {{ d_col.image | image_url: width: 900 | image_tag:
+                    loading: 'eager',
+                    sizes: '(min-width: 990px) 33vw, (min-width: 640px) 25vw, 50vw',
+                    widths: '300, 600, 900',
+                    class: 'mc-dept-cell__img',
+                    alt: d_title | escape
+                  }}
+                {%- else -%}
+                  <img
+                    class="mc-dept-cell__img"
+                    src="{{ d_asset | asset_url }}"
+                    alt="{{ d_title | escape }}"
+                    loading="eager"
+                    width="600"
+                    height="800"
+                  >
+                {%- endif -%}
               </span>
-              <span class="mc-dept-cell__arrow" aria-hidden="true">
-                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              <span class="mc-dept-cell__body">
+                <span class="mc-dept-cell__info">
+                  <span class="mc-dept-cell__title">{{ d_title | escape }}</span>
+                  {%- if d_sub != blank -%}
+                    <span class="mc-dept-cell__sub">{{ d_sub | escape }}</span>
+                  {%- endif -%}
+                </span>
+                {%- if d_href != blank -%}
+                  <span class="mc-dept-cell__arrow" aria-hidden="true">
+                    <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </span>
+                {%- endif -%}
               </span>
-            </span>
-          </a>
-        </li>
-        <li class="mc-dept-cell">
-          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/skincare">
-            <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-beauty.jpg' | asset_url }}" alt="Skincare" loading="eager" width="600" height="800">
-            </span>
-            <span class="mc-dept-cell__body">
-              <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Skincare</span>
-                <span class="mc-dept-cell__sub">Cleanse, treat, protect</span>
-              </span>
-              <span class="mc-dept-cell__arrow" aria-hidden="true">
-                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </span>
-            </span>
-          </a>
-        </li>
-        <li class="mc-dept-cell">
-          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/haircare">
-            <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-haircare.jpg' | asset_url }}" alt="Haircare" loading="eager" width="600" height="800">
-            </span>
-            <span class="mc-dept-cell__body">
-              <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Haircare</span>
-                <span class="mc-dept-cell__sub">Everyday &amp; professional</span>
-              </span>
-              <span class="mc-dept-cell__arrow" aria-hidden="true">
-                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </span>
-            </span>
-          </a>
-        </li>
-        <li class="mc-dept-cell">
-          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/hosiery-innerwear">
-            <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-innerwear.jpg' | asset_url }}" alt="Hosiery & Innerwear" loading="eager" width="600" height="800">
-            </span>
-            <span class="mc-dept-cell__body">
-              <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Hosiery &amp; Innerwear</span>
-                <span class="mc-dept-cell__sub">Men, women &amp; kids</span>
-              </span>
-              <span class="mc-dept-cell__arrow" aria-hidden="true">
-                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </span>
-            </span>
-          </a>
-        </li>
-        <li class="mc-dept-cell">
-          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/toys-kids">
-            <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-kids.jpg' | asset_url }}" alt="Toys & Kids" loading="eager" width="600" height="800">
-            </span>
-            <span class="mc-dept-cell__body">
-              <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Toys &amp; Kids</span>
-                <span class="mc-dept-cell__sub">Play &amp; learn</span>
-              </span>
-              <span class="mc-dept-cell__arrow" aria-hidden="true">
-                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </span>
-            </span>
-          </a>
-        </li>
-        <li class="mc-dept-cell">
-          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/gift-articles">
-            <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-gifts.jpg' | asset_url }}" alt="Gift Articles" loading="eager" width="600" height="800">
-            </span>
-            <span class="mc-dept-cell__body">
-              <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Gift Articles</span>
-                <span class="mc-dept-cell__sub">For every occasion</span>
-              </span>
-              <span class="mc-dept-cell__arrow" aria-hidden="true">
-                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </span>
-            </span>
-          </a>
-        </li>
-        <li class="mc-dept-cell">
-          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/imitation-jewellery">
-            <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-jewellery.jpg' | asset_url }}" alt="Imitation Jewellery" loading="eager" width="600" height="800">
-            </span>
-            <span class="mc-dept-cell__body">
-              <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Imitation Jewellery</span>
-                <span class="mc-dept-cell__sub">Everyday sparkle</span>
-              </span>
-              <span class="mc-dept-cell__arrow" aria-hidden="true">
-                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </span>
-            </span>
-          </a>
-        </li>
-        <li class="mc-dept-cell">
-          <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/accessories-grooming">
-            <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-tools.jpg' | asset_url }}" alt="Accessories & Grooming" loading="eager" width="600" height="800">
-            </span>
-            <span class="mc-dept-cell__body">
-              <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Accessories &amp; Grooming</span>
-                <span class="mc-dept-cell__sub">Brushes, combs, trimmers</span>
-              </span>
-              <span class="mc-dept-cell__arrow" aria-hidden="true">
-                <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </span>
-            </span>
-          </a>
-        </li>
+            {%- if d_href != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
       {%- endif -%}
     </ul>
   </div>
@@ -363,6 +362,174 @@
       "id": "anchor_id",
       "label": "HTML anchor id",
       "default": "departments"
+    },
+    {
+      "type": "header",
+      "content": "1. Beauty & Makeup"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Beauty & Makeup Collection",
+      "info": "Select your independent Beauty & Makeup collection."
+    },
+    {
+      "type": "text",
+      "id": "title_1",
+      "label": "Title override",
+      "placeholder": "Beauty & Makeup"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image override (optional)"
+    },
+    {
+      "type": "header",
+      "content": "2. Skincare"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Skincare Collection",
+      "info": "Select your independent Skincare collection."
+    },
+    {
+      "type": "text",
+      "id": "title_2",
+      "label": "Title override",
+      "placeholder": "Skincare"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image override (optional)"
+    },
+    {
+      "type": "header",
+      "content": "3. Haircare"
+    },
+    {
+      "type": "collection",
+      "id": "collection_3",
+      "label": "Haircare Collection",
+      "info": "Select your independent Haircare collection."
+    },
+    {
+      "type": "text",
+      "id": "title_3",
+      "label": "Title override",
+      "placeholder": "Haircare"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image override (optional)"
+    },
+    {
+      "type": "header",
+      "content": "4. Hosiery & Innerwear"
+    },
+    {
+      "type": "collection",
+      "id": "collection_4",
+      "label": "Hosiery & Innerwear Collection",
+      "info": "Select your independent Hosiery & Innerwear collection."
+    },
+    {
+      "type": "text",
+      "id": "title_4",
+      "label": "Title override",
+      "placeholder": "Hosiery & Innerwear"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image override (optional)"
+    },
+    {
+      "type": "header",
+      "content": "5. Toys & Kids"
+    },
+    {
+      "type": "collection",
+      "id": "collection_5",
+      "label": "Toys & Kids Collection",
+      "info": "Select your independent Toys & Kids collection."
+    },
+    {
+      "type": "text",
+      "id": "title_5",
+      "label": "Title override",
+      "placeholder": "Toys & Kids"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "Image override (optional)"
+    },
+    {
+      "type": "header",
+      "content": "6. Gift Articles"
+    },
+    {
+      "type": "collection",
+      "id": "collection_6",
+      "label": "Gift Articles Collection",
+      "info": "Select your independent Gift Articles collection."
+    },
+    {
+      "type": "text",
+      "id": "title_6",
+      "label": "Title override",
+      "placeholder": "Gift Articles"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_6",
+      "label": "Image override (optional)"
+    },
+    {
+      "type": "header",
+      "content": "7. Imitation Jewellery"
+    },
+    {
+      "type": "collection",
+      "id": "collection_7",
+      "label": "Imitation Jewellery Collection",
+      "info": "Select your independent Imitation Jewellery collection."
+    },
+    {
+      "type": "text",
+      "id": "title_7",
+      "label": "Title override",
+      "placeholder": "Imitation Jewellery"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_7",
+      "label": "Image override (optional)"
+    },
+    {
+      "type": "header",
+      "content": "8. Accessories & Grooming"
+    },
+    {
+      "type": "collection",
+      "id": "collection_8",
+      "label": "Accessories & Grooming Collection",
+      "info": "Select your independent Accessories & Grooming collection."
+    },
+    {
+      "type": "text",
+      "id": "title_8",
+      "label": "Title override",
+      "placeholder": "Accessories & Grooming"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_8",
+      "label": "Image override (optional)"
     }
   ],
   "blocks": [
@@ -423,73 +590,7 @@
   ],
   "presets": [
     {
-      "name": "Department grid",
-      "blocks": [
-        {
-          "type": "department",
-          "settings": {
-            "title": "Beauty & Makeup",
-            "sub": "Lips, eyes, face",
-            "handle": "beauty-makeup"
-          }
-        },
-        {
-          "type": "department",
-          "settings": {
-            "title": "Skincare",
-            "sub": "Cleanse, treat, protect",
-            "handle": "skincare"
-          }
-        },
-        {
-          "type": "department",
-          "settings": {
-            "title": "Haircare",
-            "sub": "Everyday & professional",
-            "handle": "haircare"
-          }
-        },
-        {
-          "type": "department",
-          "settings": {
-            "title": "Hosiery & Innerwear",
-            "sub": "Men, women & kids",
-            "handle": "hosiery-innerwear"
-          }
-        },
-        {
-          "type": "department",
-          "settings": {
-            "title": "Toys & Kids",
-            "sub": "Play & learn",
-            "handle": "toys-kids"
-          }
-        },
-        {
-          "type": "department",
-          "settings": {
-            "title": "Gift Articles",
-            "sub": "For every occasion",
-            "handle": "gift-articles"
-          }
-        },
-        {
-          "type": "department",
-          "settings": {
-            "title": "Imitation Jewellery",
-            "sub": "Everyday sparkle",
-            "handle": "imitation-jewellery"
-          }
-        },
-        {
-          "type": "department",
-          "settings": {
-            "title": "Accessories & Grooming",
-            "sub": "Brushes, combs, trimmers",
-            "handle": "accessories-grooming"
-          }
-        }
-      ]
+      "name": "Department grid"
     }
   ]
 }
