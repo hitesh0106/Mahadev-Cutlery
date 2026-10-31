@@ -131,6 +131,14 @@
                     class: 'mc-dept-cell__img',
                     alt: dg_alt
                   }}
+                {%- elsif dg_collection != blank and dg_collection.image != blank -%}
+                  {{ dg_collection.image | image_url: width: 900 | image_tag:
+                    loading: 'eager',
+                    sizes: '(min-width: 990px) 33vw, (min-width: 640px) 25vw, 50vw',
+                    widths: '300, 600, 900',
+                    class: 'mc-dept-cell__img',
+                    alt: dg_alt
+                  }}
                 {%- else -%}
                   {%- liquid
                     case dg_handle_key
@@ -341,13 +349,14 @@
     {
       "type": "text",
       "id": "action_label",
-      "label": "Header action label",
+      "label": "Shop All label",
       "default": "Shop all"
     },
     {
       "type": "url",
       "id": "action_link",
-      "label": "Header action link"
+      "label": "Shop All link",
+      "info": "Independently configurable URL for the Shop All button (defaults to /collections if left blank)."
     },
     {
       "type": "text",
@@ -364,8 +373,26 @@
         {
           "type": "checkbox",
           "id": "enabled",
-          "label": "Show this department",
+          "label": "Enable department card",
           "default": true
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Department title",
+          "info": "Leave blank to use the selected collection title."
+        },
+        {
+          "type": "text",
+          "id": "sub",
+          "label": "Subtitle",
+          "info": "e.g. “Lips, eyes, face” under Beauty & Makeup."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image picker",
+          "info": "Image for this department card. Falls back to collection featured image or bundled asset."
         },
         {
           "type": "collection",
@@ -376,7 +403,7 @@
         {
           "type": "url",
           "id": "link",
-          "label": "Custom link (optional fallback)",
+          "label": "Optional custom URL",
           "info": "Used when no collection is selected above."
         },
         {
@@ -384,22 +411,6 @@
           "id": "handle",
           "label": "Collection handle (legacy fallback)",
           "info": "E.g. beauty-makeup → /collections/beauty-makeup."
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Title override (optional)"
-        },
-        {
-          "type": "text",
-          "id": "sub",
-          "label": "Subtitle / category line",
-          "info": "e.g. “Lips, eyes, face” under Beauty & Makeup."
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Image override (optional)"
         },
         {
           "type": "text",
