@@ -1,10 +1,17 @@
 {%- comment -%}
   Edit story — split editorial section (image + eyebrow/title/text + chip
-  pills + optional two product cards). Three instances in the reference
+  pills + TWO independent product cards). Three instances in the reference
   design: Beauty & Skincare, Hosiery & Innerwear, Gifts/Toys/Jewellery.
-  Chips: label + optional link; without a link the chip is a static pill
-  (never a dead button). Product cards render only when a collection with
-  products is picked — nothing is invented.
+
+  Product Card 1 and Product Card 2 each have their OWN independent
+  collection picker. The merchant can select a different collection for
+  each card in the Theme Editor.
+
+  Chips: label + optional collection or link; without a destination the
+  chip is a static pill (never a dead button).
+
+  Product cards render only when a collection with products is picked.
+  Nothing is invented.
 {%- endcomment -%}
 {%- liquid
   assign es_has_content = false
@@ -13,7 +20,7 @@
   endif
   assign es_rendered = 0
   for block in section.blocks
-    if block.settings.label != blank
+    if block.type == 'chip' and block.settings.label != blank
       assign es_rendered = es_rendered | plus: 1
     endif
   endfor
@@ -63,10 +70,19 @@
         {%- if es_rendered > 0 -%}
           <div class="mc-edit__chips">
             {%- for block in section.blocks -%}
+              {%- if block.type != 'chip' -%}{%- continue -%}{%- endif -%}
               {%- assign es_label = block.settings.label -%}
               {%- if es_label == blank -%}{%- continue -%}{%- endif -%}
-              {%- if block.settings.link != blank -%}
-                <a class="mc-chip" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ es_label | escape }}</a>
+              {%- liquid
+                assign chip_href = ''
+                if block.settings.collection != blank
+                  assign chip_href = block.settings.collection.url
+                elsif block.settings.link != blank
+                  assign chip_href = block.settings.link
+                endif
+              -%}
+              {%- if chip_href != blank -%}
+                <a class="mc-chip" href="{{ chip_href }}" {{ block.shopify_attributes }}>{{ es_label | escape }}</a>
               {%- else -%}
                 <span class="mc-chip mc-chip--static" {{ block.shopify_attributes }}>{{ es_label | escape }}</span>
               {%- endif -%}
@@ -74,48 +90,48 @@
           </div>
         {%- endif -%}
 
+        {%- comment -%} Product Cards — each has its own independent collection or product {%- endcomment -%}
         {%- liquid
-          assign es_collection = section.settings.collection
-          assign has_es_products = false
-          if es_collection != blank and es_collection.products_count > 0
-            assign has_es_products = true
+          assign card1_collection = section.settings.collection_1
+          assign card2_collection = section.settings.collection_2
+          assign card1_product = section.settings.product_1
+          if card1_product == blank and card1_collection != blank and card1_collection.products_count > 0
+            assign card1_product = card1_collection.products.first
+          endif
+          assign card2_product = section.settings.product_2
+          if card2_product == blank and card2_collection != blank and card2_collection.products_count > 0
+            assign card2_product = card2_collection.products.first
           endif
 
-          assign sec_anchor = section.settings.anchor_id | downcase
-          assign sec_eyebrow = section.settings.eyebrow | downcase
-          assign sec_title = section.settings.title | downcase
+          assign has_card1 = false
+          assign has_card2 = false
+          if card1_product != blank
+            assign has_card1 = true
+          endif
+          if card2_product != blank
+            assign has_card2 = true
+          endif
         -%}
 
-        <ul class="mc-edit__products">
-          {%- if has_es_products -%}
-            {%- for es_product in es_collection.products limit: 2 -%}
+        {%- if has_card1 or has_card2 -%}
+          <ul class="mc-edit__products">
+            {%- if has_card1 -%}
               <li>
-                {% render 'product-card', card_product: es_product, show_vendor: true, reveal: false %}
+                {% render 'product-card', card_product: card1_product, show_vendor: true, reveal: false %}
               </li>
-            {%- endfor -%}
-          {%- else -%}
-            {%- for i in (1..2) -%}
+            {%- endif -%}
+            {%- if has_card2 -%}
               <li>
-                <article class="mc-card mc-card--placeholder">
-                  <div class="mc-card__media-wrap">
-                    <div class="mc-card__placeholder-media" style="aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:var(--mc-cream,#FBF9F5);color:var(--mc-muted,#8C827A);">
-                      {{ 'product-' | append: i | placeholder_svg_tag: 'mc-card__placeholder-svg' }}
-                    </div>
-                  </div>
-                  <div class="mc-card__body">
-                    <p class="mc-card__vendor">{{ shop.name | default: 'MAHADEV' }}</p>
-                    <h3 class="mc-card__title">
-                      <a href="{{ es_collection.url | default: routes.all_products_collection_url }}">{{ 'cart.product' | t | default: 'Curated Item' }}</a>
-                    </h3>
-                    <div class="mc-card__price">
-                      <span class="mc-price">—</span>
-                    </div>
-                  </div>
-                </article>
+                {% render 'product-card', card_product: card2_product, show_vendor: true, reveal: false %}
               </li>
-            {%- endfor -%}
-          {%- endif -%}
-        </ul>
+            {%- endif -%}
+          </ul>
+        {%- elsif request.design_mode -%}
+          <div class="mc-edit__editor-empty" style="padding:16px 20px;margin-top:24px;border:1px dashed var(--mc-border);background:var(--mc-bg);border-radius:4px;font-size:13px;color:var(--mc-ink-soft);text-align:center;">
+            <p style="margin:0 0 6px;font-weight:600;color:var(--mc-ink);">Story Product Cards (Editor Preview)</p>
+            <p style="margin:0;">Select a collection or product for Card 1 and Card 2 in the section settings. Product cards will only display on the live store when configured.</p>
+          </div>
+        {%- endif -%}
       </div>
     </div>
   </section>
@@ -188,10 +204,36 @@
       "default": "left"
     },
     {
+      "type": "header",
+      "content": "Product Card 1"
+    },
+    {
       "type": "collection",
-      "id": "collection",
-      "label": "Collection for the 2 product cards (optional)",
-      "info": "Cards render only when this collection has products. Nothing is invented."
+      "id": "collection_1",
+      "label": "Collection for card 1",
+      "info": "Select the collection for the first product card. The first product from this collection will be displayed."
+    },
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "Or specific product for card 1 (optional)",
+      "info": "Overrides the collection selection when set."
+    },
+    {
+      "type": "header",
+      "content": "Product Card 2"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Collection for card 2",
+      "info": "Select the collection for the second product card. Independent from card 1 — choose a different collection if needed."
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "Or specific product for card 2 (optional)",
+      "info": "Overrides the collection selection when set."
     },
     {
       "type": "text",
@@ -202,7 +244,7 @@
   "blocks": [
     {
       "type": "chip",
-      "name": "Chip",
+      "name": "Chip / tag",
       "settings": [
         {
           "type": "text",
@@ -211,10 +253,16 @@
           "info": "A product type (e.g. Serums) or a brand (e.g. Cetaphil)."
         },
         {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection (optional)",
+          "info": "When picked, the chip links to this collection. Takes priority over the custom link below."
+        },
+        {
           "type": "url",
           "id": "link",
-          "label": "Link (optional)",
-          "info": "Without a link the chip renders as a static pill."
+          "label": "Custom link (fallback)",
+          "info": "Used when no collection is selected above. Without any link the chip renders as a static pill."
         }
       ]
     }

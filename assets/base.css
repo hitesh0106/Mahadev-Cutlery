@@ -3643,3 +3643,188 @@ h1.mc-section__heading, h2.mc-section__heading, h3.mc-section__heading { font-fa
   }
 }
 
+/* ==========================================================================
+   Brand Landing Page & Category Navigation Enhancements
+   ========================================================================== */
+.mc-brand-page {
+  padding-top: 32px;
+  padding-bottom: 64px;
+}
+.mc-brand-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--mc-border);
+  margin-bottom: 32px;
+}
+.mc-brand-header__copy {
+  max-width: 720px;
+}
+.mc-brand-header__title {
+  font-family: var(--mc-font-heading);
+  font-size: clamp(32px, 4.5vw, 48px);
+  line-height: 1.1;
+  color: var(--mc-ink);
+  margin: 6px 0 12px;
+}
+.mc-brand-header__desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--mc-ink-soft);
+  margin-bottom: 12px;
+}
+.mc-brand-header__taxonomy-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--mc-ink);
+  background: var(--mc-cream, #FBF9F5);
+  padding: 6px 12px;
+  border: 1px solid var(--mc-border);
+  border-radius: 4px;
+  margin-top: 8px;
+}
+.mc-badge--verified {
+  background: var(--mc-ink);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.mc-brand-header__logo {
+  flex-shrink: 0;
+  max-width: 160px;
+}
+.mc-brand-logo-img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Brand Category Subcollections Bar */
+.mc-brand-categories {
+  margin-bottom: 36px;
+  padding: 20px 24px;
+  background: var(--mc-cream, #FBF9F5);
+  border: 1px solid var(--mc-border);
+  border-radius: 4px;
+}
+.mc-brand-categories__heading {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mc-ink-soft);
+  margin: 0 0 14px;
+}
+.mc-brand-categories__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.mc-brand-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: #fff;
+  border: 1px solid var(--mc-border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mc-ink);
+  text-decoration: none;
+  transition: all 0.25s var(--mc-ease);
+}
+.mc-brand-cat-chip:hover {
+  background: var(--mc-ink);
+  color: #fff;
+  border-color: var(--mc-ink);
+}
+.mc-brand-cat-chip--static {
+  cursor: default;
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--mc-ink-soft);
+}
+.mc-brand-cat-chip__media {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mc-brand-cat-chip__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Featured Brand Card Multiple Links */
+.mc-fbrand--has-categories {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.mc-fbrand__head-link {
+  display: grid;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+.mc-fbrand__head-link:hover .mc-fbrand__name {
+  color: var(--mc-accent, #8C4A32);
+}
+.mc-fbrand__categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+.mc-fbrand__cat-link {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--mc-ink);
+  background: var(--mc-cream, #FBF9F5);
+  border: 1px solid var(--mc-border);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.mc-fbrand__cat-link:hover {
+  background: var(--mc-ink);
+  color: #fff;
+  border-color: var(--mc-ink);
+}
+.mc-fbrand__cat-static {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--mc-ink-soft);
+  background: var(--mc-cream, #FBF9F5);
+  border: 1px solid var(--mc-border);
+  border-radius: 999px;
+}
+
+/* Static Non-Clickable Card Fallbacks */
+.mc-type--static {
+  cursor: default;
+  opacity: 0.85;
+}
+.mc-dept-cell__link--static {
+  cursor: default;
+}
+

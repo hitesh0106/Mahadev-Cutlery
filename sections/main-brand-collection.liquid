@@ -1,0 +1,236 @@
+{%- comment -%}
+  Dedicated Brand Collection Page / Landing Section:
+  - Verified Brand Header (name, description, logo, verified taxonomy notes)
+  - Category sub-collection navigation cards / chips (each with its OWN independent collection selector)
+  - Live Shopify products for this brand
+  - Storefront sorting & filtering
+  - Honest, graceful empty state when brand products are not currently stocked
+{%- endcomment -%}
+{%- assign mc_page_size = section.settings.products_per_page | default: 12 -%}
+{%- assign mc_sort_current = collection.sort_by | default: collection.default_sort_by -%}
+
+<section class="mc-section mc-brand-page" data-testid="brand-collection-page">
+  <div class="mc-container">
+    <header class="mc-brand-header">
+      <div class="mc-brand-header__copy">
+        <p class="mc-eyebrow">— {{ section.settings.eyebrow | default: 'Brand Spotlight' | escape | upcase }}</p>
+        <h1 class="mc-brand-header__title">{{ collection.title | escape }}</h1>
+        {%- if collection.description != blank -%}
+          <div class="mc-brand-header__desc mc-rte">{{ collection.description }}</div>
+        {%- elsif section.settings.description != blank -%}
+          <p class="mc-brand-header__desc">{{ section.settings.description | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.taxonomy_note != blank -%}
+          <p class="mc-brand-header__taxonomy-note">
+            <span class="mc-badge mc-badge--verified">Verified Brand</span>
+            {{ section.settings.taxonomy_note | escape }}
+          </p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.logo != blank -%}
+        <div class="mc-brand-header__logo">
+          {{ section.settings.logo | image_url: width: 240 | image_tag: loading: 'eager', widths: '120, 240', class: 'mc-brand-logo-img', alt: collection.title | escape }}
+        </div>
+      {%- elsif collection.image != blank -%}
+        <div class="mc-brand-header__logo">
+          {{ collection.image | image_url: width: 240 | image_tag: loading: 'eager', widths: '120, 240', class: 'mc-brand-logo-img', alt: collection.title | escape }}
+        </div>
+      {%- endif -%}
+    </header>
+
+    {%- comment -%} Category Subcollections Bar {%- endcomment -%}
+    {%- if section.blocks.size > 0 -%}
+      <div class="mc-brand-categories">
+        <p class="mc-brand-categories__heading">{{ section.settings.categories_heading | default: 'Browse by Category' | escape }}</p>
+        <div class="mc-brand-categories__grid">
+          {%- for block in section.blocks -%}
+            {%- assign cat_title = block.settings.title -%}
+            {%- if cat_title == blank -%}{%- continue -%}{%- endif -%}
+            {%- liquid
+              assign cat_href = ''
+              if block.settings.collection != blank
+                assign cat_href = block.settings.collection.url
+              elsif block.settings.link != blank
+                assign cat_href = block.settings.link
+              endif
+            -%}
+            {%- if cat_href != blank -%}
+              <a class="mc-brand-cat-chip" href="{{ cat_href }}" {{ block.shopify_attributes }}>
+                {%- if block.settings.image != blank -%}
+                  <span class="mc-brand-cat-chip__media">
+                    {{ block.settings.image | image_url: width: 80 | image_tag: loading: 'lazy', widths: '40, 80', class: 'mc-brand-cat-chip__img', alt: cat_title | escape }}
+                  </span>
+                {%- endif -%}
+                <span class="mc-brand-cat-chip__label">{{ cat_title | escape }}</span>
+              </a>
+            {%- else -%}
+              <span class="mc-brand-cat-chip mc-brand-cat-chip--static" {{ block.shopify_attributes }}>
+                <span class="mc-brand-cat-chip__label">{{ cat_title | escape }}</span>
+              </span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- paginate collection.products by mc_page_size -%}
+      <div class="mc-brand-products">
+        {%- if collection.filters.size > 0 or collection.all_tags.size > 0 -%}
+          <form class="mc-toolbar" method="get" action="{{ collection.url }}" data-mc-filters>
+            <div class="mc-toolbar__row">
+              <button type="button" class="mc-btn mc-btn--secondary mc-btn--sm" data-mc-filters-toggle aria-expanded="false" aria-controls="mc-filters-panel">
+                {% render 'icon', name: 'menu', size: 16 %} {{ 'collections.filter' | t }}
+              </button>
+
+              <div class="mc-toolbar__sort">
+                <label class="mc-label" for="mc-sort-by">{{ 'collections.sort' | t }}</label>
+                <select class="mc-select mc-select--sm" id="mc-sort-by" name="sort_by" data-mc-sort-select onchange="this.form.submit()">
+                  {%- for option in collection.sort_options -%}
+                    <option value="{{ option.value }}" {% if option.value == mc_sort_current %}selected{% endif %}>{{ option.name | escape }}</option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            </div>
+
+            {%- if collection.filters.size > 0 -%}
+              <div class="mc-filters" id="mc-filters-panel" data-mc-filters-panel>
+                {%- for filter in collection.filters -%}
+                  {%- case filter.type -%}
+                    {%- when 'boolean' or 'list' -%}
+                      <fieldset class="mc-filters__group">
+                        <legend class="mc-filters__legend">{{ filter.label | escape }}</legend>
+                        {%- for value in filter.values -%}
+                          <label class="mc-filters__option">
+                            <input
+                              type="checkbox"
+                              class="mc-checkbox"
+                              name="{{ value.param_name }}"
+                              value="{{ value.value }}"
+                              {% if value.active %}checked{% endif %}
+                              {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                            >
+                            <span>{{ value.label | escape }}</span>
+                            <span class="mc-filters__count">({{ value.count }})</span>
+                          </label>
+                        {%- endfor -%}
+                      </fieldset>
+                    {%- when 'price_range' -%}
+                      <fieldset class="mc-filters__group">
+                        <legend class="mc-filters__legend">{{ filter.label | escape }}</legend>
+                        <div class="mc-filters__price">
+                          <input class="mc-input mc-input--sm" type="number" min="0" step="1" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | divided_by: 100.0 | replace: '.0', '' }}" placeholder="0" aria-label="{{ 'collections.price' | t }} min">
+                          <span class="mc-filters__price-sep" aria-hidden="true">&ndash;</span>
+                          <input class="mc-input mc-input--sm" type="number" min="0" step="1" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | divided_by: 100.0 | replace: '.0', '' }}" placeholder="{{ 'collections.price' | t }} max" aria-label="{{ 'collections.price' | t }} max">
+                        </div>
+                      </fieldset>
+                  {%- endcase -%}
+                {%- endfor -%}
+                <div class="mc-filters__actions">
+                  <button type="submit" class="mc-btn mc-btn--primary mc-btn--sm">{{ 'collections.apply' | t }}</button>
+                  <a class="mc-btn mc-btn--ghost mc-btn--sm" href="{{ collection.url }}">{{ 'collections.clear' | t }}</a>
+                </div>
+              </div>
+            {%- endif -%}
+          </form>
+        {%- endif -%}
+
+        {%- if paginate.items == 0 -%}
+          <div class="mc-empty-state mc-brand-empty">
+            <h3 class="mc-empty-state__title">No products currently available</h3>
+            <p class="mc-empty-state__text">We are continuously curating our shelves. Check back soon for stock updates from {{ collection.title | escape }}.</p>
+            <a class="mc-btn mc-btn--secondary" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+          </div>
+        {%- else -%}
+          <div class="mc-grid mc-grid--products" data-mc-collection-grid>
+            {%- for product in collection.products -%}
+              {% render 'product-card', card_product: product, show_vendor: false %}
+            {%- endfor -%}
+          </div>
+          {% render 'pagination', paginate: paginate %}
+        {%- endif -%}
+      </div>
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Brand Spotlight"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Brand description override",
+      "info": "Used when the collection does not have its own description."
+    },
+    {
+      "type": "text",
+      "id": "taxonomy_note",
+      "label": "Verified taxonomy / catalog note",
+      "info": "E.g. “Zoiro: Men's innerwear only” or “L'Oréal Professionnel: Salon-exclusive formulas”"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Brand logo override"
+    },
+    {
+      "type": "text",
+      "id": "categories_heading",
+      "label": "Categories bar heading",
+      "default": "Shop by Category"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 16
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category subcollection",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Category title",
+          "info": "E.g. Face Wash, Men's Innerwear, Lip Makeup, Serums"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Shopify collection",
+          "info": "Select the independent Shopify collection for this brand category."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Custom link (optional fallback)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Thumbnail icon (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand collection"
+    }
+  ]
+}
+{% endschema %}

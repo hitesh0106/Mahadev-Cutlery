@@ -1,13 +1,18 @@
 {%- comment -%}
-  Shop by product type — circular image chips (11 in the reference design).
-  Each block: title + optional link + optional image. Default link is a
-  storefront search for the type (works before type collections exist);
-  default image is the bundled placeholder chosen by handle map below.
+  Shop by product type — circular image chips.
+  Each block has its own title, collection picker, optional custom link,
+  optional image, and enable/disable toggle. The merchant can select a
+  unique Shopify collection for every single tile independently.
+
+  Link priority:
+    1. If a collection is selected → collection.url
+    2. If a custom link is provided → custom link
+    3. Otherwise → storefront search for the type name
 {%- endcomment -%}
 {%- liquid
   assign pt_rendered = 0
   for block in section.blocks
-    if block.settings.title != blank
+    if block.settings.title != blank and block.settings.enabled
       assign pt_rendered = pt_rendered | plus: 1
     endif
   endfor
@@ -28,38 +33,61 @@
         {%- if pt_rendered > 0 -%}
           {%- for block in section.blocks -%}
             {%- assign pt_title = block.settings.title -%}
-            {%- if pt_title == blank -%}{%- continue -%}{%- endif -%}
+            {%- if pt_title == blank or block.settings.enabled == false -%}{%- continue -%}{%- endif -%}
             {%- liquid
               assign pt_handle = pt_title | handleize
               assign pt_asset = 'dept-beauty.jpg'
               if pt_handle contains 'shampoo' or pt_handle contains 'conditioner'
                 assign pt_asset = 'dept-haircare.jpg'
-              elsif pt_handle contains 'lip' or pt_handle contains 'makeup'
+              elsif pt_handle contains 'lip' or pt_handle contains 'makeup' or pt_handle contains 'foundation' or pt_handle contains 'kajal' or pt_handle contains 'mascara'
                 assign pt_asset = 'dept-makeup.jpg'
               elsif pt_handle contains 'innerwear'
                 assign pt_asset = 'dept-innerwear.jpg'
               elsif pt_handle contains 'gift'
                 assign pt_asset = 'dept-gifts.jpg'
-              elsif pt_handle contains 'toy'
+              elsif pt_handle contains 'toy' or pt_handle contains 'game'
                 assign pt_asset = 'dept-kids.jpg'
-              elsif pt_handle contains 'cream'
+              elsif pt_handle contains 'jewellery'
+                assign pt_asset = 'dept-jewellery.jpg'
+              elsif pt_handle contains 'groom' or pt_handle contains 'styling' or pt_handle contains 'tool'
+                assign pt_asset = 'dept-tools.jpg'
+              elsif pt_handle contains 'cream' or pt_handle contains 'serum' or pt_handle contains 'moistur' or pt_handle contains 'wash'
                 assign pt_asset = 'editorial-skincare.jpg'
+              endif
+
+              assign pt_href = ''
+              if block.settings.collection != blank
+                assign pt_href = block.settings.collection.url
+              elsif block.settings.link != blank
+                assign pt_href = block.settings.link
               endif
             -%}
             <li {{ block.shopify_attributes }}>
-              <a
-                class="mc-type"
-                href="{% if block.settings.link != blank %}{{ block.settings.link }}{% else %}{{ routes.search_url }}?q={{ pt_title | url_encode }}{% endif %}"
-              >
+              {%- if pt_href != blank -%}
+                <a
+                  class="mc-type"
+                  href="{{ pt_href }}"
+                  aria-label="{{ pt_title | escape }}"
+                >
+              {%- else -%}
+                <span
+                  class="mc-type mc-type--static"
+                  aria-label="{{ pt_title | escape }}"
+                >
+              {%- endif -%}
                 <span class="mc-type__media">
                   {%- if block.settings.image != blank -%}
-                    {{ block.settings.image | image_url: width: 264 | image_tag: loading: 'lazy', widths: '132, 264', class: 'mc-type__img', alt: '' }}
+                    {{ block.settings.image | image_url: width: 264 | image_tag: loading: 'lazy', widths: '132, 264', class: 'mc-type__img', alt: pt_title | escape }}
                   {%- else -%}
-                    <img class="mc-type__img" src="{{ pt_asset | asset_url }}" alt="" loading="lazy" width="264" height="264">
+                    <img class="mc-type__img" src="{{ pt_asset | asset_url }}" alt="{{ pt_title | escape }}" loading="lazy" width="264" height="264">
                   {%- endif -%}
                 </span>
                 <span class="mc-type__label">{{ pt_title | escape }}</span>
-              </a>
+              {%- if pt_href != blank -%}
+                </a>
+              {%- else -%}
+                </span>
+              {%- endif -%}
             </li>
           {%- endfor -%}
         {%- else -%}
@@ -70,12 +98,12 @@
             {%- assign pt_name = parts[0] -%}
             {%- assign pt_img = parts[1] -%}
             <li>
-              <a class="mc-type" href="{{ routes.search_url }}?q={{ pt_name | url_encode }}">
+              <span class="mc-type mc-type--static" aria-label="{{ pt_name | escape }}">
                 <span class="mc-type__media">
-                  <img class="mc-type__img" src="{{ pt_img | asset_url }}" alt="" loading="lazy" width="264" height="264">
+                  <img class="mc-type__img" src="{{ pt_img | asset_url }}" alt="{{ pt_name | escape }}" loading="lazy" width="264" height="264">
                 </span>
                 <span class="mc-type__label">{{ pt_name | escape }}</span>
-              </a>
+              </span>
             </li>
           {%- endfor -%}
         {%- endif -%}
@@ -106,21 +134,34 @@
       "name": "Product type",
       "settings": [
         {
+          "type": "checkbox",
+          "id": "enabled",
+          "label": "Show this tile",
+          "default": true
+        },
+        {
           "type": "text",
           "id": "title",
           "label": "Type title",
           "info": "e.g. Face Wash, Serum, Shampoo, Innerwear, Gifts, Toys"
         },
         {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection",
+          "info": "Select the Shopify collection this tile should link to. Each tile can have its own independent collection."
+        },
+        {
           "type": "url",
           "id": "link",
-          "label": "Link (optional)",
-          "info": "Defaults to a storefront search for the type name."
+          "label": "Custom link (fallback)",
+          "info": "Used only when no collection is selected above. If both are empty, defaults to a storefront search."
         },
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Image (optional)"
+          "label": "Image (optional)",
+          "info": "Circular thumbnail for this tile. Uses a category placeholder when empty."
         }
       ]
     }
@@ -129,10 +170,22 @@
     {
       "name": "Product types",
       "blocks": [
-        { "type": "type" },
-        { "type": "type" },
-        { "type": "type" },
-        { "type": "type" }
+        { "type": "type", "settings": { "title": "Face Wash" } },
+        { "type": "type", "settings": { "title": "Moisturizer" } },
+        { "type": "type", "settings": { "title": "Face Serum" } },
+        { "type": "type", "settings": { "title": "Shampoo" } },
+        { "type": "type", "settings": { "title": "Conditioner" } },
+        { "type": "type", "settings": { "title": "Lipstick & Lip Care" } },
+        { "type": "type", "settings": { "title": "Foundation & Compact" } },
+        { "type": "type", "settings": { "title": "Kajal & Mascara" } },
+        { "type": "type", "settings": { "title": "Men's Innerwear" } },
+        { "type": "type", "settings": { "title": "Women's Innerwear" } },
+        { "type": "type", "settings": { "title": "Children's Innerwear" } },
+        { "type": "type", "settings": { "title": "Hair Styling Tools" } },
+        { "type": "type", "settings": { "title": "Toys & Games" } },
+        { "type": "type", "settings": { "title": "Gift Sets" } },
+        { "type": "type", "settings": { "title": "Imitation Jewellery" } },
+        { "type": "type", "settings": { "title": "Grooming Tools" } }
       ]
     }
   ]

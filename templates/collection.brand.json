@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-brand-collection",
+      "settings": {
+        "eyebrow": "Brand Spotlight",
+        "categories_heading": "Shop by Category",
+        "products_per_page": 16
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

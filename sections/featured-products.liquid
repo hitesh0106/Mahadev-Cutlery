@@ -1,27 +1,27 @@
 {%- comment -%}
-  Featured products — grid / carousel of product cards from a picked collection.
-  Falls back to guaranteed canonical sample products when none is picked or collection is empty.
-  Matches reference design (Image 2 parity).
+  Featured products — carousel of product cards from a picked collection or explicit product list.
+  Uses real Shopify product data only. If the selected collection is empty,
+  it never generates fabricated products on the live storefront.
 {%- endcomment -%}
 {%- liquid
-  assign fp_collection = section.settings.collection
-  if fp_collection == blank
-    assign fp_collection = collections.all
-  endif
-
+  assign fp_products = nil
   assign has_real_products = false
-  if fp_collection != blank and fp_collection.products.size > 0
+  assign fp_url = routes.all_products_collection_url
+
+  if section.settings.product_list != blank and section.settings.product_list.count > 0
+    assign fp_products = section.settings.product_list
     assign has_real_products = true
+  elsif section.settings.collection != blank and section.settings.collection.products_count > 0
+    assign fp_products = section.settings.collection.products
+    assign has_real_products = true
+    assign fp_url = section.settings.collection.url
+  elsif section.settings.collection == blank and collections.all != blank and collections.all.products_count > 0
+    assign fp_products = collections.all.products
+    assign has_real_products = true
+    assign fp_url = collections.all.url
   endif
 
-  assign fp_limit = section.settings.products_to_show | default: 4
-
-  assign is_new_arrivals = false
-  assign h_lower = section.settings.heading | downcase
-  assign e_lower = section.settings.eyebrow | downcase
-  if h_lower contains 'new' or h_lower contains 'arrivals' or e_lower contains 'just'
-    assign is_new_arrivals = true
-  endif
+  assign fp_limit = section.settings.products_to_show | default: 8
 -%}
 
 <section class="mc-section{% if section.settings.bg_soft %} mc-section--soft{% endif %} mc-featured-products" id="{{ section.settings.heading | handleize | default: 'featured-products' }}" data-testid="featured-products-section">
@@ -35,8 +35,8 @@
           <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
         {%- endif -%}
       </div>
-      {%- if section.settings.show_view_all -%}
-        <a class="mc-action-link" href="{{ fp_collection.url | default: routes.all_products_collection_url }}">
+      {%- if section.settings.show_view_all and has_real_products -%}
+        <a class="mc-action-link" href="{{ fp_url }}">
           VIEW ALL
           <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
@@ -45,12 +45,12 @@
 
     <ul class="mc-products-carousel" data-carousel-track>
       {%- if has_real_products -%}
-        {%- for product in fp_collection.products limit: fp_limit -%}
+        {%- for product in fp_products limit: fp_limit -%}
           <li class="mc-products-carousel__item">
             {% render 'product-card', card_product: product, show_vendor: true, reveal: false %}
           </li>
         {%- endfor -%}
-      {%- else -%}
+      {%- elsif request.design_mode -%}
         {%- for i in (1..fp_limit) -%}
           <li class="mc-products-carousel__item">
             <article class="mc-card mc-card--placeholder">
@@ -60,9 +60,9 @@
                 </div>
               </div>
               <div class="mc-card__body">
-                <p class="mc-card__vendor">{{ shop.name | default: 'MAHADEV' }}</p>
+                <p class="mc-card__vendor">Theme Editor Preview</p>
                 <h3 class="mc-card__title">
-                  <a href="{{ fp_collection.url | default: routes.all_products_collection_url }}">{{ 'cart.product' | t | default: 'Curated Item' }}</a>
+                  <span>Assign a collection or product list</span>
                 </h3>
                 <div class="mc-card__price">
                   <span class="mc-price">—</span>
@@ -71,17 +71,24 @@
             </article>
           </li>
         {%- endfor -%}
+      {%- else -%}
+        <li class="mc-products-carousel__empty" style="grid-column: 1 / -1; padding: 48px 16px; text-align: center; color: var(--mc-ink-soft); list-style: none; width: 100%;">
+          <p style="margin: 0 0 12px; font-size: 15px;">{{ 'collections.empty' | t | default: 'No products currently available in this section.' }}</p>
+          <a class="mc-btn mc-btn--secondary mc-btn--sm" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t | default: 'Explore All Products' }}</a>
+        </li>
       {%- endif -%}
     </ul>
 
-    <div class="mc-carousel-nav" aria-label="Carousel navigation">
-      <button type="button" class="mc-carousel-btn mc-carousel-btn--prev" aria-label="Previous products" data-carousel-prev>
-        <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg>
-      </button>
-      <button type="button" class="mc-carousel-btn mc-carousel-btn--next" aria-label="Next products" data-carousel-next>
-        <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
-      </button>
-    </div>
+    {%- if has_real_products -%}
+      <div class="mc-carousel-nav" aria-label="Carousel navigation">
+        <button type="button" class="mc-carousel-btn mc-carousel-btn--prev" aria-label="Previous products" data-carousel-prev>
+          <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="mc-carousel-btn mc-carousel-btn--next" aria-label="Next products" data-carousel-next>
+          <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -110,8 +117,14 @@
     {
       "type": "collection",
       "id": "collection",
-      "label": "Collection",
-      "info": "Leave empty to use All Products or fallback sample cards."
+      "label": "Shopify collection",
+      "info": "Select the independent Shopify collection for this section."
+    },
+    {
+      "type": "product_list",
+      "id": "product_list",
+      "label": "Or select specific products (optional)",
+      "info": "Explicitly select specific products. Takes priority over collection when set."
     },
     {
       "type": "range",

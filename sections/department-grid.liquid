@@ -1,11 +1,30 @@
 {%- comment -%}
-  Shop by department — the reference grid (2 featured cards + 3-across rows).
-  Blocks: collection picker (wins when picked) OR a text handle for the
-  pre-launch state → /collections/<handle>; title, sub-line, optional note
-  and an image that falls back to the bundled department placeholder chosen
-  by handle. Only merchant-configured blocks render — nothing auto-generates.
-  NO kitchenware/cutlery department exists (the eight approved only).
+  Shop by department — reference editorial grid (2 featured cards + 3-across rows).
+  Each card has its OWN independent block with:
+    - Collection picker (type: "collection")
+    - Custom link (type: "url", fallback)
+    - Image picker (type: "image_picker")
+    - Title & Subtitle override
+    - Enable/disable toggle
+  Official 8 departments ONLY:
+    1. Beauty & Makeup
+    2. Skincare
+    3. Haircare
+    4. Hosiery & Innerwear
+    5. Toys & Kids
+    6. Gift Articles
+    7. Imitation Jewellery
+    8. Accessories & Grooming
+  NO kitchenware or cutlery department exists (store name remains MAHADEV CUTLERY & GIFT ARTICLES).
 {%- endcomment -%}
+{%- liquid
+  assign dg_rendered = 0
+  for block in section.blocks
+    if block.settings.enabled
+      assign dg_rendered = dg_rendered | plus: 1
+    endif
+  endfor
+-%}
 <section class="mc-section mc-departments" id="{{ section.settings.anchor_id | default: 'departments' }}" data-testid="departments-section">
   <div class="mc-container">
     <div class="mc-section__head">
@@ -26,13 +45,19 @@
     </div>
 
     <ul class="mc-departments__grid">
-      {%- if section.blocks.size >= 8 -%}
+      {%- if dg_rendered > 0 -%}
         {%- for block in section.blocks -%}
+          {%- if block.settings.enabled == false -%}{%- continue -%}{%- endif -%}
           {%- liquid
+            assign slot_handle = 'beauty-makeup'
+            assign slot_title = 'Beauty & Makeup'
+            assign slot_sub = 'Lips, eyes, face'
+            assign slot_img = 'dept-makeup.jpg'
+
             case forloop.index
               when 1
                 assign slot_handle = 'beauty-makeup'
-                assign slot_title = 'Makeup & Cosmetics'
+                assign slot_title = 'Beauty & Makeup'
                 assign slot_sub = 'Lips, eyes, face'
                 assign slot_img = 'dept-makeup.jpg'
               when 2
@@ -52,7 +77,7 @@
                 assign slot_img = 'dept-innerwear.jpg'
               when 5
                 assign slot_handle = 'toys-kids'
-                assign slot_title = 'Kids & Toys'
+                assign slot_title = 'Toys & Kids'
                 assign slot_sub = 'Play & learn'
                 assign slot_img = 'dept-kids.jpg'
               when 6
@@ -67,27 +92,24 @@
                 assign slot_img = 'dept-jewellery.jpg'
               when 8
                 assign slot_handle = 'accessories-grooming'
-                assign slot_title = 'Beauty Tools & Grooming'
+                assign slot_title = 'Accessories & Grooming'
                 assign slot_sub = 'Brushes, combs, trimmers'
                 assign slot_img = 'dept-tools.jpg'
-              else
-                assign slot_handle = 'beauty-makeup'
-                assign slot_title = 'Makeup & Cosmetics'
-                assign slot_sub = 'Lips, eyes, face'
-                assign slot_img = 'dept-makeup.jpg'
             endcase
 
             assign dg_collection = block.settings.collection
             assign dg_handle = block.settings.handle
+            assign dg_href = ''
+            assign dg_handle_key = slot_handle
+
             if dg_collection != blank
               assign dg_href = dg_collection.url
               assign dg_handle_key = dg_collection.handle
+            elsif block.settings.link != blank
+              assign dg_href = block.settings.link
             elsif dg_handle != blank
               assign dg_handle_key = dg_handle
               assign dg_href = routes.collections_url | append: '/' | append: dg_handle
-            else
-              assign dg_handle_key = slot_handle
-              assign dg_href = routes.collections_url | append: '/' | append: slot_handle
             endif
 
             assign dg_title = block.settings.title | default: dg_collection.title | default: slot_title
@@ -95,7 +117,11 @@
             assign dg_alt = dg_title
           -%}
           <li class="mc-dept-cell" {{ block.shopify_attributes }}>
-            <a class="mc-dept-cell__link" href="{{ dg_href }}">
+            {%- if dg_href != blank -%}
+              <a class="mc-dept-cell__link" href="{{ dg_href }}">
+            {%- else -%}
+              <div class="mc-dept-cell__link mc-dept-cell__link--static">
+            {%- endif -%}
               <span class="mc-dept-cell__media">
                 {%- if block.settings.image != blank -%}
                   {{ block.settings.image | image_url: width: 900 | image_tag:
@@ -144,24 +170,33 @@
                   {%- if dg_sub != blank -%}
                     <span class="mc-dept-cell__sub">{{ dg_sub | escape }}</span>
                   {%- endif -%}
+                  {%- if block.settings.rule_text != blank -%}
+                    <span class="mc-dept-cell__note">{{ block.settings.rule_text | escape }}</span>
+                  {%- endif -%}
                 </span>
-                <span class="mc-dept-cell__arrow" aria-hidden="true">
-                  <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </span>
+                {%- if dg_href != blank -%}
+                  <span class="mc-dept-cell__arrow" aria-hidden="true">
+                    <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </span>
+                {%- endif -%}
               </span>
-            </a>
+            {%- if dg_href != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
           </li>
         {%- endfor -%}
       {%- else -%}
-        {%- comment -%} Guaranteed fallback canonical 8 departments {%- endcomment -%}
+        {%- comment -%} Guaranteed canonical fallback to 8 primary departments {%- endcomment -%}
         <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/beauty-makeup">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-makeup.jpg' | asset_url }}" alt="Makeup & Cosmetics" loading="eager" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-makeup.jpg' | asset_url }}" alt="Beauty & Makeup" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Makeup & Cosmetics</span>
+                <span class="mc-dept-cell__title">Beauty &amp; Makeup</span>
                 <span class="mc-dept-cell__sub">Lips, eyes, face</span>
               </span>
               <span class="mc-dept-cell__arrow" aria-hidden="true">
@@ -194,7 +229,7 @@
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
                 <span class="mc-dept-cell__title">Haircare</span>
-                <span class="mc-dept-cell__sub">Everyday & professional</span>
+                <span class="mc-dept-cell__sub">Everyday &amp; professional</span>
               </span>
               <span class="mc-dept-cell__arrow" aria-hidden="true">
                 <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -209,8 +244,8 @@
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Hosiery & Innerwear</span>
-                <span class="mc-dept-cell__sub">Men, women & kids</span>
+                <span class="mc-dept-cell__title">Hosiery &amp; Innerwear</span>
+                <span class="mc-dept-cell__sub">Men, women &amp; kids</span>
               </span>
               <span class="mc-dept-cell__arrow" aria-hidden="true">
                 <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -221,12 +256,12 @@
         <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/toys-kids">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-kids.jpg' | asset_url }}" alt="Kids & Toys" loading="eager" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-kids.jpg' | asset_url }}" alt="Toys & Kids" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Kids & Toys</span>
-                <span class="mc-dept-cell__sub">Play & learn</span>
+                <span class="mc-dept-cell__title">Toys &amp; Kids</span>
+                <span class="mc-dept-cell__sub">Play &amp; learn</span>
               </span>
               <span class="mc-dept-cell__arrow" aria-hidden="true">
                 <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -269,11 +304,11 @@
         <li class="mc-dept-cell">
           <a class="mc-dept-cell__link" href="{{ routes.collections_url }}/accessories-grooming">
             <span class="mc-dept-cell__media">
-              <img class="mc-dept-cell__img" src="{{ 'dept-tools.jpg' | asset_url }}" alt="Beauty Tools & Grooming" loading="eager" width="600" height="800">
+              <img class="mc-dept-cell__img" src="{{ 'dept-tools.jpg' | asset_url }}" alt="Accessories & Grooming" loading="eager" width="600" height="800">
             </span>
             <span class="mc-dept-cell__body">
               <span class="mc-dept-cell__info">
-                <span class="mc-dept-cell__title">Beauty Tools & Grooming</span>
+                <span class="mc-dept-cell__title">Accessories &amp; Grooming</span>
                 <span class="mc-dept-cell__sub">Brushes, combs, trimmers</span>
               </span>
               <span class="mc-dept-cell__arrow" aria-hidden="true">
@@ -327,16 +362,28 @@
       "name": "Department card",
       "settings": [
         {
+          "type": "checkbox",
+          "id": "enabled",
+          "label": "Show this department",
+          "default": true
+        },
+        {
           "type": "collection",
           "id": "collection",
-          "label": "Collection (optional)",
-          "info": "The EIGHT approved departments: Beauty & Makeup, Skincare, Haircare, Hosiery & Innerwear, Toys & Kids, Gift Articles, Imitation Jewellery, Accessories & Grooming. No kitchenware/cutlery department exists."
+          "label": "Shopify collection",
+          "info": "Select the independent Shopify collection for this department. Takes top priority."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Custom link (optional fallback)",
+          "info": "Used when no collection is selected above."
         },
         {
           "type": "text",
           "id": "handle",
-          "label": "Collection handle (fallback)",
-          "info": "Used until a collection is picked, e.g. beauty-makeup → /collections/beauty-makeup."
+          "label": "Collection handle (legacy fallback)",
+          "info": "E.g. beauty-makeup → /collections/beauty-makeup."
         },
         {
           "type": "text",
@@ -346,7 +393,7 @@
         {
           "type": "text",
           "id": "sub",
-          "label": "Sub-line (optional)",
+          "label": "Subtitle / category line",
           "info": "e.g. “Lips, eyes, face” under Beauty & Makeup."
         },
         {
@@ -366,7 +413,72 @@
   "presets": [
     {
       "name": "Department grid",
-      "blocks": []
+      "blocks": [
+        {
+          "type": "department",
+          "settings": {
+            "title": "Beauty & Makeup",
+            "sub": "Lips, eyes, face",
+            "handle": "beauty-makeup"
+          }
+        },
+        {
+          "type": "department",
+          "settings": {
+            "title": "Skincare",
+            "sub": "Cleanse, treat, protect",
+            "handle": "skincare"
+          }
+        },
+        {
+          "type": "department",
+          "settings": {
+            "title": "Haircare",
+            "sub": "Everyday & professional",
+            "handle": "haircare"
+          }
+        },
+        {
+          "type": "department",
+          "settings": {
+            "title": "Hosiery & Innerwear",
+            "sub": "Men, women & kids",
+            "handle": "hosiery-innerwear"
+          }
+        },
+        {
+          "type": "department",
+          "settings": {
+            "title": "Toys & Kids",
+            "sub": "Play & learn",
+            "handle": "toys-kids"
+          }
+        },
+        {
+          "type": "department",
+          "settings": {
+            "title": "Gift Articles",
+            "sub": "For every occasion",
+            "handle": "gift-articles"
+          }
+        },
+        {
+          "type": "department",
+          "settings": {
+            "title": "Imitation Jewellery",
+            "sub": "Everyday sparkle",
+            "handle": "imitation-jewellery"
+          }
+        },
+        {
+          "type": "department",
+          "settings": {
+            "title": "Accessories & Grooming",
+            "sub": "Brushes, combs, trimmers",
+            "handle": "accessories-grooming"
+          }
+        }
+      ]
     }
   ]
 }

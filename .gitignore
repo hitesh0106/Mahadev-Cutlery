@@ -57,3 +57,4 @@ server.log
 upload/*.mp4
 upload/*.mov
 tool-results/
+*.zip
