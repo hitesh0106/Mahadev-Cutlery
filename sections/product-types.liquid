@@ -70,9 +70,14 @@
               assign pt_asset = 'editorial-skincare.jpg'
             endif
 
+            assign col_fallback_key = 'collection_' | append: forloop.index
+            assign sec_col = section.settings[col_fallback_key]
+
             assign pt_href = ''
             if block.settings.collection != blank
               assign pt_href = block.settings.collection.url
+            elsif sec_col != blank
+              assign pt_href = sec_col.url
             elsif block.settings.link != blank
               assign pt_href = block.settings.link
             endif
@@ -97,6 +102,8 @@
                   {{ block.settings.image | image_url: width: 264 | image_tag: loading: 'lazy', widths: '132, 264', class: 'mc-type__img', alt: pt_alt | escape }}
                 {%- elsif block.settings.collection != blank and block.settings.collection.image != blank -%}
                   {{ block.settings.collection.image | image_url: width: 264 | image_tag: loading: 'lazy', widths: '132, 264', class: 'mc-type__img', alt: pt_alt | escape }}
+                {%- elsif sec_col != blank and sec_col.image != blank -%}
+                  {{ sec_col.image | image_url: width: 264 | image_tag: loading: 'lazy', widths: '132, 264', class: 'mc-type__img', alt: pt_alt | escape }}
                 {%- else -%}
                   <img class="mc-type__img" src="{{ pt_asset | asset_url }}" alt="{{ pt_alt | escape }}" loading="lazy" width="264" height="264">
                 {%- endif -%}
