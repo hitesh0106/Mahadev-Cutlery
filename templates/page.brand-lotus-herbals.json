@@ -1,0 +1,137 @@
+{
+  "sections": {
+    "hero": {
+      "type": "brand-hero",
+      "settings": {
+        "eyebrow": "Brand Spotlight",
+        "brand_name": "Lotus Herbals",
+        "taxonomy_note": "STRICT: Botanical Skincare & Sun Protection (Not Makeup)",
+        "description": "<p>Pure herbal efficacy backed by botanical science. Trusted for Safe Sun UV defense and WhiteGlow rejuvenating skincare.</p>",
+        "cta_label": "Explore Categories",
+        "cta_link": "#brand-categories",
+        "secondary_cta_label": "View All Products",
+        "secondary_cta_link": "#brand-products"
+      }
+    },
+    "categories": {
+      "type": "brand-categories",
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "Lotus Herbals Categories",
+        "subheading": "Select a category to browse verified Lotus Herbals products."
+      },
+      "blocks": {
+        "cat-1": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Skincare",
+            "sub": "WhiteGlow & YouthRx herbal treatments"
+          }
+        },
+        "cat-2": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Face Care",
+            "sub": "Gentle botanical face washes & cleansers"
+          }
+        },
+        "cat-3": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Sunscreen",
+            "sub": "Safe Sun matte gel SPF 50 sunblock"
+          }
+        },
+        "cat-4": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Cleansers",
+            "sub": "Herbal cleansing milks & balancing toners"
+          }
+        },
+        "cat-5": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Moisturisers",
+            "sub": "Nutramoist & alphamoist daily lotions"
+          }
+        },
+        "cat-6": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "All Lotus Herbals Products",
+            "sub": "Complete herbal skincare collection"
+          }
+        }
+      },
+      "block_order": [
+        "cat-1",
+        "cat-2",
+        "cat-3",
+        "cat-4",
+        "cat-5",
+        "cat-6"
+      ]
+    },
+    "products": {
+      "type": "brand-products",
+      "settings": {
+        "eyebrow": "Selected Products",
+        "heading": "Featured Lotus Herbals Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_label": "Shop All Lotus Herbals Products"
+      }
+    },
+    "story": {
+      "type": "brand-story",
+      "settings": {
+        "eyebrow": "Authenticity & Promise",
+        "heading": "Genuine Lotus Herbals at Mahadev",
+        "text": "<p>At Mahadev Cutlery & Gift Articles, every Lotus Herbals product is 100% genuine, sourced directly from authorized distribution channels in Ahmedabad. We guarantee original quality, verified batch codes, and dedicated category organization.</p>"
+      },
+      "blocks": {
+        "promise-1": {
+          "type": "promise",
+          "settings": {
+            "title": "100% Genuine Guarantee",
+            "text": "Directly sourced from authorized Lotus Herbals distributors."
+          }
+        },
+        "promise-2": {
+          "type": "promise",
+          "settings": {
+            "title": "Ahmedabad Store Pickup",
+            "text": "Available at our local retail store with personal sizing guidance."
+          }
+        },
+        "promise-3": {
+          "type": "promise",
+          "settings": {
+            "title": "Dedicated Brand Categories",
+            "text": "Only relevant products appear in each category — no mixed stock."
+          }
+        }
+      },
+      "block_order": [
+        "promise-1",
+        "promise-2",
+        "promise-3"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "products",
+    "story"
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "sections": {
+    "hero": {
+      "type": "brand-hero",
+      "settings": {
+        "eyebrow": "Brand Spotlight",
+        "brand_name": "Ghar Soaps",
+        "taxonomy_note": "Authentic Handcrafted Personal Care Soaps",
+        "description": "<p>Handcrafted artisan soaps formulated with authentic natural ingredients, cold-pressed oils, saffron, and fresh goat milk.</p>",
+        "cta_label": "Explore Categories",
+        "cta_link": "#brand-categories",
+        "secondary_cta_label": "View All Products",
+        "secondary_cta_link": "#brand-products"
+      }
+    },
+    "categories": {
+      "type": "brand-categories",
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "Ghar Soaps Categories",
+        "subheading": "Select a category to browse verified Ghar Soaps products."
+      },
+      "blocks": {
+        "cat-1": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Handcrafted Soaps",
+            "sub": "Magic soaps & saffron goat milk bars"
+          }
+        },
+        "cat-2": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Body Care",
+            "sub": "Natural body wash & bath scrubs"
+          }
+        },
+        "cat-3": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "All Ghar Soaps Products",
+            "sub": "Complete Ghar Soaps collection"
+          }
+        }
+      },
+      "block_order": [
+        "cat-1",
+        "cat-2",
+        "cat-3"
+      ]
+    },
+    "products": {
+      "type": "brand-products",
+      "settings": {
+        "eyebrow": "Selected Products",
+        "heading": "Featured Ghar Soaps Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_label": "Shop All Ghar Soaps Products"
+      }
+    },
+    "story": {
+      "type": "brand-story",
+      "settings": {
+        "eyebrow": "Authenticity & Promise",
+        "heading": "Genuine Ghar Soaps at Mahadev",
+        "text": "<p>At Mahadev Cutlery & Gift Articles, every Ghar Soaps product is 100% genuine, sourced directly from authorized distribution channels in Ahmedabad. We guarantee original quality, verified batch codes, and dedicated category organization.</p>"
+      },
+      "blocks": {
+        "promise-1": {
+          "type": "promise",
+          "settings": {
+            "title": "100% Genuine Guarantee",
+            "text": "Directly sourced from authorized Ghar Soaps distributors."
+          }
+        },
+        "promise-2": {
+          "type": "promise",
+          "settings": {
+            "title": "Ahmedabad Store Pickup",
+            "text": "Available at our local retail store with personal sizing guidance."
+          }
+        },
+        "promise-3": {
+          "type": "promise",
+          "settings": {
+            "title": "Dedicated Brand Categories",
+            "text": "Only relevant products appear in each category — no mixed stock."
+          }
+        }
+      },
+      "block_order": [
+        "promise-1",
+        "promise-2",
+        "promise-3"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "products",
+    "story"
+  ]
+}

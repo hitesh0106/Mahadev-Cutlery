@@ -1,0 +1,137 @@
+{
+  "sections": {
+    "hero": {
+      "type": "brand-hero",
+      "settings": {
+        "eyebrow": "Brand Spotlight",
+        "brand_name": "O3+",
+        "taxonomy_note": "Professional Facial Care & Serums",
+        "description": "<p>India's leading professional salon facial brand. Dermatologically formulated for brightening, anti-tan, and deep skin repair.</p>",
+        "cta_label": "Explore Categories",
+        "cta_link": "#brand-categories",
+        "secondary_cta_label": "View All Products",
+        "secondary_cta_link": "#brand-products"
+      }
+    },
+    "categories": {
+      "type": "brand-categories",
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "O3+ Categories",
+        "subheading": "Select a category to browse verified O3+ products."
+      },
+      "blocks": {
+        "cat-1": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Face Care",
+            "sub": "Brightening & anti-tan facial cleansers"
+          }
+        },
+        "cat-2": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Cleansers",
+            "sub": "Derma clean foaming washes & toners"
+          }
+        },
+        "cat-3": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Serums",
+            "sub": "Hyaluronic & Vitamin C salon serums"
+          }
+        },
+        "cat-4": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Moisturisers",
+            "sub": "Hydrating massage creams & lotions"
+          }
+        },
+        "cat-5": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Professional Skincare",
+            "sub": "D-Tan packs & bridal glow facial kits"
+          }
+        },
+        "cat-6": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "All O3+ Products",
+            "sub": "Complete O3+ professional range"
+          }
+        }
+      },
+      "block_order": [
+        "cat-1",
+        "cat-2",
+        "cat-3",
+        "cat-4",
+        "cat-5",
+        "cat-6"
+      ]
+    },
+    "products": {
+      "type": "brand-products",
+      "settings": {
+        "eyebrow": "Selected Products",
+        "heading": "Featured O3+ Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_label": "Shop All O3+ Products"
+      }
+    },
+    "story": {
+      "type": "brand-story",
+      "settings": {
+        "eyebrow": "Authenticity & Promise",
+        "heading": "Genuine O3+ at Mahadev",
+        "text": "<p>At Mahadev Cutlery & Gift Articles, every O3+ product is 100% genuine, sourced directly from authorized distribution channels in Ahmedabad. We guarantee original quality, verified batch codes, and dedicated category organization.</p>"
+      },
+      "blocks": {
+        "promise-1": {
+          "type": "promise",
+          "settings": {
+            "title": "100% Genuine Guarantee",
+            "text": "Directly sourced from authorized O3+ distributors."
+          }
+        },
+        "promise-2": {
+          "type": "promise",
+          "settings": {
+            "title": "Ahmedabad Store Pickup",
+            "text": "Available at our local retail store with personal sizing guidance."
+          }
+        },
+        "promise-3": {
+          "type": "promise",
+          "settings": {
+            "title": "Dedicated Brand Categories",
+            "text": "Only relevant products appear in each category — no mixed stock."
+          }
+        }
+      },
+      "block_order": [
+        "promise-1",
+        "promise-2",
+        "promise-3"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "products",
+    "story"
+  ]
+}

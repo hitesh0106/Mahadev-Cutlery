@@ -1,0 +1,133 @@
+{%- comment -%}
+  Brand Story & Assurance Section.
+  Provides verified merchant context, authenticity notes, and store guarantees.
+{%- endcomment -%}
+
+<section class="mc-section mc-section--soft mc-brand-story" data-testid="brand-story-section">
+  <div class="mc-container">
+    <div class="mc-brand-story__grid">
+      <div class="mc-brand-story__main">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="mc-section__heading">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="mc-brand-story__desc mc-rte">
+            {{ section.settings.text }}
+          </div>
+        {%- endif -%}
+        {%- if section.settings.cta_label != blank and section.settings.cta_link != blank -%}
+          <div class="mc-brand-story__action">
+            <a class="mc-btn mc-btn--secondary" href="{{ section.settings.cta_link }}">
+              {{ section.settings.cta_label | escape }}
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="mc-brand-story__features">
+        {%- for block in section.blocks -%}
+          <div class="mc-brand-story__feature" {{ block.shopify_attributes }}>
+            <div class="mc-brand-story__feature-icon" aria-hidden="true">
+              <svg class="mc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <h4 class="mc-brand-story__feature-title">{{ block.settings.title | escape }}</h4>
+              {%- if block.settings.text != blank -%}
+                <p class="mc-brand-story__feature-text">{{ block.settings.text | escape }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand information",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Authenticity & Promise"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Curated with Care in Ahmedabad"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>At Mahadev Cutlery & Gift Articles, every brand is selected for authentic craftsmanship, verified fabric standards, and dependable daily quality. We source directly from official brand networks to ensure what you take home is 100% genuine.</p>"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Explore All 30 Brands"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "default": "/pages/brands"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promise",
+      "name": "Store guarantee",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Feature title",
+          "default": "100% Genuine Products"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Feature detail",
+          "default": "Sourced through authorized distribution channels with verified batch codes."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand information",
+      "blocks": [
+        {
+          "type": "promise",
+          "settings": {
+            "title": "100% Genuine Stock",
+            "text": "Every item is guaranteed authentic from official brand distributors."
+          }
+        },
+        {
+          "type": "promise",
+          "settings": {
+            "title": "Ahmedabad Store Pickup",
+            "text": "Visit our local retail store for personal sizing guidance and immediate pickup."
+          }
+        },
+        {
+          "type": "promise",
+          "settings": {
+            "title": "Dedicated Brand Categories",
+            "text": "Only verified products appear in brand categories — no mixed inventory."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

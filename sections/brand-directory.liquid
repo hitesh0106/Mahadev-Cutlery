@@ -1,74 +1,397 @@
 {%- comment -%}
-  Brand directory (page.brands template).
-  Blocks are configured BY THE MERCHANT in the theme editor: brand name + optional
-  collection link + optional one-line rule. The theme never auto-generates brands and
-  never invents stock claims. Blocks with no name are skipped.
+  Brand Directory Section (A–Z).
+  Used on /pages/brands (page.brands template).
+  Features:
+  - All 30 canonical brands pre-configured with verified taxonomy
+  - Interactive live search input with clear button
+  - Interactive A–Z alphabet jump navigation
+  - Letter-grouped brand cards with editorial typography
+  - Quick category pills for direct category access
+  - Direct links to dedicated brand landing pages (/pages/brand-[handle])
+  - Graceful empty state when search returns no match
+  - Full Theme Editor support (add, remove, reorder, edit brands)
 {%- endcomment -%}
-<section class="mc-section mc-brands">
-  <div class="mc-container">
-    <h1 class="mc-section__heading">{{ 'brands.directory_title' | t }}</h1>
 
-    {%- if section.blocks.size == 0 -%}
-      <p class="mc-empty-note">{{ 'brands.no_collection_note' | t }}</p>
-    {%- else -%}
-      <div class="mc-brands__grid">
-        {%- for block in section.blocks -%}
-          {%- assign bd_name = block.settings.name -%}
-          {%- if bd_name == blank -%}{%- continue -%}{%- endif -%}
-          <article class="mc-brands__card mc-reveal" {{ block.shopify_attributes }}>
-            <h2 class="mc-brands__name">{{ bd_name | escape }}</h2>
-            {%- if block.settings.rule != blank -%}
-              <p class="mc-brands__rule">{{ block.settings.rule | escape }}</p>
-            {%- endif -%}
-            {%- if block.settings.collection != blank -%}
-              <a class="mc-btn mc-btn--secondary mc-btn--sm" href="{{ block.settings.collection.url }}">{{ block.settings.collection.title | escape }}</a>
-            {%- else -%}
-              <p class="mc-brands__note">{{ 'brands.no_collection_note' | t }}</p>
-            {%- endif -%}
-          </article>
-        {%- endfor -%}
+<section class="mc-section mc-brand-dir" id="brand-directory" data-testid="brand-directory-section">
+  <div class="mc-container">
+    <div class="mc-brand-dir__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
+      {%- endif -%}
+      <h1 class="mc-brand-dir__title">{{ section.settings.heading | default: 'All Brands A–Z' | escape }}</h1>
+      {%- if section.settings.text != blank -%}
+        <p class="mc-brand-dir__intro">{{ section.settings.text | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="mc-brand-dir__toolbar">
+      <div class="mc-brand-dir__search-wrap">
+        <label class="mc-brand-dir__search-label" for="brand-search-input">
+          <svg class="mc-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="mc-sr-only">{{ 'general.search' | t }}</span>
+        </label>
+        <input
+          type="search"
+          id="brand-search-input"
+          class="mc-brand-dir__input"
+          data-mc-brand-search
+          placeholder="{{ section.settings.search_placeholder | default: 'Search 30 brands (e.g. Jockey, Lakmé, Minimalist)...' | escape }}"
+          autocomplete="off"
+        >
+        <button type="button" class="mc-brand-dir__clear" data-mc-brand-clear aria-label="Clear search" hidden>
+          <svg class="mc-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
       </div>
-    {%- endif -%}
+
+      <nav class="mc-brand-dir__az-nav" aria-label="Alphabetical jump links" data-mc-brand-letters>
+        {%- assign alphabet = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#' | split: ',' -%}
+        {%- for l in alphabet -%}
+          <a class="mc-brand-dir__letter" href="#letter-{{ l }}" data-letter="{{ l }}">{{ l }}</a>
+        {%- endfor -%}
+      </nav>
+    </div>
+
+    {%- comment -%}
+      Render List:
+      If merchant has configured blocks, use blocks.
+      If blocks size is 0, render the 30 canonical brands guaranteed by the project specification.
+    {%- endcomment -%}
+
+    {%- assign canonical_raw = "Bodycare|bodycare|Hosiery & Innerwear|Women's & children's innerwear (No men's)|Women's Innerwear,Women's Hosiery,Kids Boys,Kids Girls,All Bodycare Products
+Cetaphil|cetaphil|Skincare|Gentle dermatologist-recommended formulas|Face Cleansers,Moisturisers,Body Care,All Cetaphil Products
+Colorbar|colorbar|Beauty & Makeup|Cosmetics, eye makeup & nail care|Lip Makeup,Face Makeup,Eye Makeup,Nail Products,Makeup Tools,All Colorbar Products
+Dot & Key|dot-and-key|Skincare|Hydrating skincare, sunscreens & active serums|Face Wash,Moisturisers,Serums,Sunscreen,Lip Care,Body Care,All Dot & Key Products
+Faces Canada|faces-canada|Beauty & Makeup|Lipsticks, foundations, compacts & nail care|Lip Makeup,Face Makeup,Eye Makeup,Nail Products,All Faces Canada Products
+Garnier|garnier|Skincare & Haircare|Brightening face wash & everyday haircare|Face Wash,Skincare,Haircare,Hair Colour,All Garnier Products
+Ghar Soaps|ghar-soaps|Skincare|Authentic handcrafted personal care soaps|Handcrafted Soaps,Body Care,All Ghar Soaps Products
+Jockey|jockey|Hosiery & Innerwear|Innerwear, loungewear, vests & socks|Men's Innerwear,Women's Innerwear,Socks,Loungewear,All Jockey Products
+Lady Care|lady-care|Hosiery & Innerwear|Women's nikar & panties (Verified women's)|Women's Nikar,Women's Panty,Women's Innerwear,All Lady Care Products
+Lakmé|lakme|Beauty & Makeup|Iconic cosmetics, primers & gentle skincare|Lip Makeup,Face Makeup,Eye Makeup,Skincare,Sunscreen,All Lakmé Products
+L'Oréal Paris|loreal-paris|Haircare & Beauty|Everyday haircare, colour, skincare & makeup|Shampoo,Conditioner,Hair Serum,Hair Colour,All L'Oréal Paris Products
+L'Oréal Professionnel|loreal-professionnel|Haircare|Professional salon haircare & treatments (Separate brand)|Professional Shampoo,Conditioner,Hair Masks,Hair Serums,Hair Treatments,All L'Oréal Professionnel Products
+Lotus Herbals|lotus-herbals|Skincare|Botanical skincare & sun protection (Not makeup)|Skincare,Face Care,Sunscreen,Cleansers,Moisturisers,All Lotus Herbals Products
+MARS Cosmetics|mars-cosmetics|Beauty & Makeup|Trendy makeup kits, palettes & beauty tools|Lip Makeup,Face Makeup,Eye Makeup,Makeup Kits,Beauty Tools,All MARS Products
+Matrix|matrix|Haircare|Professional salon haircare, masks & styling|Shampoo,Conditioner,Hair Masks,Hair Serums,Hair Treatments,All Matrix Products
+Maybelline New York|maybelline-new-york|Beauty & Makeup|Foundations, concealers, mascaras & kajal|Lip Makeup,Face Makeup,Eye Makeup,Foundation & Concealer,Mascara & Kajal,All Maybelline Products
+Minimalist|minimalist|Skincare|Transparent active science face serums & care|Face Serums,Cleansers,Moisturisers,Sunscreen,Haircare,All Minimalist Products
+NIVEA|nivea|Skincare & Bodycare|Nourishing body lotions, creams & lip care|Body Lotion,Body Cream,Deodorants,Face Care,Lip Care,All NIVEA Products
+O3+|o3-plus|Skincare|Professional facial care, serums & treatments|Face Care,Cleansers,Serums,Moisturisers,Professional Skincare,All O3+ Products
+Philips|philips|Accessories & Grooming|Men's grooming trimmers & styling appliances|Trimmers,Men's Grooming,Hair Styling Appliances,Electric Grooming,All Philips Products
+Pilgrim|pilgrim|Skincare & Haircare|Discovery-led beauty & active hair routines|Face Care,Serums,Moisturisers,Sunscreen,Haircare,All Pilgrim Products
+Plix|plix|Skincare|Plant-powered skincare & wellness care|Skincare,Face Care,Haircare,Body Care,All Plix Products
+POND'S|ponds|Skincare|Classic face wash, face creams & hydration|Face Wash,Moisturisers,Face Cream,Serums,All POND'S Products
+Sebamed|sebamed|Skincare|pH 5.5 balanced skin, hair & body care|Face Care,Body Care,Cleansers,Baby Care,All Sebamed Products
+Sunny|sunny|Hosiery & Innerwear|Verified store favourites & everyday hosiery|Verified Innerwear,All Sunny Products
+Swiss Beauty|swiss-beauty|Beauty & Makeup|Cosmetics, concealers, palettes & beauty tools|Lip Makeup,Face Makeup,Eye Makeup,Foundation & Concealer,Nail Products,Beauty Tools,All Swiss Beauty Products
+Van Heusen|van-heusen|Hosiery & Innerwear|Men's innerwear, vests & premium loungewear|Men's Innerwear,Men's Loungewear,All Van Heusen Products
+VEGA|vega|Accessories & Grooming|Hair brushes, styling tools & grooming appliances|Hair Brushes,Combs,Hair Dryers,Hair Straighteners,Hair Styling Tools,Grooming Tools,All VEGA Products
+Wella Professionals|wella-professionals|Haircare|Expert salon haircare, treatments & colour|Shampoo,Conditioner,Hair Masks,Hair Colour,Hair Treatments,All Wella Professionals Products
+Zoiro|zoiro|Hosiery & Innerwear|Men's innerwear & nikar ONLY (Strictly men's)|Men's Innerwear,Men's Nikar,Men's Briefs,All Zoiro Products" | split: '
+' -%}
+
+    <div class="mc-brand-dir__groups" data-mc-brand-groups>
+      {%- for l in alphabet -%}
+        {%- capture group_cards -%}
+          {%- if section.blocks.size > 0 -%}
+            {%- for block in section.blocks -%}
+              {%- assign b_name = block.settings.name -%}
+              {%- if b_name == blank -%}{%- continue -%}{%- endif -%}
+              {%- assign first_char = b_name | slice: 0, 1 | upcase -%}
+              {%- unless 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' contains first_char -%}
+                {%- assign first_char = '#' -%}
+              {%- endunless -%}
+              {%- if first_char == l -%}
+                {%- liquid
+                  assign b_handle = block.settings.handle
+                  if b_handle == blank
+                    assign b_handle = b_name | handleize
+                  endif
+
+                  assign b_url = '/pages/brand-' | append: b_handle
+                  if block.settings.page != blank
+                    assign b_url = block.settings.page.url
+                  elsif block.settings.collection != blank
+                    assign b_url = block.settings.collection.url
+                  elsif block.settings.link != blank
+                    assign b_url = block.settings.link
+                  endif
+                -%}
+                <article class="mc-brand-dir-card" data-mc-brand-card data-brand-name="{{ b_name | downcase }}" {{ block.shopify_attributes }}>
+                  <div class="mc-brand-dir-card__head">
+                    <div>
+                      {%- if block.settings.department != blank -%}
+                        <span class="mc-brand-dir-card__dept">{{ block.settings.department | escape }}</span>
+                      {%- endif -%}
+                      <h3 class="mc-brand-dir-card__name">
+                        <a href="{{ b_url }}">{{ b_name | escape }}</a>
+                      </h3>
+                      {%- if block.settings.rule != blank -%}
+                        <p class="mc-brand-dir-card__rule">{{ block.settings.rule | escape }}</p>
+                      {%- endif -%}
+                    </div>
+                    {%- if block.settings.image != blank -%}
+                      <div class="mc-brand-dir-card__logo">
+                        {{ block.settings.image | image_url: width: 120 | image_tag: loading: 'lazy', widths: '60, 120', class: 'mc-brand-dir-card__logo-img', alt: b_name | escape }}
+                      </div>
+                    {%- endif -%}
+                  </div>
+
+                  {%- if block.settings.categories != blank -%}
+                    {%- assign card_cats = block.settings.categories | split: ',' -%}
+                    <div class="mc-brand-dir-card__cats">
+                      {%- for c in card_cats -%}
+                        <a class="mc-brand-dir-card__cat-pill" href="{{ b_url }}#brand-categories">{{ c | strip | escape }}</a>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+
+                  <div class="mc-brand-dir-card__footer">
+                    <a class="mc-btn mc-btn--secondary mc-btn--sm" href="{{ b_url }}">
+                      Explore Brand
+                      <svg class="mc-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                  </div>
+                </article>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- else -%}
+            {%- for row in canonical_raw -%}
+              {%- assign fields = row | split: '|' -%}
+              {%- assign b_name = fields[0] -%}
+              {%- assign b_handle = fields[1] -%}
+              {%- assign b_dept = fields[2] -%}
+              {%- assign b_rule = fields[3] -%}
+              {%- assign b_cats = fields[4] -%}
+
+              {%- assign first_char = b_name | slice: 0, 1 | upcase -%}
+              {%- unless 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' contains first_char -%}
+                {%- assign first_char = '#' -%}
+              {%- endunless -%}
+
+              {%- if first_char == l -%}
+                {%- assign b_url = '/pages/brand-' | append: b_handle -%}
+                <article class="mc-brand-dir-card" data-mc-brand-card data-brand-name="{{ b_name | downcase }}">
+                  <div class="mc-brand-dir-card__head">
+                    <div>
+                      <span class="mc-brand-dir-card__dept">{{ b_dept | escape }}</span>
+                      <h3 class="mc-brand-dir-card__name">
+                        <a href="{{ b_url }}">{{ b_name | escape }}</a>
+                      </h3>
+                      <p class="mc-brand-dir-card__rule">{{ b_rule | escape }}</p>
+                    </div>
+                  </div>
+
+                  {%- if b_cats != blank -%}
+                    {%- assign card_cats = b_cats | split: ',' -%}
+                    <div class="mc-brand-dir-card__cats">
+                      {%- for c in card_cats -%}
+                        <a class="mc-brand-dir-card__cat-pill" href="{{ b_url }}#brand-categories">{{ c | strip | escape }}</a>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+
+                  <div class="mc-brand-dir-card__footer">
+                    <a class="mc-btn mc-btn--secondary mc-btn--sm" href="{{ b_url }}">
+                      Explore Brand
+                      <svg class="mc-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                  </div>
+                </article>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endcapture -%}
+
+        {%- if group_cards != blank -%}
+          <div class="mc-brand-dir__group" id="letter-{{ l }}" data-mc-letter-group="{{ l }}">
+            <div class="mc-brand-dir__letter-badge">{{ l }}</div>
+            <div class="mc-brand-dir__group-cards">
+              {{ group_cards }}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="mc-empty-state mc-brand-dir__empty" data-mc-brand-empty hidden>
+      <div class="mc-brand-empty__icon" aria-hidden="true">
+        <svg class="mc-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </div>
+      <h3 class="mc-empty-state__title">No brand matches your search</h3>
+      <p class="mc-empty-state__text">We stock 30 authentic brands across beauty, skincare, innerwear, haircare and accessories.</p>
+      <button type="button" class="mc-btn mc-btn--primary mc-btn--sm" data-mc-brand-reset>Show All 30 Brands</button>
+    </div>
   </div>
 </section>
 
+<script>
+  (function () {
+    'use strict';
+    var sectionEl = document.getElementById('brand-directory');
+    if (!sectionEl || sectionEl.dataset.mcInit) return;
+    sectionEl.dataset.mcInit = '1';
+
+    var searchInput = sectionEl.querySelector('[data-mc-brand-search]');
+    var clearBtn = sectionEl.querySelector('[data-mc-brand-clear]');
+    var emptyEl = sectionEl.querySelector('[data-mc-brand-empty]');
+    var resetBtn = sectionEl.querySelector('[data-mc-brand-reset]');
+    var cards = sectionEl.querySelectorAll('[data-mc-brand-card]');
+    var groups = sectionEl.querySelectorAll('[data-mc-letter-group]');
+    var letterLinks = sectionEl.querySelectorAll('.mc-brand-dir__letter');
+
+    function applyFilter() {
+      var q = searchInput.value.trim().toLowerCase();
+      if (clearBtn) {
+        clearBtn.hidden = !q;
+      }
+
+      var totalMatches = 0;
+
+      groups.forEach(function (group) {
+        var groupCards = group.querySelectorAll('[data-mc-brand-card]');
+        var groupMatches = 0;
+
+        groupCards.forEach(function (card) {
+          var name = card.getAttribute('data-brand-name') || '';
+          var text = card.textContent.toLowerCase();
+          var isMatch = !q || name.indexOf(q) !== -1 || text.indexOf(q) !== -1;
+
+          card.hidden = !isMatch;
+          if (isMatch) {
+            groupMatches++;
+            totalMatches++;
+          }
+        });
+
+        group.hidden = groupMatches === 0;
+
+        var letter = group.getAttribute('data-mc-letter-group');
+        var letterLink = sectionEl.querySelector('.mc-brand-dir__letter[data-letter="' + letter + '"]');
+        if (letterLink) {
+          if (groupMatches === 0) {
+            letterLink.classList.add('is-disabled');
+          } else {
+            letterLink.classList.remove('is-disabled');
+          }
+        }
+      });
+
+      if (emptyEl) {
+        emptyEl.hidden = totalMatches > 0;
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilter);
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        searchInput.focus();
+        applyFilter();
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        applyFilter();
+      });
+    }
+  })();
+</script>
+
 {% schema %}
 {
-  "name": "Brand directory",
-  "settings": [],
+  "name": "Brand directory A–Z",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Curated Brand Directory"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "All Brands A–Z"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Introduction",
+      "default": "Discover all 30 authentic brands stocked at Mahadev Cutlery & Gift Articles, Ahmedabad. Tap any brand to explore dedicated category collections and verified genuine inventory."
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search 30 brands (e.g. Jockey, Lakmé, Minimalist)..."
+    }
+  ],
   "blocks": [
     {
       "type": "brand",
-      "name": "Brand",
+      "name": "Brand card",
       "settings": [
         {
           "type": "text",
           "id": "name",
-          "label": "Brand name"
+          "label": "Brand name",
+          "info": "Exact brand name"
         },
         {
-          "type": "collection",
-          "id": "collection",
-          "label": "Collection link (optional)",
-          "info": "Create an automated collection (condition: Product vendor is …) first — the theme never creates collections for you."
+          "type": "text",
+          "id": "handle",
+          "label": "Brand handle",
+          "info": "e.g. 'jockey' -> /pages/brand-jockey"
+        },
+        {
+          "type": "text",
+          "id": "department",
+          "label": "Primary department",
+          "info": "e.g. 'Hosiery & Innerwear' or 'Beauty & Makeup'"
         },
         {
           "type": "text",
           "id": "rule",
-          "label": "One-line note (optional)",
-          "info": "e.g. \"Men's innerwear only\" — shown under the brand name."
+          "label": "Verified taxonomy note",
+          "info": "e.g. \"Men's innerwear only\" or \"100% genuine cosmetics\""
+        },
+        {
+          "type": "text",
+          "id": "categories",
+          "label": "Category pills (comma-separated)",
+          "info": "e.g. Men's Innerwear, Women's Innerwear, Socks"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Dedicated brand page (optional)"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Brand collection (optional)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Custom URL (optional)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Brand logo / image (optional)"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Brand directory",
-      "blocks": [
-        { "type": "brand" },
-        { "type": "brand" },
-        { "type": "brand" }
-      ]
+      "name": "Brand directory A–Z"
     }
   ]
 }

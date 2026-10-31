@@ -1,0 +1,137 @@
+{
+  "sections": {
+    "hero": {
+      "type": "brand-hero",
+      "settings": {
+        "eyebrow": "Brand Spotlight",
+        "brand_name": "Pilgrim",
+        "taxonomy_note": "Discovery-Led Beauty & Active Serums",
+        "description": "<p>Discovery-led non-toxic beauty. Harnessing native beauty secrets from Jeju Island (Korea) and Bordeaux (France) for hair and skin.</p>",
+        "cta_label": "Explore Categories",
+        "cta_link": "#brand-categories",
+        "secondary_cta_label": "View All Products",
+        "secondary_cta_link": "#brand-products"
+      }
+    },
+    "categories": {
+      "type": "brand-categories",
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "Pilgrim Categories",
+        "subheading": "Select a category to browse verified Pilgrim products."
+      },
+      "blocks": {
+        "cat-1": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Face Care",
+            "sub": "Volcanic lava ash & red vine face cleansers"
+          }
+        },
+        "cat-2": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Serums",
+            "sub": "Alpha arbutin, 24K gold & squalane serums"
+          }
+        },
+        "cat-3": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Moisturisers",
+            "sub": "Oil-free gel moisturiser with hyaluronic acid"
+          }
+        },
+        "cat-4": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Sunscreen",
+            "sub": "Broad spectrum invisible sunscreens"
+          }
+        },
+        "cat-5": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Haircare",
+            "sub": "Patua & red clover hair growth serums"
+          }
+        },
+        "cat-6": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "All Pilgrim Products",
+            "sub": "Complete Pilgrim beauty routines"
+          }
+        }
+      },
+      "block_order": [
+        "cat-1",
+        "cat-2",
+        "cat-3",
+        "cat-4",
+        "cat-5",
+        "cat-6"
+      ]
+    },
+    "products": {
+      "type": "brand-products",
+      "settings": {
+        "eyebrow": "Selected Products",
+        "heading": "Featured Pilgrim Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_label": "Shop All Pilgrim Products"
+      }
+    },
+    "story": {
+      "type": "brand-story",
+      "settings": {
+        "eyebrow": "Authenticity & Promise",
+        "heading": "Genuine Pilgrim at Mahadev",
+        "text": "<p>At Mahadev Cutlery & Gift Articles, every Pilgrim product is 100% genuine, sourced directly from authorized distribution channels in Ahmedabad. We guarantee original quality, verified batch codes, and dedicated category organization.</p>"
+      },
+      "blocks": {
+        "promise-1": {
+          "type": "promise",
+          "settings": {
+            "title": "100% Genuine Guarantee",
+            "text": "Directly sourced from authorized Pilgrim distributors."
+          }
+        },
+        "promise-2": {
+          "type": "promise",
+          "settings": {
+            "title": "Ahmedabad Store Pickup",
+            "text": "Available at our local retail store with personal sizing guidance."
+          }
+        },
+        "promise-3": {
+          "type": "promise",
+          "settings": {
+            "title": "Dedicated Brand Categories",
+            "text": "Only relevant products appear in each category — no mixed stock."
+          }
+        }
+      },
+      "block_order": [
+        "promise-1",
+        "promise-2",
+        "promise-3"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "products",
+    "story"
+  ]
+}

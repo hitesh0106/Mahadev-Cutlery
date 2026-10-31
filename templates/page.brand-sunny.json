@@ -1,0 +1,101 @@
+{
+  "sections": {
+    "hero": {
+      "type": "brand-hero",
+      "settings": {
+        "eyebrow": "Brand Spotlight",
+        "brand_name": "Sunny",
+        "taxonomy_note": "Verified Sunny Store Stock",
+        "description": "<p>Verified store favourites and comfortable daily hosiery from Sunny, stocked at our Ahmedabad showroom.</p>",
+        "cta_label": "Explore Categories",
+        "cta_link": "#brand-categories",
+        "secondary_cta_label": "View All Products",
+        "secondary_cta_link": "#brand-products"
+      }
+    },
+    "categories": {
+      "type": "brand-categories",
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "Sunny Categories",
+        "subheading": "Select a category to browse verified Sunny products."
+      },
+      "blocks": {
+        "cat-1": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Verified Innerwear",
+            "sub": "Authentic stocked innerwear basics"
+          }
+        },
+        "cat-2": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "All Sunny Products",
+            "sub": "Verified store inventory"
+          }
+        }
+      },
+      "block_order": [
+        "cat-1",
+        "cat-2"
+      ]
+    },
+    "products": {
+      "type": "brand-products",
+      "settings": {
+        "eyebrow": "Selected Products",
+        "heading": "Featured Sunny Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_label": "Shop All Sunny Products"
+      }
+    },
+    "story": {
+      "type": "brand-story",
+      "settings": {
+        "eyebrow": "Authenticity & Promise",
+        "heading": "Genuine Sunny at Mahadev",
+        "text": "<p>At Mahadev Cutlery & Gift Articles, every Sunny product is 100% genuine, sourced directly from authorized distribution channels in Ahmedabad. We guarantee original quality, verified batch codes, and dedicated category organization.</p>"
+      },
+      "blocks": {
+        "promise-1": {
+          "type": "promise",
+          "settings": {
+            "title": "100% Genuine Guarantee",
+            "text": "Directly sourced from authorized Sunny distributors."
+          }
+        },
+        "promise-2": {
+          "type": "promise",
+          "settings": {
+            "title": "Ahmedabad Store Pickup",
+            "text": "Available at our local retail store with personal sizing guidance."
+          }
+        },
+        "promise-3": {
+          "type": "promise",
+          "settings": {
+            "title": "Dedicated Brand Categories",
+            "text": "Only relevant products appear in each category — no mixed stock."
+          }
+        }
+      },
+      "block_order": [
+        "promise-1",
+        "promise-2",
+        "promise-3"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "products",
+    "story"
+  ]
+}

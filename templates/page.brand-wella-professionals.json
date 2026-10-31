@@ -1,0 +1,137 @@
+{
+  "sections": {
+    "hero": {
+      "type": "brand-hero",
+      "settings": {
+        "eyebrow": "Brand Spotlight",
+        "brand_name": "Wella Professionals",
+        "taxonomy_note": "Expert Salon Haircare & Treatments",
+        "description": "<p>Over 140 years of German salon mastery. Specialized in Invigo hair nutrition, Color Brilliance, and salon-grade care.</p>",
+        "cta_label": "Explore Categories",
+        "cta_link": "#brand-categories",
+        "secondary_cta_label": "View All Products",
+        "secondary_cta_link": "#brand-products"
+      }
+    },
+    "categories": {
+      "type": "brand-categories",
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "Wella Professionals Categories",
+        "subheading": "Select a category to browse verified Wella Professionals products."
+      },
+      "blocks": {
+        "cat-1": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Shampoo",
+            "sub": "Invigo Nutri-Enrich & Color Brilliance"
+          }
+        },
+        "cat-2": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Conditioner",
+            "sub": "Deep moisturizing salon conditioners"
+          }
+        },
+        "cat-3": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Hair Masks",
+            "sub": "Nutri-Enrich deep nourishing masks"
+          }
+        },
+        "cat-4": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Hair Colour",
+            "sub": "Koleston & Color Touch salon shades"
+          }
+        },
+        "cat-5": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Hair Treatments",
+            "sub": "Oil Reflections luminous smoothing oil"
+          }
+        },
+        "cat-6": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "All Wella Professionals Products",
+            "sub": "Complete Wella salon catalogue"
+          }
+        }
+      },
+      "block_order": [
+        "cat-1",
+        "cat-2",
+        "cat-3",
+        "cat-4",
+        "cat-5",
+        "cat-6"
+      ]
+    },
+    "products": {
+      "type": "brand-products",
+      "settings": {
+        "eyebrow": "Selected Products",
+        "heading": "Featured Wella Professionals Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_label": "Shop All Wella Professionals Products"
+      }
+    },
+    "story": {
+      "type": "brand-story",
+      "settings": {
+        "eyebrow": "Authenticity & Promise",
+        "heading": "Genuine Wella Professionals at Mahadev",
+        "text": "<p>At Mahadev Cutlery & Gift Articles, every Wella Professionals product is 100% genuine, sourced directly from authorized distribution channels in Ahmedabad. We guarantee original quality, verified batch codes, and dedicated category organization.</p>"
+      },
+      "blocks": {
+        "promise-1": {
+          "type": "promise",
+          "settings": {
+            "title": "100% Genuine Guarantee",
+            "text": "Directly sourced from authorized Wella Professionals distributors."
+          }
+        },
+        "promise-2": {
+          "type": "promise",
+          "settings": {
+            "title": "Ahmedabad Store Pickup",
+            "text": "Available at our local retail store with personal sizing guidance."
+          }
+        },
+        "promise-3": {
+          "type": "promise",
+          "settings": {
+            "title": "Dedicated Brand Categories",
+            "text": "Only relevant products appear in each category — no mixed stock."
+          }
+        }
+      },
+      "block_order": [
+        "promise-1",
+        "promise-2",
+        "promise-3"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "products",
+    "story"
+  ]
+}

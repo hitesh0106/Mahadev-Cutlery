@@ -1,0 +1,137 @@
+{
+  "sections": {
+    "hero": {
+      "type": "brand-hero",
+      "settings": {
+        "eyebrow": "Brand Spotlight",
+        "brand_name": "Colorbar",
+        "taxonomy_note": "Cosmetics, Eye Makeup & Nail Care",
+        "description": "<p>Vibrant, cruelty-free premium cosmetics, longwear lipsticks, flawless foundations, and rich salon-quality nail lacquers.</p>",
+        "cta_label": "Explore Categories",
+        "cta_link": "#brand-categories",
+        "secondary_cta_label": "View All Products",
+        "secondary_cta_link": "#brand-products"
+      }
+    },
+    "categories": {
+      "type": "brand-categories",
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "Colorbar Categories",
+        "subheading": "Select a category to browse verified Colorbar products."
+      },
+      "blocks": {
+        "cat-1": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Lip Makeup",
+            "sub": "Sinful matte & velvet lip colours"
+          }
+        },
+        "cat-2": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Face Makeup",
+            "sub": "Flawless foundations, primers & compacts"
+          }
+        },
+        "cat-3": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Eye Makeup",
+            "sub": "Intense eyeliners, kajal & mascaras"
+          }
+        },
+        "cat-4": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Nail Products",
+            "sub": "Luxe nail enamels & gentle removers"
+          }
+        },
+        "cat-5": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "Makeup Tools",
+            "sub": "Professional makeup brushes & blenders"
+          }
+        },
+        "cat-6": {
+          "type": "category",
+          "settings": {
+            "enabled": true,
+            "title": "All Colorbar Products",
+            "sub": "Complete Colorbar cosmetics range"
+          }
+        }
+      },
+      "block_order": [
+        "cat-1",
+        "cat-2",
+        "cat-3",
+        "cat-4",
+        "cat-5",
+        "cat-6"
+      ]
+    },
+    "products": {
+      "type": "brand-products",
+      "settings": {
+        "eyebrow": "Selected Products",
+        "heading": "Featured Colorbar Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_label": "Shop All Colorbar Products"
+      }
+    },
+    "story": {
+      "type": "brand-story",
+      "settings": {
+        "eyebrow": "Authenticity & Promise",
+        "heading": "Genuine Colorbar at Mahadev",
+        "text": "<p>At Mahadev Cutlery & Gift Articles, every Colorbar product is 100% genuine, sourced directly from authorized distribution channels in Ahmedabad. We guarantee original quality, verified batch codes, and dedicated category organization.</p>"
+      },
+      "blocks": {
+        "promise-1": {
+          "type": "promise",
+          "settings": {
+            "title": "100% Genuine Guarantee",
+            "text": "Directly sourced from authorized Colorbar distributors."
+          }
+        },
+        "promise-2": {
+          "type": "promise",
+          "settings": {
+            "title": "Ahmedabad Store Pickup",
+            "text": "Available at our local retail store with personal sizing guidance."
+          }
+        },
+        "promise-3": {
+          "type": "promise",
+          "settings": {
+            "title": "Dedicated Brand Categories",
+            "text": "Only relevant products appear in each category — no mixed stock."
+          }
+        }
+      },
+      "block_order": [
+        "promise-1",
+        "promise-2",
+        "promise-3"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "products",
+    "story"
+  ]
+}

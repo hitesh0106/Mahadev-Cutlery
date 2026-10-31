@@ -1,0 +1,222 @@
+{%- comment -%}
+  Brand Categories Section.
+  Displays brand-specific category cards.
+  Each card is independently configurable in Shopify Theme Editor:
+  - Title
+  - Subtitle
+  - Image picker
+  - Independent collection picker (type: collection)
+  - Custom link override
+  - Enable/disable toggle
+  Links directly to the assigned category collection URL.
+{%- endcomment -%}
+
+<section class="mc-section mc-brand-categories-section" id="{{ section.settings.anchor_id | default: 'brand-categories' }}" data-testid="brand-categories-section">
+  <div class="mc-container">
+    <div class="mc-section__head">
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <p class="mc-section__text">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.action_label != blank and section.settings.action_link != blank -%}
+        <a class="mc-action-link" href="{{ section.settings.action_link }}">
+          {{ section.settings.action_label | escape | upcase }}
+          <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- if section.blocks.size == 0 -%}
+      <div class="mc-empty-note">
+        <p>No brand categories configured yet. Add category cards using the Theme Editor block controls.</p>
+      </div>
+    {%- else -%}
+      <div class="mc-brand-cat-grid">
+        {%- for block in section.blocks -%}
+          {%- if block.settings.enabled == false -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign cat_col = block.settings.collection
+            assign cat_title = block.settings.title
+            if cat_title == blank and cat_col != blank
+              assign cat_title = cat_col.title
+            endif
+
+            assign cat_href = ''
+            if cat_col != blank
+              assign cat_href = cat_col.url
+            elsif block.settings.link != blank
+              assign cat_href = block.settings.link
+            endif
+          -%}
+          {%- if cat_title == blank -%}{%- continue -%}{%- endif -%}
+
+          <div class="mc-brand-cat-card" {{ block.shopify_attributes }}>
+            {%- if cat_href != blank -%}
+              <a class="mc-brand-cat-card__link" href="{{ cat_href }}">
+            {%- else -%}
+              <div class="mc-brand-cat-card__link mc-brand-cat-card__link--unconfigured">
+            {%- endif -%}
+
+              <div class="mc-brand-cat-card__media">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, (min-width: 640px) 33vw, 50vw', widths: '240, 400, 600', class: 'mc-brand-cat-card__img', alt: cat_title | escape }}
+                {%- elsif cat_col != blank and cat_col.image != blank -%}
+                  {{ cat_col.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, (min-width: 640px) 33vw, 50vw', widths: '240, 400, 600', class: 'mc-brand-cat-card__img', alt: cat_title | escape }}
+                {%- else -%}
+                  <div class="mc-brand-cat-card__placeholder">
+                    <span class="mc-brand-cat-card__placeholder-letter">{{ cat_title | slice: 0, 1 | upcase }}</span>
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <div class="mc-brand-cat-card__info">
+                <div class="mc-brand-cat-card__copy">
+                  <h3 class="mc-brand-cat-card__title">{{ cat_title | escape }}</h3>
+                  {%- if block.settings.sub != blank -%}
+                    <p class="mc-brand-cat-card__sub">{{ block.settings.sub | escape }}</p>
+                  {%- elsif cat_col != blank and cat_col.products_count > 0 -%}
+                    <p class="mc-brand-cat-card__sub">{{ cat_col.products_count }} Products</p>
+                  {%- endif -%}
+                </div>
+                {%- if cat_href != blank -%}
+                  <span class="mc-brand-cat-card__arrow" aria-hidden="true">
+                    <svg class="mc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </span>
+                {%- else -%}
+                  <span class="mc-badge mc-badge--draft">Pending</span>
+                {%- endif -%}
+              </div>
+
+            {%- if cat_href != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand categories",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop by category"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Brand categories"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Explore verified categories curated from this brand."
+    },
+    {
+      "type": "text",
+      "id": "action_label",
+      "label": "Header link label"
+    },
+    {
+      "type": "url",
+      "id": "action_link",
+      "label": "Header link URL"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "HTML anchor id",
+      "default": "brand-categories"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category card",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enabled",
+          "label": "Enable category card",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Category title",
+          "info": "e.g. \"Men's Innerwear\" or \"Lip Makeup\". Leave blank to use selected collection title."
+        },
+        {
+          "type": "text",
+          "id": "sub",
+          "label": "Subtitle",
+          "info": "e.g. \"Briefs, trunks & vests\""
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Category image (optional)",
+          "info": "Defaults to collection image if not uploaded."
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Independent Shopify collection",
+          "info": "Select the dedicated collection containing this brand's category products."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Optional custom URL",
+          "info": "Used only if collection is not selected."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand categories",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "title": "Category 1",
+            "sub": "Curated selection"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Category 2",
+            "sub": "Curated selection"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Category 3",
+            "sub": "Curated selection"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

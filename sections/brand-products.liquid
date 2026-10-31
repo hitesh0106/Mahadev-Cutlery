@@ -1,0 +1,166 @@
+{%- comment -%}
+  Brand Products Section.
+  Displays featured products strictly from the current brand.
+  - Uses Shopify native collection picker
+  - Filters strictly to the selected brand collection
+  - Renders genuine products using product-card snippet
+  - Provides a graceful, honest empty state when stock is pending
+{%- endcomment -%}
+{%- liquid
+  assign b_col = section.settings.collection
+  if b_col == blank and collection != blank
+    assign b_col = collection
+  endif
+
+  assign limit = section.settings.products_to_show | default: 8
+  assign has_products = false
+  if b_col != blank and b_col.products_count > 0
+    assign has_products = true
+  endif
+
+  assign view_all_url = section.settings.view_all_link
+  if view_all_url == blank and b_col != blank
+    assign view_all_url = b_col.url
+  endif
+-%}
+
+<section class="mc-section mc-brand-products-section" id="brand-products" data-testid="brand-products-section">
+  <div class="mc-container">
+    <div class="mc-section__head">
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="mc-section__heading mc-section__heading--flush">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_view_all and view_all_url != blank -%}
+        <a class="mc-action-link" href="{{ view_all_url }}">
+          {{ section.settings.view_all_label | default: 'Shop All' | escape | upcase }}
+          <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- if has_products -%}
+      <div class="mc-grid mc-grid--products mc-grid--cols-{{ section.settings.columns_desktop | default: 4 }}">
+        {%- for prod in b_col.products limit: limit -%}
+          {% render 'product-card', card_product: prod, show_vendor: section.settings.show_vendor %}
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.show_view_all and view_all_url != blank and b_col.products_count > limit -%}
+        <div class="mc-section__footer-cta">
+          <a class="mc-btn mc-btn--secondary" href="{{ view_all_url }}">
+            {{ section.settings.view_all_label | default: 'View all products' | escape }}
+            ({{ b_col.products_count }})
+            <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="mc-empty-state mc-brand-empty">
+        <div class="mc-brand-empty__icon" aria-hidden="true">
+          <svg class="mc-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/></svg>
+        </div>
+        <h3 class="mc-empty-state__title">{{ section.settings.empty_heading | default: 'Products arriving soon' | escape }}</h3>
+        <p class="mc-empty-state__text">{{ section.settings.empty_text | default: 'We curate genuine inventory directly from verified brand distributors. Check back shortly or visit our Ahmedabad store for instant availability.' | escape }}</p>
+        <div class="mc-empty-state__actions">
+          <a class="mc-btn mc-btn--secondary" href="/pages/brands">
+            Explore All Brands
+          </a>
+          <a class="mc-btn mc-btn--primary" href="{{ routes.all_products_collection_url }}">
+            Shop All Products
+          </a>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Selected Products"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured Brand Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Brand collection",
+      "info": "Select the automated collection containing products for this brand (e.g. Jockey or Swiss Beauty)."
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 24,
+      "step": 4,
+      "default": 8,
+      "label": "Products to show"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "Desktop columns"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show brand name on cards",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'Shop All' link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "'Shop All' button label",
+      "default": "Shop All Brand Products"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "Custom 'Shop All' link override",
+      "info": "Defaults to the selected collection URL."
+    },
+    {
+      "type": "text",
+      "id": "empty_heading",
+      "label": "Empty state title",
+      "default": "Products arriving soon"
+    },
+    {
+      "type": "textarea",
+      "id": "empty_text",
+      "label": "Empty state description",
+      "default": "We curate genuine inventory directly from verified brand distributors. Check back shortly or visit our Ahmedabad store for instant availability."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand products"
+    }
+  ]
+}
+{% endschema %}

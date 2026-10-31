@@ -1,0 +1,160 @@
+{%- comment -%}
+  Brand Hero Section (reusable for brand landing pages & collection pages).
+  Displays:
+  - Brand wordmark / name
+  - Optional brand logo
+  - Verified taxonomy / authenticity note
+  - Short editorial brand introduction
+  - Premium banner image (optional)
+  - Direct navigation button to categories & products
+{%- endcomment -%}
+{%- liquid
+  assign b_title = section.settings.brand_name
+  if b_title == blank
+    if page != blank and page.title != blank
+      assign b_title = page.title
+    elsif collection != blank and collection.title != blank
+      assign b_title = collection.title
+    else
+      assign b_title = 'Brand Collection'
+    endif
+  endif
+
+  assign b_desc = section.settings.description
+  if b_desc == blank
+    if page != blank and page.content != blank
+      assign b_desc = page.content
+    elsif collection != blank and collection.description != blank
+      assign b_desc = collection.description
+    endif
+  endif
+-%}
+
+<section class="mc-section mc-brand-hero" data-testid="brand-hero-section">
+  <div class="mc-container">
+    <div class="mc-brand-hero__inner {% if section.settings.banner_image != blank %}mc-brand-hero__inner--split{% endif %}">
+      <div class="mc-brand-hero__content">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="mc-eyebrow">— {{ section.settings.eyebrow | escape | upcase }}</p>
+        {%- endif -%}
+
+        <div class="mc-brand-hero__title-row">
+          {%- if section.settings.logo != blank -%}
+            <div class="mc-brand-hero__logo">
+              {{ section.settings.logo | image_url: width: 180 | image_tag: loading: 'eager', widths: '90, 180', class: 'mc-brand-hero__logo-img', alt: b_title | escape }}
+            </div>
+          {%- endif -%}
+          <h1 class="mc-brand-hero__title">{{ b_title | escape }}</h1>
+        </div>
+
+        {%- if section.settings.taxonomy_note != blank -%}
+          <div class="mc-brand-hero__badge-row">
+            <span class="mc-badge mc-badge--verified">
+              <svg class="mc-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Verified Brand
+            </span>
+            <span class="mc-brand-hero__rule">{{ section.settings.taxonomy_note | escape }}</span>
+          </div>
+        {%- endif -%}
+
+        {%- if b_desc != blank -%}
+          <div class="mc-brand-hero__desc mc-rte">
+            {{ b_desc }}
+          </div>
+        {%- endif -%}
+
+        <div class="mc-brand-hero__actions">
+          {%- if section.settings.cta_label != blank -%}
+            <a class="mc-btn mc-btn--primary" href="{{ section.settings.cta_link | default: '#brand-categories' }}">
+              {{ section.settings.cta_label | escape }}
+              <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.secondary_cta_label != blank and section.settings.secondary_cta_link != blank -%}
+            <a class="mc-btn mc-btn--secondary" href="{{ section.settings.secondary_cta_link }}">
+              {{ section.settings.secondary_cta_label | escape }}
+              <svg class="mc-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- if section.settings.banner_image != blank -%}
+        <div class="mc-brand-hero__media">
+          {{ section.settings.banner_image | image_url: width: 1200 | image_tag: loading: 'eager', sizes: '(min-width: 990px) 45vw, 100vw', widths: '600, 900, 1200', class: 'mc-brand-hero__img', alt: b_title | escape }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Brand Spotlight"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand name override",
+      "info": "Leave blank to use the page or collection title automatically."
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Brand logo (optional)"
+    },
+    {
+      "type": "text",
+      "id": "taxonomy_note",
+      "label": "Taxonomy / verified note",
+      "default": "100% genuine brand stock curated in Ahmedabad",
+      "info": "e.g. \"Men's innerwear only\" or \"Dermatologist-recommended skincare\""
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Brand introduction",
+      "default": "<p>Discover authentic collections directly from verified brand distributors, curated for quality and everyday comfort.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Brand banner / editorial image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Primary button label",
+      "default": "Explore Categories"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Primary button link",
+      "info": "Defaults to #brand-categories to scroll directly to the category cards."
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary button label",
+      "default": "Shop All Products"
+    },
+    {
+      "type": "url",
+      "id": "secondary_cta_link",
+      "label": "Secondary button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand hero"
+    }
+  ]
+}
+{% endschema %}

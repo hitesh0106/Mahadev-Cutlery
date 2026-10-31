@@ -50,7 +50,9 @@
           {%- assign fb_name = block.settings.name -%}
           {%- if fb_name == blank or block.settings.enabled == false -%}{%- continue -%}{%- endif -%}
           {%- liquid
-            if block.settings.collection != blank
+            if block.settings.brand_page != blank
+              assign fb_href = block.settings.brand_page.url
+            elsif block.settings.collection != blank
               assign fb_href = block.settings.collection.url
             elsif block.settings.link != blank
               assign fb_href = block.settings.link
@@ -281,6 +283,12 @@
           "type": "image_picker",
           "id": "image",
           "label": "Brand logo / image (optional)"
+        },
+        {
+          "type": "page",
+          "id": "brand_page",
+          "label": "Dedicated brand landing page (optional)",
+          "info": "Link directly to the brand's dedicated landing page (e.g. /pages/brand-jockey)."
         },
         {
           "type": "collection",
