@@ -1,16 +1,14 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "announcement": {
-      "type": "announcement-bar",
-      "settings": {
-        "show": true,
-        "message_1": "Beauty, care & gifts — curated in Ahmedabad",
-        "message_2": "Explore authentic products from brands you trust",
-        "autoplay": true,
-        "bg": "#20201e",
-        "text": "#faf8f5"
-      }
-    },
     "hero": {
       "type": "hero",
       "settings": {
@@ -29,279 +27,32 @@
     },
     "departments": {
       "type": "department-grid",
-      "blocks": {
-        "dept-1": {
-          "type": "department",
-          "settings": {
-            "enabled": true,
-            "title": "Beauty & Makeup",
-            "sub": "Lips, eyes, face",
-            "handle": "beauty-makeup"
-          }
-        },
-        "dept-2": {
-          "type": "department",
-          "settings": {
-            "enabled": true,
-            "title": "Skincare",
-            "sub": "Cleanse, treat, protect",
-            "handle": "skincare"
-          }
-        },
-        "dept-3": {
-          "type": "department",
-          "settings": {
-            "enabled": true,
-            "title": "Haircare",
-            "sub": "Everyday & professional",
-            "handle": "haircare"
-          }
-        },
-        "dept-4": {
-          "type": "department",
-          "settings": {
-            "enabled": true,
-            "title": "Hosiery & Innerwear",
-            "sub": "Men, women & kids",
-            "handle": "hosiery-innerwear"
-          }
-        },
-        "dept-5": {
-          "type": "department",
-          "settings": {
-            "enabled": true,
-            "title": "Toys & Kids",
-            "sub": "Play & learn",
-            "handle": "toys-kids"
-          }
-        },
-        "dept-6": {
-          "type": "department",
-          "settings": {
-            "enabled": true,
-            "title": "Gift Articles",
-            "sub": "For every occasion",
-            "handle": "gift-articles"
-          }
-        },
-        "dept-7": {
-          "type": "department",
-          "settings": {
-            "enabled": true,
-            "title": "Imitation Jewellery",
-            "sub": "Everyday sparkle",
-            "handle": "imitation-jewellery"
-          }
-        },
-        "dept-8": {
-          "type": "department",
-          "settings": {
-            "enabled": true,
-            "title": "Accessories & Grooming",
-            "sub": "Brushes, combs, trimmers",
-            "handle": "accessories-grooming"
-          }
-        }
-      },
-      "block_order": [
-        "dept-1",
-        "dept-2",
-        "dept-3",
-        "dept-4",
-        "dept-5",
-        "dept-6",
-        "dept-7",
-        "dept-8"
-      ],
       "settings": {
         "eyebrow": "Departments",
         "heading": "Shop by department",
         "action_label": "Shop all",
         "action_link": "/collections",
-        "anchor_id": "departments"
+        "anchor_id": "departments",
+        "collection_1": "",
+        "title_1": "",
+        "collection_2": "",
+        "title_2": "",
+        "collection_3": "",
+        "title_3": "",
+        "collection_4": "",
+        "title_4": "",
+        "collection_5": "",
+        "title_5": "",
+        "collection_6": "",
+        "title_6": "",
+        "collection_7": "",
+        "title_7": "",
+        "collection_8": "",
+        "title_8": ""
       }
     },
     "featured-brands": {
       "type": "featured-brands",
-      "blocks": {
-        "brand-jockey": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Jockey",
-            "description": "Innerwear & Socks",
-            "handle": "jockey",
-            "cat_1_label": "Men's Innerwear",
-            "cat_2_label": "Women's Innerwear",
-            "cat_3_label": "Socks"
-          }
-        },
-        "brand-van-heusen": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Van Heusen",
-            "description": "Innerwear & Loungewear",
-            "handle": "van-heusen",
-            "cat_1_label": "Men's Innerwear",
-            "cat_2_label": "Loungewear"
-          }
-        },
-        "brand-zoiro": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Zoiro",
-            "description": "Men's innerwear only",
-            "handle": "zoiro",
-            "cat_1_label": "Briefs & Trunks",
-            "cat_2_label": "Vests"
-          }
-        },
-        "brand-bodycare": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Bodycare",
-            "description": "Women's & children's innerwear",
-            "handle": "bodycare",
-            "cat_1_label": "Women's Innerwear",
-            "cat_2_label": "Kids Innerwear"
-          }
-        },
-        "brand-lady-care": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Lady Care",
-            "description": "Women's nikar & panty",
-            "handle": "lady-care",
-            "cat_1_label": "Panties",
-            "cat_2_label": "Nikar"
-          }
-        },
-        "brand-swiss-beauty": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Swiss Beauty",
-            "description": "Cosmetics & beauty tools",
-            "handle": "swiss-beauty",
-            "cat_1_label": "Face Makeup",
-            "cat_2_label": "Eye Makeup",
-            "cat_3_label": "Lip Makeup"
-          }
-        },
-        "brand-lakme": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Lakmé",
-            "description": "Cosmetics & skincare",
-            "handle": "lakme",
-            "cat_1_label": "Lipsticks",
-            "cat_2_label": "Face Compact",
-            "cat_3_label": "Skincare"
-          }
-        },
-        "brand-maybelline": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Maybelline New York",
-            "description": "Cosmetics & eye makeup",
-            "handle": "maybelline-new-york",
-            "cat_1_label": "Mascara & Kajal",
-            "cat_2_label": "Foundation",
-            "cat_3_label": "Lip Colors"
-          }
-        },
-        "brand-minimalist": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Minimalist",
-            "description": "Active skincare routines",
-            "handle": "minimalist",
-            "cat_1_label": "Face Serums",
-            "cat_2_label": "Sunscreen",
-            "cat_3_label": "Cleansers"
-          }
-        },
-        "brand-cetaphil": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Cetaphil",
-            "description": "Gentle skincare formulas",
-            "handle": "cetaphil",
-            "cat_1_label": "Gentle Cleanser",
-            "cat_2_label": "Moisturizer"
-          }
-        },
-        "brand-lotus": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "Lotus Herbals",
-            "description": "Skincare & sun protection",
-            "handle": "lotus-herbals",
-            "cat_1_label": "Sunscreen",
-            "cat_2_label": "Face Wash"
-          }
-        },
-        "brand-loreal-paris": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "L'Oréal Paris",
-            "description": "Haircare, skincare & makeup",
-            "handle": "loreal-paris",
-            "cat_1_label": "Hair Serums",
-            "cat_2_label": "Revitalift Skincare",
-            "cat_3_label": "Makeup"
-          }
-        },
-        "brand-loreal-prof": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "L'Oréal Professionnel",
-            "description": "Professional salon haircare",
-            "handle": "loreal-professionnel",
-            "cat_1_label": "Salon Shampoos",
-            "cat_2_label": "Hair Masks & Serums"
-          }
-        },
-        "brand-vega": {
-          "type": "brand",
-          "settings": {
-            "enabled": true,
-            "name": "VEGA",
-            "description": "Hair & grooming tools",
-            "handle": "vega",
-            "cat_1_label": "Hair Brushes",
-            "cat_2_label": "Styling Appliances",
-            "cat_3_label": "Grooming Tools"
-          }
-        }
-      },
-      "block_order": [
-        "brand-jockey",
-        "brand-van-heusen",
-        "brand-zoiro",
-        "brand-bodycare",
-        "brand-lady-care",
-        "brand-swiss-beauty",
-        "brand-lakme",
-        "brand-maybelline",
-        "brand-minimalist",
-        "brand-cetaphil",
-        "brand-lotus",
-        "brand-loreal-paris",
-        "brand-loreal-prof",
-        "brand-vega"
-      ],
       "settings": {
         "eyebrow": "Brands we stock",
         "heading": "Featured brands",
@@ -310,150 +61,12 @@
         "card_cta_label": "Shop"
       }
     },
-    "product-types": {
-      "type": "product-types",
-      "blocks": {
-        "type-1": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Face Wash"
-          }
-        },
-        "type-2": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Moisturizer"
-          }
-        },
-        "type-3": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Face Serum"
-          }
-        },
-        "type-4": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Shampoo"
-          }
-        },
-        "type-5": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Conditioner"
-          }
-        },
-        "type-6": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Lipstick & Lip Care"
-          }
-        },
-        "type-7": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Foundation & Compact"
-          }
-        },
-        "type-8": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Kajal & Mascara"
-          }
-        },
-        "type-9": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Men's Innerwear"
-          }
-        },
-        "type-10": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Women's Innerwear"
-          }
-        },
-        "type-11": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Children's Innerwear"
-          }
-        },
-        "type-12": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Hair Styling Tools"
-          }
-        },
-        "type-13": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Toys & Games"
-          }
-        },
-        "type-14": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Gift Sets"
-          }
-        },
-        "type-15": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Imitation Jewellery"
-          }
-        },
-        "type-16": {
-          "type": "type",
-          "settings": {
-            "enabled": true,
-            "title": "Grooming Tools"
-          }
-        }
-      },
-      "block_order": [
-        "type-1",
-        "type-2",
-        "type-3",
-        "type-4",
-        "type-5",
-        "type-6",
-        "type-7",
-        "type-8",
-        "type-9",
-        "type-10",
-        "type-11",
-        "type-12",
-        "type-13",
-        "type-14",
-        "type-15",
-        "type-16"
-      ],
-      "settings": {
-        "eyebrow": "Find it fast",
-        "heading": "Shop by product type"
-      }
-    },
     "trending": {
       "type": "featured-products",
       "settings": {
         "eyebrow": "Trending now",
         "heading": "Trending products",
+        "bg_soft": false,
         "collection": "",
         "products_to_show": 8,
         "show_view_all": true
@@ -464,45 +77,37 @@
       "settings": {
         "eyebrow": "Just in",
         "heading": "New arrivals",
+        "bg_soft": false,
         "collection": "",
         "products_to_show": 4,
         "show_view_all": true
       }
     },
+    "product-types": {
+      "type": "product-types",
+      "settings": {
+        "eyebrow": "Find it fast",
+        "heading": "Shop by product type",
+        "collection_1": "",
+        "collection_2": "",
+        "collection_3": "",
+        "collection_4": "",
+        "collection_5": "",
+        "collection_6": "",
+        "collection_7": "",
+        "collection_8": "",
+        "collection_9": "",
+        "collection_10": "",
+        "collection_11": "",
+        "collection_12": "",
+        "collection_13": "",
+        "collection_14": "",
+        "collection_15": "",
+        "collection_16": ""
+      }
+    },
     "edit-skincare": {
       "type": "edit-section",
-      "blocks": {
-        "chip-1": {
-          "type": "chip",
-          "settings": {
-            "label": "Cleansers"
-          }
-        },
-        "chip-2": {
-          "type": "chip",
-          "settings": {
-            "label": "Face Serums"
-          }
-        },
-        "chip-3": {
-          "type": "chip",
-          "settings": {
-            "label": "Moisturizers"
-          }
-        },
-        "chip-4": {
-          "type": "chip",
-          "settings": {
-            "label": "Sunscreens"
-          }
-        }
-      },
-      "block_order": [
-        "chip-1",
-        "chip-2",
-        "chip-3",
-        "chip-4"
-      ],
       "settings": {
         "eyebrow": "The Beauty & Skincare Edit",
         "title": "Gentle routines for every skin",
@@ -510,45 +115,12 @@
         "fallback_image": "editorial-skincare.jpg",
         "tone": "cream",
         "image_side": "left",
-        "collection_1": "",
-        "collection_2": "",
+        "collection": "",
         "anchor_id": "skincare-edit"
       }
     },
     "edit-innerwear": {
       "type": "edit-section",
-      "blocks": {
-        "chip-1": {
-          "type": "chip",
-          "settings": {
-            "label": "Men's Briefs & Trunks"
-          }
-        },
-        "chip-2": {
-          "type": "chip",
-          "settings": {
-            "label": "Men's Vests"
-          }
-        },
-        "chip-3": {
-          "type": "chip",
-          "settings": {
-            "label": "Women's Panties"
-          }
-        },
-        "chip-4": {
-          "type": "chip",
-          "settings": {
-            "label": "Socks & Loungewear"
-          }
-        }
-      },
-      "block_order": [
-        "chip-1",
-        "chip-2",
-        "chip-3",
-        "chip-4"
-      ],
       "settings": {
         "eyebrow": "Hosiery & Innerwear",
         "title": "Comfort, in every size",
@@ -556,45 +128,12 @@
         "fallback_image": "dept-innerwear.jpg",
         "tone": "paper",
         "image_side": "right",
-        "collection_1": "",
-        "collection_2": "",
+        "collection": "",
         "anchor_id": "innerwear-edit"
       }
     },
     "edit-gifts": {
       "type": "edit-section",
-      "blocks": {
-        "chip-1": {
-          "type": "chip",
-          "settings": {
-            "label": "Gift Sets & Boxes"
-          }
-        },
-        "chip-2": {
-          "type": "chip",
-          "settings": {
-            "label": "Board Games & Toys"
-          }
-        },
-        "chip-3": {
-          "type": "chip",
-          "settings": {
-            "label": "Earrings & Bangles"
-          }
-        },
-        "chip-4": {
-          "type": "chip",
-          "settings": {
-            "label": "Necklaces & Sets"
-          }
-        }
-      },
-      "block_order": [
-        "chip-1",
-        "chip-2",
-        "chip-3",
-        "chip-4"
-      ],
       "settings": {
         "eyebrow": "Gifts, Toys & Jewellery",
         "title": "Little joys, thoughtfully wrapped",
@@ -602,8 +141,7 @@
         "fallback_image": "dept-gifts.jpg",
         "tone": "blush",
         "image_side": "left",
-        "collection_1": "",
-        "collection_2": "",
+        "collection": "",
         "anchor_id": "gifts-edit"
       }
     },
@@ -613,6 +151,7 @@
         "eyebrow": "NEWSLETTER",
         "heading": "Be the first to know",
         "subtitle": "New arrivals and store updates. Unsubscribe any time.",
+        "placeholder": "Your email address",
         "button_label": "SUBSCRIBE"
       }
     }
@@ -621,9 +160,9 @@
     "hero",
     "departments",
     "featured-brands",
-    "product-types",
     "trending",
     "new-arrivals",
+    "product-types",
     "edit-skincare",
     "edit-innerwear",
     "edit-gifts",
